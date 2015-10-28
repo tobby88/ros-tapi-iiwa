@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="TestDevice" value="Spacenav"/>
+	<node pkg="masterslave" type="controldevice" name="DeviceTestSpacenav" args="$(arg TestDevice)" output="screen"/>
+	<node respawn="true" pkg="spacenav_node" type="spacenav_node" name="spacenav">
+		<param name="dev" type="string" value="/dev/input/js0" />
+		<param name="deadzone" value="0.12"/>
+		<param name="autorepeat_rate" value="60"/>
+	</node>
+
+</launch>
