@@ -6,17 +6,19 @@
 
 ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
 {
-    std::string param_str = nh_.getNamespace();
-    std::stringstream ss;
-    ss << "/API" << param_str;
-    if(nh_.hasParam(ss.str().c_str()))
-    {
 
+    std::string param_str = nh_.getNamespace();
+    std::stringstream param_sstr;
+    std::stringstream namespace_sstr;
+    curDeviceNum=0;
+    do{
+        param_sstr.str(std::string());
+        curDeviceNum ++;
+        param_sstr << "/API" << param_str << "/node" << curDeviceNum;
     }
-    else
-    {
-        nh_.setParam(ss.str().c_str(),"ControlDevice");
-    }
+    while(nh_.hasParam(param_sstr.str().c_str()));
+
+    nh_.setParam(param_sstr.str().c_str(),"ControlDevice");
     curDeviceType = nh_.getNamespace();
     ROS_INFO("Das ist der Namespace: %s",curDeviceType.c_str());
     if(strcmp(curDeviceType.c_str(),"/Joy")==0)
@@ -29,7 +31,8 @@ ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
         deviceSub = nh_.subscribe<sensor_msgs::Joy>("/spacenav/joy",10,&ControlDevice::controlDeviceCallback, this);
         ROS_INFO("Spacenav");
     }
-    apiSub = nh_.advertise<geometry_msgs::TwistStamped>("ControlDevice",1);
+    namespace_sstr << "node" << curDeviceNum << "/Velocity";
+    apiSub = nh_.advertise<geometry_msgs::TwistStamped>(namespace_sstr.str().c_str(),1);
 }
 
 ControlDevice::~ControlDevice()

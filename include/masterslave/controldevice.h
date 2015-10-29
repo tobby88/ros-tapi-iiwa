@@ -22,6 +22,7 @@ private:
     double rotGain;
     double transGain;
     std::string curDeviceType;
+    int curDeviceNum;
 
 
 
