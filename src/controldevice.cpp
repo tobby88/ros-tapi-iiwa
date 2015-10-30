@@ -8,6 +8,7 @@
 ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
 {
     std::stringstream namespace_sstr;
+    errorShown = false;
     curDeviceNum=0;
     rotGain = 1.0;
     transGain = 1.0;
@@ -16,9 +17,7 @@ ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
     registration();
     curDeviceType = nh_.getNamespace();
 
-    ROS_DEBUG("Das ist der Namespace: %s",curDeviceType.c_str());
-    // Test if it's a Gamepad or a Spacenav
-
+    // Check if it's a Gamepad or a Spacenav
     if(strcmp(curDeviceType.c_str(),"/Joy")==0)
     {
         deviceSub = nh_.subscribe<sensor_msgs::Joy>("/joy",10,&ControlDevice::controlDeviceCallback, this);
@@ -59,20 +58,17 @@ void ControlDevice::registration()
 
 void ControlDevice::buttonCheck()
 {
-    std::string val;
-    curButton = 0;
     std::stringstream button_sstream;
-    button_sstream << "button_" << curButton;
-    while(nh_.hasParam(button_sstream.str().c_str()))
+    button_sstream << "button";
+    if(nh_.hasParam(button_sstream.str().c_str()))
     {
-        nh_.getParam(button_sstream.str().c_str(),val);
-        buttons[curButton] = val;
-        ROS_DEBUG_NAMED("ButtonCheck","Button: %s", button_sstream.str().c_str());
-        button_sstream.str(std::string());
-        curButton ++;
-        button_sstream << "button_" << curButton;
-
-
+        XmlRpc::XmlRpcValue buttonList;
+        nh_.getParam(button_sstream.str().c_str(),buttonList);
+        for(XmlRpc::XmlRpcValue::iterator it=buttonList.begin();it!=buttonList.end();it++)
+        {
+            buttons[std::atoi(it->first.c_str())] = (std::string&)(it->second);
+            ROS_INFO_NAMED("ButtonCheck","found: Functions %s (Button: %s)", ((std::string&)(it->second)).c_str(), it->first.c_str());
+        }
 
     }
 
@@ -113,16 +109,18 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
     for(std::map<int,std::string>::iterator it=buttons.begin(); it!=buttons.end();it++)
     {
        outputButton.header.stamp = ros::Time::now();
-       output.header.frame_id = joy->header.frame_id;
-       if(joy->buttons[it->first]==NULL)
-       {
-           ROS_ERROR("Button is not usable");
-       }
+       outputButton.header.frame_id = joy->header.frame_id;
+
+       ROS_WARN_COND(joy->buttons.capacity()<=it->first&& !errorShown,"Button %d is not accessible",it->first);
+
        outputButton.state = joy->buttons[it->first];
        outputButton.name = it->second;
        buttonsPub.publish(outputButton);
     }
+    errorShown = true;
+
     axisPub.publish(output);
+
 
 }
 
