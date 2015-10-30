@@ -39,3 +39,9 @@ Thumbs.db
 # Folder	     #
 ######################
 build
+
+# user specific files #
+######################
+*.user
+.*~
+*.autosave
