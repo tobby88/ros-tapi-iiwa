@@ -1,9 +1,7 @@
 #include "masterslave/controldevice.h"
 #include <ros/console.h>
 #include <ros/ros.h>
-#include <string>
-#include <algorithm>
-#include <sstream>
+
 
 ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
 {
@@ -110,10 +108,17 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
     {
        outputButton.header.stamp = ros::Time::now();
        outputButton.header.frame_id = joy->header.frame_id;
-
+       // Idee: unerreichbare Buttons nicht senden?!
        ROS_WARN_COND(joy->buttons.capacity()<=it->first&& !errorShown,"Button %d is not accessible",it->first);
+       if(joy->buttons.capacity()<=it->first)
+       {
+           outputButton.state = -1;
+       }
+       else
+       {
+          outputButton.state = joy->buttons[it->first];
+       }
 
-       outputButton.state = joy->buttons[it->first];
        outputButton.name = it->second;
        buttonsPub.publish(outputButton);
     }
