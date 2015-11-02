@@ -8,8 +8,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   message_generation
+  eigen_conversions
+  cmake_modules
 )
-
+find_package(Eigen REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -81,7 +83,7 @@ generate_messages(
 ## * In this file (CMakeLists.txt):
 ##   * add "dynamic_reconfigure" to
 ##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * uncomment the "generate_dynamic_reconfigure_options" section below
+##   * uncomment the "generaEigen REQUIREDte_dynamic_reconfigure_options" section below
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
@@ -103,6 +105,7 @@ catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES masterslave
   CATKIN_DEPENDS roscpp std_msgs message_runtime
+  DEPENDS Eigen
 #  DEPENDS system_lib
 )
 
@@ -115,6 +118,7 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${Eigen_INCLUDE_DIRS}
   include
 )
 
@@ -131,6 +135,7 @@ include_directories(
 ## Declare a C++ executable
 # add_executable(masterslave_node src/masterslave_node.cpp)
 add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
+add_executable(laprascopictool src/laprascopictool.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -139,6 +144,7 @@ add_executable(controldevice src/controldevice.cpp include/masterslave/controlde
 ## Specify libraries to link a library or executable target against
 target_link_libraries(controldevice
    ${catkin_LIBRARIES}
+   ${Eigen_LIBRARIES}
 )
 
 #############
