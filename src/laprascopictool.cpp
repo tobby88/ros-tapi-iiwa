@@ -47,23 +47,61 @@ void LaprascopicTool::calcDirKin()
 
     T_0_Q5.Identity();
     T_0_Q5.translate(Eigen::Vector3d(toolParameters.X_0_Q4,toolParameters.Y_0_Q4,toolParameters.Z_0_Q4));
-    T_0_Q5.rotate(QuaternionFromEuler(Eigen::Vector3d(toolParameters.A_0_Q4,toolParameters.B_0_Q4,toolParameters.C_0_Q4),true));
+    T_0_Q5.rotate(QuaternionFromEuler(Eigen::Vector3d(toolParameters.A_0_Q4,toolParameters.B_0_Q4,toolParameters.C_0_Q4),false));
     //direct kinematics in according to Denavit-Hartenberg
     T_Q5_Q6.Identity();
-    T_Q5_Q6.rotate(QuaternionFromEuler(Eigen::Vector3d(0,0,Q5*DEG_TO_RAD),true));
+    T_Q5_Q6.rotate(QuaternionFromEuler(Eigen::Vector3d(0,0,Q5),true));
     T_Q5_Q6.translate(Eigen::Vector3d(toolParameters.L_Q5_Q6,0,0));
     T_Q5_Q6.rotate(QuaternionFromEuler(Eigen::Vector3d(90*DEG_TO_RAD,0,0),true));
 
     T_Q6_EE.Identity();
     T_Q6_EE.rotate(QuaternionFromEuler(Eigen::Vector3d(0,0,Q6),true));
-    T_Q6_EE.translate(Eigen::Vector3d(toolParameters.L_Q6_EE,0,0));
-    T_Q6_EE.rotate(QuaternionFromEuler(Eigen::Vector3d(0,-90*DEG_TO_RAD,0),true));
+    T_Q6_EE.translate(Eigen::Vector3d(toolParameters.L_Q6_EE,0,0));    
 
     T_0_EE = T_0_Q5*T_Q5_Q6*T_Q6_EE;
 
 }
 
-void LaprascopicTool::calcInvKin(){
+void LaprascopicTool::calcInvKin()
+{
+    Eigen::Vector3d p_EE = T_0_EE.translation();
+    Eigen::Affine3d T_0_Q6 = T_0_EE.translate(-toolParameters.L_Q6_EE,0,0);
+    // z_Q6 = z_EE
+    Eigen::Vector4d z_Q6 = T_0_Q6 * Eigen::Vector4d(0,0,1,0);
+    Eigen::Vector3d p_EE_RCM = p_EE - RCM;
+    Eigen::Vector3d y_Q5 = z_Q6.cross(p_EE_RCM);
+    // y_EE = y_Q6
+    Eigen::Vector3d y_EE = T_0_Q6 * Eigen::Vector4d(0,1,0,0);
+    // Q6
+    Q6 = asin(y_Q5.cross(y_EE).norm()/(y_Q5.norm()*y_EE.norm()));
+    // Spatprodukt zum Überprüfen: Ist das Volumen kleiner 0 dann ist der Winkel größer als 90° (nicht möglich)
+    if(y_Q5.cross(Y_EE).dot(z_Q6)<0)
+    {
+        Q6 = -Q6;
+    }
+    T_EE_Q5.Identity();
+    T_EE_Q5.rotate(QuternionFromEuler(Eigen::Vector3d(0,0,-Q6),true));
+    T_EE_Q5.rotate(QuaternionFromEuler(Eigen::Vector3d(90*DEG_TO_RAD,0,0),true));
+    T_EE_Q5.translate(Eigen::Vector3d(-toolParameters.L_Q5_Q6,0,0));
+
+    Eigen::Affine3d T_0_Q5 = T_0_EE*T_EE_Q5;
+    Eigen::Vector3d p_Q5 = T_0_Q5.translation();
+
+    Eigen::Vector3d p_Q5_RCM = p_Q5 - RCM;
+    p_Q6_Q5 = p_Q6 - p_Q5;
+
+    Q5 = asin(p_Q5_RCM.cross(p_Q6_Q5).norm()/(p_Q5_RCM.norm()*p_Q6_Q5.norm()));
+    // Spatprodukt zum Überprüfen: Ist das Volumen kleiner 0 dann ist der Winkel größer als 90° (nicht möglich)
+    if(p_Q5_RCM.cross(p_Q6_Q5).dot(y_Q5)<0)
+    {
+        Q5 = -Q5;
+    }
+    T_Q5_0.Identity();
+    T_Q5_0.rotate(QuaternionFromEuler(Eigen::Vector3d(0,0,-Q5)));
+    T_Q5_0.rotate(QuaternionFromEuler(Eigen::Vector3d(-toolParameters.A_0_Q4,-toolParameters.B_0_Q4,-toolParameters.C_0_Q4),true));
+    T_Q5_0.translate(Eigen::Vector3d(-toolParameters.X_0_Q4,-toolParameters.Y_0_Q4,-toolParameters.Z_0_Q4));
+
+
 
 
 }

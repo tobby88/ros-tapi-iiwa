@@ -25,6 +25,8 @@ class LaprascopicTool {
         Eigen::Affine3d T_0_Q5;
         Eigen::Affine3d T_Q5_Q6;
         Eigen::Affine3d T_Q6_EE;
+	Eigen::Affine3d T_EE_Q5;
+	Eigen::Affine3d T_Q5_0;
         Eigen::Vector4d RemoteCenterOfMotion;
 
 
