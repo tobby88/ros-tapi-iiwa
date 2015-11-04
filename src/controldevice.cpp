@@ -8,10 +8,9 @@ ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
     std::stringstream namespace_sstr;
     errorShown = false;
     curDeviceNum=0;
-    rotGain = 1.0;
-    transGain = 1.0;
-    nh_.getParam("rotGain",rotGain);
-    nh_.getParam("transGain",transGain);
+
+    nh_.param("rotGain",rotGain,1.0);
+    nh_.param("transGain",transGain,1.0);
     registration();
     curDeviceType = nh_.getNamespace();
 
@@ -88,19 +87,19 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
     {
         output.twist.linear.y = transGain*joy->axes[0];
         output.twist.linear.x = transGain*joy->axes[1];
-        output.twist.linear.z = transGain*joy->axes[2];
+        //output.twist.linear.z = transGain*joy->axes[2];
         output.twist.angular.y = rotGain*joy->axes[3];
         output.twist.angular.x = rotGain*joy->axes[4];
-        output.twist.angular.z = rotGain*joy->axes[5];
+        //output.twist.angular.z = rotGain*joy->axes[5];
     }
     else if(strcmp(curDeviceType.c_str(),"/Joy")==0)
     {
         output.twist.linear.x = transGain*joy->axes[0];
         output.twist.linear.y = transGain*joy->axes[1];
-        output.twist.linear.z = transGain*joy->axes[2];
+        //output.twist.linear.z = transGain*joy->axes[2];
         output.twist.angular.x = rotGain*joy->axes[3];
         output.twist.angular.y = rotGain*joy->axes[4];
-        output.twist.angular.z = rotGain*joy->axes[5];
+        //output.twist.angular.z = rotGain*joy->axes[5];
 
     }
     // iterate through the buttons map and publish every button press with name and value

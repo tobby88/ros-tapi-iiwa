@@ -6,10 +6,12 @@
 
 class LaprascopicTool {
     public:
-        LaprascopicTool(Eigen::Vector4d);
+        LaprascopicTool(Eigen::Vector3d);
         void setAngles(std::vector<double>);
-        Eigen::Vector4d getRCM(){return RemoteCenterOfMotion;}
+        Eigen::Vector3d getRCM(){return RemoteCenterOfMotion;}
         std::vector<double> getAngles();
+	void setQ4(double);
+	double getQ4(){ return Q4;}
         void setQ5(double);
         double getQ5(){ return Q5; }
         void setQ6(double);
@@ -18,7 +20,7 @@ class LaprascopicTool {
         Eigen::Affine3d getT_0_EE(){ return T_0_EE; }
 
     private:
-
+	double Q4;
         double Q5;
         double Q6;
         Eigen::Affine3d T_0_EE;
@@ -27,7 +29,7 @@ class LaprascopicTool {
         Eigen::Affine3d T_Q6_EE;
 	Eigen::Affine3d T_EE_Q5;
 	Eigen::Affine3d T_Q5_0;
-        Eigen::Vector4d RemoteCenterOfMotion;
+        Eigen::Vector3d RemoteCenterOfMotion;
 
 
         struct toolDescriptionParameters{

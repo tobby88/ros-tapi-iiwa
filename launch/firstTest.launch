@@ -10,6 +10,7 @@
 		<param name="deadzone" value="0.12"/>
 		<param name="autorepeat_rate" value="60"/>
 	</node>
+	<node pkg="masterslave" type="masterslave" name="MasterSlave" args="$(arg TestDevice)" output="screen"/>
 
 </launch>
 
