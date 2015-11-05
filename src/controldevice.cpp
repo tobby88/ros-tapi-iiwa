@@ -78,6 +78,10 @@ ControlDevice::~ControlDevice()
 
 void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
 {
+    if(joy_old.buttons.empty())
+    {
+        joy_old = *joy;
+    }
     geometry_msgs::TwistStamped output;
     masterslave::Button outputButton;
     output.header.stamp = ros::Time::now();
@@ -105,6 +109,7 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
     // iterate through the buttons map and publish every button press with name and value
     for(std::map<int,std::string>::iterator it=buttons.begin(); it!=buttons.end();it++)
     {
+
        outputButton.header.stamp = ros::Time::now();
        outputButton.header.frame_id = joy->header.frame_id;
        // Idee: unerreichbare Buttons nicht senden?!
@@ -117,14 +122,17 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
        {
           outputButton.state = joy->buttons[it->first];
        }
-
        outputButton.name = it->second;
-       buttonsPub.publish(outputButton);
+       if(joy->buttons[it->first]!=joy_old.buttons[it->first])
+       {
+            buttonsPub.publish(outputButton);
+       }
+
     }
     errorShown = true;
 
     axisPub.publish(output);
-
+    joy_old = *joy;
 
 }
 

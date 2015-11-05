@@ -51,7 +51,6 @@ void LaprascopicTool::setT_0_EE(Eigen::Affine3d value)
 
 void LaprascopicTool::calcDirKin()
 {
-
     T_0_Q5.setIdentity();
     T_0_Q5.translate(Eigen::Vector3d(toolParameters.X_0_Q4,toolParameters.Y_0_Q4,toolParameters.Z_0_Q4));
     T_0_Q5.rotate(QuaternionFromEuler((Eigen::Vector3d(0,0,Q4)),true));

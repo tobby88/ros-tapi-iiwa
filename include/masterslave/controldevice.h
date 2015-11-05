@@ -34,6 +34,7 @@ private:
     double transGain;
     std::string curDeviceType;
     int curDeviceNum;
+    sensor_msgs::Joy joy_old;
 
 
 
