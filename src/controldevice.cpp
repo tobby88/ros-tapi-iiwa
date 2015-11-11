@@ -94,7 +94,7 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
         //output.twist.linear.z = transGain*joy->axes[2];
         output.twist.angular.y = -rotGain*joy->axes[4];
         output.twist.angular.x = -rotGain*joy->axes[3];
-        //output.twist.angular.z = rotGain*joy->axes[5];
+        output.twist.angular.z = rotGain*joy->axes[5];
     }
     else if(strcmp(curDeviceType.c_str(),"/Joy")==0)
     {

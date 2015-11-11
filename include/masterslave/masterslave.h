@@ -10,7 +10,7 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/Joy.h>
 #include <sensor_msgs/JointState.h>
-#include <std_msgs/Float32.h>
+#include <std_msgs/Float64.h>
 #include <Eigen/Geometry>
 
 class MasterSlave
@@ -21,6 +21,7 @@ class MasterSlave
     private:
         void velocityCallback(const geometry_msgs::TwistStampedConstPtr&);
         void buttonCallback(const masterslave::ButtonConstPtr&);
+        void Q4StateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q5StateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state);
@@ -32,22 +33,26 @@ class MasterSlave
         ros::NodeHandle controlDeviceNH;
         ros::Subscriber velocitySub;
         ros::Subscriber buttonSub;
+        ros::Subscriber Q4StateSub;
         ros::Subscriber Q5StateSub;
         ros::Subscriber Q6pStateSub;
         ros::Subscriber Q6nStateSub;
+        ros::Publisher  Q4Pub;
         ros::Publisher  Q5Pub;
         ros::Publisher  Q6pPub;
         ros::Publisher  Q6nPub;
 
 
         Eigen::Vector3d RemoteCenterOfMotion;
+        double Q4_act;
         double Q5_act;
         double Q6n_act;
         double Q6p_act;
 
-        std_msgs::Float32 Q5Vel;
-        std_msgs::Float32 Q6nVel;
-        std_msgs::Float32 Q6pVel;
+        std_msgs::Float64 Q4Vel;
+        std_msgs::Float64 Q5Vel;
+        std_msgs::Float64 Q6nVel;
+        std_msgs::Float64 Q6pVel;
         double gripperVelocityValue;
         geometry_msgs::TwistStamped velocity_;
 
