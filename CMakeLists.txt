@@ -10,6 +10,8 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   eigen_conversions
   cmake_modules
+  tf
+  tf_conversions
 )
 find_package(Eigen REQUIRED)
 ## System dependencies are found with CMake's conventions
@@ -136,7 +138,7 @@ include_directories(
 ## Declare a C++ executable
 # add_executable(masterslave_node src/masterslave_node.cpp)
 add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
-add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h)
+add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/laprascopictool.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
