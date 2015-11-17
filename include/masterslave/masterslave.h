@@ -33,6 +33,7 @@ class MasterSlave
         void Q5StateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state);
+        void tcpCallback(const geometry_msgs::PoseStampedConstPtr &pose);
         Eigen::Affine3d moveEEFrame(Eigen::Affine3d);
         void getTargetAngles(LaprascopicTool*);
         Eigen::Quaternion<double> QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX);
@@ -49,7 +50,7 @@ class MasterSlave
 
         ros::Subscriber startSub;
         ros::Subscriber stopSub;
-        ros::Subscriber flangeSub;
+        ros::Subscriber tcpSub;
         ros::Subscriber velocitySub;
         ros::Subscriber buttonSub;
         ros::Subscriber Q4StateSub;
@@ -66,6 +67,7 @@ class MasterSlave
 
         Eigen::Vector3d RemoteCenterOfMotion;
         Eigen::Affine3d lbrFlange;
+        Eigen::Affine3d tcpAct;
         double Q4_act;
         double Q5_act;
         double Q6n_act;

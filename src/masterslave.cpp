@@ -58,6 +58,7 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     Q6pStateSub = globalNH.subscribe("Q6P/joint_states",1,&MasterSlave::Q6pStateCallback, this);
     startSub = globalNH.subscribe("startMasterSlave",1,&MasterSlave::startCallback,this);
     stopSub = globalNH.subscribe("stopMasterSlave",1,&MasterSlave::stopCallback,this);
+    tcpSub = globalNH.subscribe("TCPTarget",1,&MasterSlave::tcpCallback,this);
 
     Q4Pub = globalNH.advertise<std_msgs::Float64>("Q4/setPointVelocity",1);
     Q5Pub = globalNH.advertise<std_msgs::Float64>("Q5/setPointVelocity",1);
@@ -117,20 +118,26 @@ void MasterSlave::doWorkRobot()
         ros::spinOnce();
         if(start_ && !stop_)
         {
+
             if(first)
             {
-                tf::transformTFToEigen(lookupROSTransform("/world","/flangeMountPoint"),lbrFlange);
+                tf::transformTFToEigen(lookupROSTransform("/world","/flange"),lbrFlange);
                 tool = new LaprascopicTool(lbrFlange);
                 first = false;
 
             }
             else
             {
+                Eigen::Affine3d TCPist;
                 tool->setQ4(Q4_act);
                 tool->setQ5(Q5_act);
                 calcQ6();
                 tool->setQ6(Q6_act);
-                tool->setT_0_EE(moveEEFrame(tool->getT_0_FL()));
+                TCPist = lbrFlange*tool->getT_FL_EE();
+                tool->buildDebugFrameFromTM(TCPist,"DK_TCP");
+                tool->buildDebugFrameFromTM(tcpAct,"tcpAct");
+                tool->setT_0_EE(tcpAct);
+                //ROS_INFO("Q5_calc: %f",tool->getQ6());
                 getTargetAngles(tool);
                 commandVelocities();
                 tf::poseEigenToMsg(tool->getT_0_FL(),poseFL);
@@ -153,8 +160,8 @@ void MasterSlave::getTargetAngles(LaprascopicTool* tool)
 void MasterSlave::commandVelocities()
 {
     double gripperVelocity;
-    Q4Vel.data = (Q4_target - Q4_act)/cycleTime;
-    Q5Vel.data = (Q5_target - Q5_act)/cycleTime;
+    Q4Vel.data = (Q4_target - Q4_act);
+    Q5Vel.data = (Q5_target - Q5_act);
     if(gripper_close && !gripper_open)
     {
         gripperVelocity = gripperVelocityValue;
@@ -175,6 +182,11 @@ void MasterSlave::commandVelocities()
     Q6nPub.publish(Q6nVel);
     Q6pPub.publish(Q6pVel);
 
+}
+
+void MasterSlave::tcpCallback(const geometry_msgs::PoseStampedConstPtr &pose)
+{
+    tf::poseMsgToEigen(pose->pose,tcpAct);
 }
 
 void MasterSlave::startCallback(const std_msgs::BoolConstPtr &val)
@@ -271,7 +283,7 @@ void MasterSlave::calcQ6()
 Eigen::Affine3d MasterSlave::moveEEFrame(Eigen::Affine3d oldFrame)
 {
     oldFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x,velocity_.twist.linear.y,velocity_.twist.linear.z));
-    oldFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x,velocity_.twist.angular.y,velocity_.twist.angular.z),true));
+    oldFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x,velocity_.twist.angular.y,velocity_.twist.angular.z),false));
     return oldFrame;
 }
 
