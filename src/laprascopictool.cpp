@@ -174,7 +174,6 @@ void LaprascopicTool::calcInvKin()
     T_Q4_FL.translate(Eigen::Vector3d(-toolParameters.X_0_Q4,-toolParameters.Y_0_Q4,-toolParameters.Z_0_Q4));
 
     T_0_FL = T_0_Q4*T_Q4_FL;
-    //T_0_FL.setIdentity();
     buildDebugFrameFromTM(T_0_FL,"T_0_FL");
 }
 

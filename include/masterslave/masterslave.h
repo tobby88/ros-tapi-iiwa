@@ -24,7 +24,7 @@ class MasterSlave
         MasterSlave(ros::NodeHandle&,ros::NodeHandle&);
 
     private:
-        void flangeCallback(const geometry_msgs::TransformStampedConstPtr&);
+        void flangeCallback(const geometry_msgs::PoseStampedConstPtr&);
         void velocityCallback(const geometry_msgs::TwistStampedConstPtr&);
         void startCallback(const std_msgs::BoolConstPtr&);
         void stopCallback(const std_msgs::BoolConstPtr&);
@@ -57,6 +57,7 @@ class MasterSlave
         ros::Subscriber Q5StateSub;
         ros::Subscriber Q6pStateSub;
         ros::Subscriber Q6nStateSub;
+        ros::Subscriber flangeSub;
 
         ros::Publisher  Q4Pub;
         ros::Publisher  Q5Pub;

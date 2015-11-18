@@ -59,12 +59,13 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     startSub = globalNH.subscribe("startMasterSlave",1,&MasterSlave::startCallback,this);
     stopSub = globalNH.subscribe("stopMasterSlave",1,&MasterSlave::stopCallback,this);
     tcpSub = globalNH.subscribe("TCPTarget",1,&MasterSlave::tcpCallback,this);
+    flangeSub = globalNH.subscribe("flangeLBR",1,&MasterSlave::flangeCallback,this);
 
     Q4Pub = globalNH.advertise<std_msgs::Float64>("Q4/setPointVelocity",1);
     Q5Pub = globalNH.advertise<std_msgs::Float64>("Q5/setPointVelocity",1);
     Q6nPub = globalNH.advertise<std_msgs::Float64>("Q6N/setPointVelocity",1);
     Q6pPub = globalNH.advertise<std_msgs::Float64>("Q6P/setPointVelocity",1);
-    flangeTargetPub = globalNH.advertise<geometry_msgs::PoseStamped>("/vrep/flangeTarget",1);
+    flangeTargetPub = globalNH.advertise<geometry_msgs::PoseStamped>("flangeTarget",1);
 
     ROS_INFO("Mode: %s",mode.c_str());
     buttonCheck();
@@ -98,8 +99,8 @@ void MasterSlave::doWorkTool()
             gripperVelocity = 0;
         }
 
-        Q6nVel.data = velocity_.twist.angular.x + gripperVelocity;
-        Q6pVel.data = velocity_.twist.angular.x - gripperVelocity;
+        Q6nVel.data = velocity_.twist.angular.x + gripperVelocity*cycleTime;
+        Q6pVel.data = velocity_.twist.angular.x - gripperVelocity*cycleTime;
         Q5Pub.publish(Q5Vel);
         Q4Pub.publish(Q4Vel);
         Q6nPub.publish(Q6nVel);
@@ -118,10 +119,9 @@ void MasterSlave::doWorkRobot()
         ros::spinOnce();
         if(start_ && !stop_)
         {
-
             if(first)
             {
-                tf::transformTFToEigen(lookupROSTransform("/world","/flange"),lbrFlange);
+                ROS_INFO("first");
                 tool = new LaprascopicTool(lbrFlange);
                 first = false;
 
@@ -136,10 +136,10 @@ void MasterSlave::doWorkRobot()
                 TCPist = lbrFlange*tool->getT_FL_EE();
                 tool->buildDebugFrameFromTM(TCPist,"DK_TCP");
                 tool->buildDebugFrameFromTM(tcpAct,"tcpAct");
-                tool->setT_0_EE(tcpAct);
+                tool->setT_0_EE(moveEEFrame(TCPist));
                 //ROS_INFO("Q5_calc: %f",tool->getQ6());
                 getTargetAngles(tool);
-                commandVelocities();
+                commandVelocities();             
                 tf::poseEigenToMsg(tool->getT_0_FL(),poseFL);
                 geometry_msgs::PoseStamped T_0_FL_msg;
                 T_0_FL_msg.pose = poseFL;
@@ -175,8 +175,8 @@ void MasterSlave::commandVelocities()
         gripperVelocity = 0;
     }
     //Hier ist noch ein Fehler ;) Achsen?
-    Q6nVel.data = (Q6_target-Q6_act)+ gripperVelocity;
-    Q6pVel.data = (Q6_target-Q6_act) - gripperVelocity;
+    Q6nVel.data = (Q6_target-Q6_act)+ gripperVelocity*cycleTime;
+    Q6pVel.data = (Q6_target-Q6_act) - gripperVelocity*cycleTime;
 
     Q5Pub.publish(Q5Vel);
     Q6nPub.publish(Q6nVel);
@@ -199,9 +199,9 @@ void MasterSlave::stopCallback(const std_msgs::BoolConstPtr &val)
     stop_ = val->data;
 }
 
-void MasterSlave::flangeCallback(const geometry_msgs::TransformStampedConstPtr &flangeTF)
+void MasterSlave::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
 {
-    tf::transformMsgToEigen(flangeTF->transform,lbrFlange);
+    tf::poseMsgToEigen(flangePose->pose,lbrFlange);
 }
 
 void MasterSlave::buttonCallback(const masterslave::ButtonConstPtr &button)
