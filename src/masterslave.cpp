@@ -135,7 +135,7 @@ void MasterSlave::doWorkRobot()
                 tool->setQ6(Q6_act);
                 TCPist = lbrFlange*tool->getT_FL_EE();
                 tool->buildDebugFrameFromTM(TCPist,"DK_TCP");
-                tool->buildDebugFrameFromTM(tcpAct,"tcpAct");
+                tool->buildDebugFrameFromTM(lbrFlange,"lbrFlange");
                 tool->setT_0_EE(moveEEFrame(TCPist));
                 //ROS_INFO("Q5_calc: %f",tool->getQ6());
                 getTargetAngles(tool);

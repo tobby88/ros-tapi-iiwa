@@ -46,7 +46,6 @@ class LaprascopicTool {
 	Eigen::Affine3d T_0_FL;
         Eigen::Vector3d RemoteCenterOfMotion;
 
-
         struct toolDescriptionParameters{
             double X_0_Q4;
             double Y_0_Q4;
