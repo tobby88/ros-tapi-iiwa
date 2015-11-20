@@ -15,8 +15,8 @@ class LaprascopicTool {
         LaprascopicTool(const Eigen::Affine3d startPoseLBR);
         void buildDebugFrameFromTM(const Eigen::Affine3d &T_0_XX, const std::string &name);
         Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
-        void setAngles(std::vector<double>);
-        Eigen::Vector3d getRCM(){return RemoteCenterOfMotion;}
+        void setAngles(double, double, double);
+        Eigen::Affine3d getRCM(){return RemoteCenterOfMotion;}
         std::vector<double> getAngles();
 	void setQ4(double);
 	double getQ4(){ return Q4tar;}
@@ -44,7 +44,7 @@ class LaprascopicTool {
 	//iKin
 	Eigen::Affine3d T_0_EE;
 	Eigen::Affine3d T_0_FL;
-        Eigen::Vector3d RemoteCenterOfMotion;
+        Eigen::Affine3d RemoteCenterOfMotion;
 
         struct toolDescriptionParameters{
             double X_0_Q4;

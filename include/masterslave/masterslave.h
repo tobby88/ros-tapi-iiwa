@@ -66,7 +66,6 @@ class MasterSlave
         ros::Publisher  flangeTargetPub;
 
 
-        Eigen::Vector3d RemoteCenterOfMotion;
         Eigen::Affine3d lbrFlange;
         Eigen::Affine3d tcpAct;
         double Q4_act;

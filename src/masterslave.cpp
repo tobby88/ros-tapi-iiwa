@@ -114,6 +114,7 @@ void MasterSlave::doWorkRobot()
     bool first = true;
     LaprascopicTool* tool;
     geometry_msgs::Pose poseFL;
+    ros::Rate rate(2000);
     while(ros::ok())
     {
         ros::spinOnce();
@@ -121,7 +122,6 @@ void MasterSlave::doWorkRobot()
         {
             if(first)
             {
-                ROS_INFO("first");
                 tool = new LaprascopicTool(lbrFlange);
                 first = false;
 
@@ -129,10 +129,8 @@ void MasterSlave::doWorkRobot()
             else
             {
                 Eigen::Affine3d TCPist;
-                tool->setQ4(Q4_act);
-                tool->setQ5(Q5_act);
                 calcQ6();
-                tool->setQ6(Q6_act);
+                tool->setAngles(Q4_act,Q5_act,Q6_act);
                 TCPist = lbrFlange*tool->getT_FL_EE();
                 tool->buildDebugFrameFromTM(TCPist,"DK_TCP");
                 tool->buildDebugFrameFromTM(lbrFlange,"lbrFlange");
@@ -145,7 +143,7 @@ void MasterSlave::doWorkRobot()
                 T_0_FL_msg.pose = poseFL;
                 flangeTargetPub.publish(T_0_FL_msg);
             }
-
+            rate.sleep();
         }
     }
 }
@@ -160,7 +158,7 @@ void MasterSlave::getTargetAngles(LaprascopicTool* tool)
 void MasterSlave::commandVelocities()
 {
     double gripperVelocity;
-    Q4Vel.data = (Q4_target - Q4_act);
+    //Q4Vel.data = (Q4_target - Q4_act)*cycleTime;
     Q5Vel.data = (Q5_target - Q5_act);
     if(gripper_close && !gripper_open)
     {
@@ -175,7 +173,7 @@ void MasterSlave::commandVelocities()
         gripperVelocity = 0;
     }
     //Hier ist noch ein Fehler ;) Achsen?
-    Q6nVel.data = (Q6_target-Q6_act)+ gripperVelocity*cycleTime;
+    Q6nVel.data = (Q6_target-Q6_act) + gripperVelocity*cycleTime;
     Q6pVel.data = (Q6_target-Q6_act) - gripperVelocity*cycleTime;
 
     Q5Pub.publish(Q5Vel);
@@ -282,9 +280,13 @@ void MasterSlave::calcQ6()
 
 Eigen::Affine3d MasterSlave::moveEEFrame(Eigen::Affine3d oldFrame)
 {
-    oldFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x,velocity_.twist.linear.y,velocity_.twist.linear.z));
-    oldFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x,velocity_.twist.angular.y,velocity_.twist.angular.z),false));
-    return oldFrame;
+    Eigen::Affine3d newFrame;
+    newFrame.setIdentity();
+    newFrame.translate(oldFrame.translation());
+    newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x,velocity_.twist.linear.y,velocity_.twist.linear.z));
+    newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x,velocity_.twist.angular.y,velocity_.twist.angular.z),false));
+    newFrame.rotate(oldFrame.rotation());
+    return newFrame;
 }
 
 Eigen::Quaternion<double> MasterSlave::QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX=true)
