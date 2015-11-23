@@ -114,7 +114,7 @@ void MasterSlave::doWorkRobot()
     bool first = true;
     LaprascopicTool* tool;
     geometry_msgs::Pose poseFL;
-    ros::Rate rate(2000);
+    ros::Rate rate(2);
     while(ros::ok())
     {
         ros::spinOnce();

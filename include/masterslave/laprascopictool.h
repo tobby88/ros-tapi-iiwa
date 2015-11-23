@@ -39,7 +39,8 @@ class LaprascopicTool {
 	//dirKin
         Eigen::Affine3d T_FL_Q4;
         Eigen::Affine3d T_Q4_Q5;
-        Eigen::Affine3d T_Q5_EE;
+        Eigen::Affine3d T_Q5_Q6;
+        Eigen::Affine3d T_Q6_EE;
         Eigen::Affine3d T_FL_EE;
 	//iKin
 	Eigen::Affine3d T_0_EE;

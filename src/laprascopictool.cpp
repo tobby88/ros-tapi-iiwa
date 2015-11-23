@@ -7,16 +7,16 @@ LaprascopicTool::LaprascopicTool(const Eigen::Affine3d startPoseLBR)
 
     toolParameters.A_0_Q4 = 0;
     toolParameters.B_0_Q4 = 90.0;
-    toolParameters.C_0_Q4 = 22.5;
-    toolParameters.X_0_Q4 = 0.455;
-    toolParameters.Y_0_Q4 = 0;
-    toolParameters.Z_0_Q4 = 0.06;
+    toolParameters.C_0_Q4 = 0.0;
+    toolParameters.X_0_Q4 = 0.438;
+    toolParameters.Y_0_Q4 = 0.0;
+    toolParameters.Z_0_Q4 = 0.062;
     toolParameters.L_Q5_Q6 = 0.0088;
     toolParameters.L_Q6_EE = 0.017;
     Q4act=0.0;
     Q5act=0.0;
     Q6act=0.0;
-    Eigen::Affine3d T_FL_RCM = buildAffine3d(Eigen::Vector3d(0.35,toolParameters.Y_0_Q4,toolParameters.Z_0_Q4),Eigen::Vector3d(toolParameters.A_0_Q4*DEG_TO_RAD,toolParameters.B_0_Q4*DEG_TO_RAD,toolParameters.C_0_Q4*DEG_TO_RAD),true);
+    Eigen::Affine3d T_FL_RCM = buildAffine3d(Eigen::Vector3d(0.315,toolParameters.Y_0_Q4,toolParameters.Z_0_Q4),Eigen::Vector3d(toolParameters.A_0_Q4*DEG_TO_RAD,toolParameters.B_0_Q4*DEG_TO_RAD,toolParameters.C_0_Q4*DEG_TO_RAD),true);
     RemoteCenterOfMotion = (startPoseLBR * T_FL_RCM);
     T_0_FL = startPoseLBR;
 }
@@ -101,14 +101,15 @@ void LaprascopicTool::calcDirKin()
     buildDebugFrameFromTM(T_Q4_Q5,"TF_Q4_Q5");
 
 
-    T_Q5_EE.setIdentity();
-    T_Q5_EE.translate(Eigen::Vector3d(toolParameters.L_Q5_Q6,0,0));
-    T_Q5_EE.rotate(QuaternionFromEuler(Eigen::Vector3d(-90*DEG_TO_RAD,0,0),false));
+    T_Q5_Q6.setIdentity();
+    T_Q5_Q6.translate(Eigen::Vector3d(toolParameters.L_Q5_Q6,0,0));
+    T_Q5_Q6.rotate(QuaternionFromEuler(Eigen::Vector3d(-90*DEG_TO_RAD,0,0),false));
     // Q6 um z
-    T_Q5_EE.rotate(QuaternionFromEuler(Eigen::Vector3d(0,0,Q6act),true));
-    T_Q5_EE.translate(toolParameters.L_Q6_EE*Eigen::Vector3d::UnitX());
+    T_Q6_EE.setIdentity();
+    T_Q6_EE.rotate(QuaternionFromEuler(Eigen::Vector3d(0,0,Q6act),true));
+    T_Q6_EE.translate(toolParameters.L_Q6_EE*Eigen::Vector3d::UnitX());
 
-    T_FL_EE = T_FL_Q4*T_Q4_Q5*T_Q5_EE;
+    T_FL_EE = T_FL_Q4*T_Q4_Q5*T_Q5_Q6*T_Q6_EE;
     buildDebugFrameFromTM(T_FL_EE,"TF_FL_EE");
 
 }
@@ -120,36 +121,46 @@ void LaprascopicTool::calcInvKin()
     Eigen::Affine3d T_0_Q6 = T_0_EE.translate(Eigen::Vector3d(-toolParameters.L_Q6_EE,0,0));
     Eigen::Vector3d p_Q6 =  T_0_Q6.translation()-RemoteCenterOfMotion.translation();
 
-    Eigen::Vector3d nPlane = p_Q6.cross(p_EE);
-
-    // z_Q6 = z_EE
     Eigen::Vector4d z_Q6_h = T_0_Q6.matrix() * Eigen::Vector4d(0,0,1,0);
     Eigen::Vector3d z_Q6;
     z_Q6 << z_Q6_h(0), z_Q6_h(1), z_Q6_h(2);
 
+    Eigen::Vector4d y_Q6_h = T_0_Q6.matrix() * Eigen::Vector4d(0,-1,0,0);
+    Eigen::Vector3d y_Q6;
+    y_Q6 << y_Q6_h(0), y_Q6_h(1), y_Q6_h(2);
+
+    Eigen::Vector3d nPlane;
+    if(p_Q6.normalized()==z_Q6.normalized() || p_Q6.normalized() == -z_Q6.normalized())
+    {
+        nPlane = y_Q6;
+    }
+    else
+    {
+        nPlane = p_Q6.cross(z_Q6);
+    }
+
     Eigen::Vector3d p_EE_RCM = p_EE - RemoteCenterOfMotion.translation();
     //siehe V-Rep
-    Eigen::Vector3d z_Q5 = z_Q6.cross(p_EE_RCM);
     // y_EE = y_Q6
-    Eigen::Vector4d y_EE_h = T_0_Q6.matrix() * Eigen::Vector4d(0,1,0,0);
-    Eigen::Vector3d y_EE;
-    y_EE << y_EE_h(0), y_EE_h(1), y_EE_h(2);
+
     // Q6
-    Q6tar = acos(nPlane.dot(z_Q6)/(nPlane.norm()*z_Q6.norm()));
+    Q6tar = acos(nPlane.dot(y_Q6)/(nPlane.norm()*y_Q6.norm()));
     // Spatprodukt zum Überprüfen: Ist das Volumen kleiner 0 dann ist der Winkel größer als 90° (nicht möglich)
-    if(z_Q5.cross(y_EE).dot(z_Q6)<0)
+    if(nPlane.cross(y_Q6).dot(z_Q6)<0)
     {
         Q6tar = -Q6tar;
     }
-    Eigen::Affine3d T_EE_Q5;
+    Eigen::Affine3d T_EE_Q6;
     ROS_INFO("Q6tar: %f",Q6tar);
-    T_EE_Q5.setIdentity();
-    T_EE_Q5.translate(Eigen::Vector3d(-toolParameters.L_Q6_EE,0,0));
-    T_EE_Q5.rotate(QuaternionFromEuler(Eigen::Vector3d(0,0,-Q6tar),true));
-    T_EE_Q5.rotate(QuaternionFromEuler(Eigen::Vector3d(90*DEG_TO_RAD,0,0),false));
-    T_EE_Q5.translate(Eigen::Vector3d(-toolParameters.L_Q5_Q6,0,0));
+    T_EE_Q6.setIdentity();
+    //T_EE_Q6.translate(Eigen::Vector3d(-toolParameters.L_Q6_EE,0,0));
+    T_EE_Q6.rotate(QuaternionFromEuler(Eigen::Vector3d(0,0,-Q6tar),true));
+    T_EE_Q6.rotate(QuaternionFromEuler(Eigen::Vector3d(90*DEG_TO_RAD,0,0),false));
+    Eigen::Affine3d T_Q6_Q5;
+    T_Q6_Q5.setIdentity();
+    T_Q6_Q5.translate(Eigen::Vector3d(-toolParameters.L_Q5_Q6,0,0));
 
-    Eigen::Affine3d T_0_Q5 = T_0_EE*T_EE_Q5;
+    Eigen::Affine3d T_0_Q5 = T_0_EE*T_EE_Q6*T_Q6_Q5;
     buildDebugFrameFromTM(T_0_Q5,"T_0_Q5");
 
     Eigen::Vector3d p_Q5 = T_0_Q5.translation() - RemoteCenterOfMotion.translation();
@@ -159,17 +170,21 @@ void LaprascopicTool::calcInvKin()
     Eigen::Vector3d RCM_x;
     RCM_x << RCM_x_h(0), RCM_x_h(1), RCM_x_h(2);
 
-    Eigen::Vector4d y_Q5_h = T_0_Q5.matrix() * Eigen::Vector4d(1,0,0,0);
+    Eigen::Vector4d x_Q5_h = T_0_Q5.matrix() * Eigen::Vector4d(1,0,0,0);
+    Eigen::Vector3d x_Q5;
+    x_Q5 << x_Q5_h(0), x_Q5_h(1), x_Q5_h(2);
+
+    Eigen::Vector4d y_Q5_h = T_0_Q5.matrix() * Eigen::Vector4d(0,0,1,0);
     Eigen::Vector3d y_Q5;
     y_Q5 << y_Q5_h(0), y_Q5_h(1), y_Q5_h(2);
 
-    Q5tar = acos(RCM_x.dot(y_Q5)/(RCM_x.norm()*y_Q5.norm()));
+    Q5tar = acos(RCM_x.dot(x_Q5)/(RCM_x.norm()*x_Q5.norm()));
 
     // Spatprodukt zum Überprüfen: Ist das Volumen kleiner 0 dann ist der Winkel größer als 90° (nicht möglich)
-    /*if(y_Q5.cross(x_Q4).dot(z_Q5)<0)
+    if(RCM_x.cross(x_Q5).dot(y_Q5)<0)
     {
         Q5tar = -Q5tar;
-    }*/
+    }
     ROS_INFO("Q5_tar: %f",Q5tar);
     // TODO: Johann fragen bzgl. Q4
     //Q4tar = (p_Q5-RemoteCenterOfMotion).norm();
@@ -181,13 +196,18 @@ void LaprascopicTool::calcInvKin()
     Eigen::Affine3d T_0_Q4 = T_0_Q5*T_Q5_Q4;
     Eigen::Affine3d T_Q4_FL;
     T_Q4_FL.setIdentity();
-    T_Q4_FL.rotate(QuaternionFromEuler(Eigen::Vector3d(0,0,-Q4tar),true));
+    //T_Q4_FL.rotate(QuaternionFromEuler(Eigen::Vector3d(0,0,-Q4tar),true));
     T_Q4_FL.rotate(QuaternionFromEuler(Eigen::Vector3d(-toolParameters.A_0_Q4*DEG_TO_RAD,-toolParameters.B_0_Q4*DEG_TO_RAD,-toolParameters.C_0_Q4*DEG_TO_RAD),false));
+    Eigen::Affine3d T_FL;
+    T_FL.setIdentity();
+    T_FL.translate(Eigen::Vector3d(-toolParameters.X_0_Q4,-toolParameters.Y_0_Q4,-toolParameters.Z_0_Q4));
 
-    T_Q4_FL.translate(Eigen::Vector3d(-toolParameters.X_0_Q4,-toolParameters.Y_0_Q4,-toolParameters.Z_0_Q4));
-
-    T_0_FL = T_0_Q4*T_Q4_FL;
+    T_0_FL = T_0_Q4*T_Q4_FL*T_FL;
     buildDebugFrameFromTM(T_0_FL,"T_0_FL");
+    // round values
+    Q4tar = round(Q4tar*1000)/1000;
+    Q5tar = round(Q5tar*1000)/1000;
+    Q6tar = round(Q6tar*1000)/1000;
 }
 
 Eigen::Quaternion<double> LaprascopicTool::QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX=true)
