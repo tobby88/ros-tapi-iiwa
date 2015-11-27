@@ -11,18 +11,19 @@ ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
 
     nh_.param("rotGain",rotGain,1.0);
     nh_.param("transGain",transGain,1.0);
+    nh_.param("joyThresh",joyThresh,0.05);
     registration();
     curDeviceType = nh_.getNamespace();
 
     // Check if it's a Gamepad or a Spacenav
     if(strcmp(curDeviceType.c_str(),"/Joy")==0)
     {
-        deviceSub = nh_.subscribe<sensor_msgs::Joy>("/joy",10,&ControlDevice::controlDeviceCallback, this);
+        deviceSub = nh_.subscribe<sensor_msgs::Joy>("/joy",1,&ControlDevice::controlDeviceCallback, this);
         ROS_DEBUG("Gamepad");
     }
     else if(strcmp(curDeviceType.c_str(),"/Spacenav")==0)
     {
-        deviceSub = nh_.subscribe<sensor_msgs::Joy>("/spacenav/joy",10,&ControlDevice::controlDeviceCallback, this);
+        deviceSub = nh_.subscribe<sensor_msgs::Joy>("/spacenav/joy",1,&ControlDevice::controlDeviceCallback, this);
         ROS_DEBUG("Spacenav");
     }
 
@@ -83,26 +84,34 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
         joy_old = *joy;
     }
     geometry_msgs::TwistStamped output;
+    sensor_msgs::Joy filteredInput;
     masterslave::Button outputButton;
     output.header.stamp = ros::Time::now();
     output.header.frame_id = joy->header.frame_id;
     //TODO: Achsenbelegung per Launchfile oder GUI
+    for(int i=0;i<6;i++)
+    {
+        filteredInput.axes.push_back(joy->axes[i]);
+        if(fabs(joy->axes[i]) < joyThresh){
+            filteredInput.axes[i] = 0.0;
+        }
+    }
     if(strcmp(curDeviceType.c_str(),"/Spacenav")==0)
     {
-        output.twist.linear.y = transGain*joy->axes[0];
-        output.twist.linear.x = transGain*joy->axes[1];
-        //output.twist.linear.z = transGain*joy->axes[2];
-        output.twist.angular.y = -rotGain*joy->axes[4];
-        output.twist.angular.x = -rotGain*joy->axes[3];
-        output.twist.angular.z = rotGain*joy->axes[5];
+        output.twist.linear.y = transGain*filteredInput.axes[0];
+        output.twist.linear.x = transGain*filteredInput.axes[1];
+        output.twist.linear.z = transGain*filteredInput.axes[2];
+        output.twist.angular.y = rotGain*filteredInput.axes[3];
+        output.twist.angular.x = rotGain*filteredInput.axes[4];
+        output.twist.angular.z = rotGain*filteredInput.axes[5];
     }
     else if(strcmp(curDeviceType.c_str(),"/Joy")==0)
     {
-        output.twist.linear.x = transGain*joy->axes[0];
-        output.twist.linear.y = transGain*joy->axes[1];
+        output.twist.linear.x = transGain*filteredInput.axes[0];
+        output.twist.linear.y = transGain*filteredInput.axes[1];
         //output.twist.linear.z = transGain*joy->axes[2];
-        output.twist.angular.x = rotGain*joy->axes[3];
-        output.twist.angular.y = rotGain*joy->axes[4];
+        output.twist.angular.x = rotGain*filteredInput.axes[3];
+        output.twist.angular.y = rotGain*filteredInput.axes[4];
         //output.twist.angular.z = rotGain*joy->axes[5];
 
     }

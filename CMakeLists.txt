@@ -139,7 +139,7 @@ include_directories(
 ## Declare a C++ executable
 # add_executable(masterslave_node src/masterslave_node.cpp)
 add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
-add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/laprascopictool.cpp)
+add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/laprascopictool.cpp src/laparoscope.cpp include/masterslave/laparoscope.h)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above

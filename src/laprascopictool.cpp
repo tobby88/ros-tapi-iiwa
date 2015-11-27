@@ -16,6 +16,7 @@ LaprascopicTool::LaprascopicTool(const Eigen::Affine3d startPoseLBR)
     Q4act=0.0;
     Q5act=0.0;
     Q6act=0.0;
+    Q5old=0.0;
     Eigen::Affine3d T_FL_RCM = buildAffine3d(Eigen::Vector3d(0.315,toolParameters.Y_0_Q4,toolParameters.Z_0_Q4),Eigen::Vector3d(toolParameters.A_0_Q4*DEG_TO_RAD,toolParameters.B_0_Q4*DEG_TO_RAD,toolParameters.C_0_Q4*DEG_TO_RAD),true);
     RemoteCenterOfMotion = (startPoseLBR * T_FL_RCM);
     T_0_FL = startPoseLBR;
@@ -69,7 +70,7 @@ void LaprascopicTool::setQ4(double value)
 
 void LaprascopicTool::setQ5(double value)
 {
-    Q5act = value;
+    Q5act = value+0.0001;
     calcDirKin();
 }
 
@@ -150,6 +151,10 @@ void LaprascopicTool::calcInvKin()
     {
         Q6tar = -Q6tar;
     }
+    if(isnan(Q6tar))
+    {
+        Q6tar = 0.0;
+    }
     Eigen::Affine3d T_EE_Q6;
     ROS_INFO("Q6tar: %f",Q6tar);
     T_EE_Q6.setIdentity();
@@ -180,11 +185,19 @@ void LaprascopicTool::calcInvKin()
 
     Q5tar = acos(RCM_x.dot(x_Q5)/(RCM_x.norm()*x_Q5.norm()));
 
-    // Spatprodukt zum Überprüfen: Ist das Volumen kleiner 0 dann ist der Winkel größer als 90° (nicht möglich)
+    ROS_INFO_STREAM("Spatprodukt: " << RCM_x.cross(x_Q5).dot(y_Q5));
+
     if(RCM_x.cross(x_Q5).dot(y_Q5)<0)
     {
         Q5tar = -Q5tar;
     }
+
+    if(isnan(Q5tar))
+    {
+        Q5tar = 0.0;
+    }
+
+
     ROS_INFO("Q5_tar: %f",Q5tar);
     // TODO: Johann fragen bzgl. Q4
     //Q4tar = (p_Q5-RemoteCenterOfMotion).norm();
@@ -205,9 +218,8 @@ void LaprascopicTool::calcInvKin()
     T_0_FL = T_0_Q4*T_Q4_FL*T_FL;
     buildDebugFrameFromTM(T_0_FL,"T_0_FL");
     // round values
-    Q4tar = round(Q4tar*1000)/1000;
-    Q5tar = round(Q5tar*1000)/1000;
-    Q6tar = round(Q6tar*1000)/1000;
+
+    Q5old = Q5tar;
 }
 
 Eigen::Quaternion<double> LaprascopicTool::QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX=true)

@@ -7,6 +7,7 @@
 #include "masterslave/Button.h"
 #include <faulhaber_driver/state.h>
 #include "masterslave/laprascopictool.h"
+#include "masterslave/laparoscope.h"
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/Joy.h>
 #include <sensor_msgs/JointState.h>
@@ -35,7 +36,7 @@ class MasterSlave
         void Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state);
         void tcpCallback(const geometry_msgs::PoseStampedConstPtr &pose);
         Eigen::Affine3d moveEEFrame(Eigen::Affine3d);
-        void getTargetAngles(LaprascopicTool*);
+        void getTargetAngles(Laparoscope*);
         Eigen::Quaternion<double> QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX);
         tf::StampedTransform lookupROSTransform(const std::string from, const std::string to);
 
@@ -78,6 +79,7 @@ class MasterSlave
         double Q6_target;
         double cycleTime;
         double lastTime;
+        double rosRate;
 
         std_msgs::Float64 Q4Vel;
         std_msgs::Float64 Q5Vel;

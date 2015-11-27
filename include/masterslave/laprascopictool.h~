@@ -36,8 +36,6 @@ class LaprascopicTool {
 	double Q4tar;
 	double Q5tar;
 	double Q6tar;
-
-	double Q5old;
 	//dirKin
         Eigen::Affine3d T_FL_Q4;
         Eigen::Affine3d T_Q4_Q5;

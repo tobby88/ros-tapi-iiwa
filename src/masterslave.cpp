@@ -17,15 +17,16 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     start_ = false;
     stop_ = false;
 
-    Q6_act = 0.0;
-    Q5_act = 0.0;
-    Q4_act = 0.0;
+    Q6_act = 0.00000;
+    Q5_act = 0.00000;
+    Q4_act = 0.00000;
 
     std::stringstream device_sstream;
     XmlRpc::XmlRpcValue deviceList;
     ROS_INFO("Namespace: %s",globalNH.getNamespace().c_str());
     globalNH.param<std::string>("/MasterSlave/Mode", mode,"Laparoscope");
     globalNH.param("/MasterSlave/gripper_vel",gripperVelocityValue,5.0);
+    globalNH.param("ros_rate",rosRate,200.0);
 
     // TODO: Laparoskop-Kinematik einbinden
     if(strcmp(controlDeviceNH.getNamespace().c_str(),"/Joy")==0)
@@ -112,9 +113,9 @@ void MasterSlave::doWorkTool()
 void MasterSlave::doWorkRobot()
 {
     bool first = true;
-    LaprascopicTool* tool;
+    Laparoscope* tool;
     geometry_msgs::Pose poseFL;
-    ros::Rate rate(2);
+    ros::Rate rate(rosRate);
     while(ros::ok())
     {
         ros::spinOnce();
@@ -122,7 +123,7 @@ void MasterSlave::doWorkRobot()
         {
             if(first)
             {
-                tool = new LaprascopicTool(lbrFlange);
+                tool = new Laparoscope(lbrFlange);
                 first = false;
 
             }
@@ -132,8 +133,8 @@ void MasterSlave::doWorkRobot()
                 calcQ6();
                 tool->setAngles(Q4_act,Q5_act,Q6_act);
                 TCPist = lbrFlange*tool->getT_FL_EE();
-                tool->buildDebugFrameFromTM(TCPist,"DK_TCP");
-                tool->buildDebugFrameFromTM(lbrFlange,"lbrFlange");
+                //tool->buildDebugFrameFromTM(TCPist,"DK_TCP");
+               // tool->buildDebugFrameFromTM(lbrFlange,"lbrFlange");
                 tool->setT_0_EE(moveEEFrame(TCPist));
                 //ROS_INFO("Q5_calc: %f",tool->getQ6());
                 getTargetAngles(tool);
@@ -148,7 +149,7 @@ void MasterSlave::doWorkRobot()
     }
 }
 
-void MasterSlave::getTargetAngles(LaprascopicTool* tool)
+void MasterSlave::getTargetAngles(Laparoscope* tool)
 {
     Q4_target = tool->getQ4();
     Q5_target = tool->getQ5();
@@ -173,8 +174,8 @@ void MasterSlave::commandVelocities()
         gripperVelocity = 0;
     }
     //Hier ist noch ein Fehler ;) Achsen?
-    Q6nVel.data = (Q6_target-Q6_act) + gripperVelocity*cycleTime;
-    Q6pVel.data = (Q6_target-Q6_act) - gripperVelocity*cycleTime;
+    Q6nVel.data = (Q6_target-Q6_act) + gripperVelocity;
+    Q6pVel.data = (Q6_target-Q6_act) - gripperVelocity;
 
     Q5Pub.publish(Q5Vel);
     Q6nPub.publish(Q6nVel);

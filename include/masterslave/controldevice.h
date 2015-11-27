@@ -32,6 +32,7 @@ private:
     std::map<int, std::string> buttons;
     double rotGain;
     double transGain;
+    double joyThresh;
     std::string curDeviceType;
     int curDeviceNum;
     sensor_msgs::Joy joy_old;
