@@ -151,6 +151,7 @@ void Laparoscope::calcInvKin()
 
     Eigen::Affine3d T_Q5_Q4 = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(-90*DEG_TO_RAD,0,-90*DEG_TO_RAD-q5Tar),true);
     Eigen::Affine3d T_0_Q4 = T_0_Q5*T_Q5_Q4;
+
     Eigen::Affine3d T_Q4_FL = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(-toolParameters.A_0_Q4*DEG_TO_RAD,-toolParameters.B_0_Q4*DEG_TO_RAD,-toolParameters.C_0_Q4*DEG_TO_RAD),true);
     T_Q4_FL.translate(Eigen::Vector3d(-toolParameters.X_0_Q4,-toolParameters.Y_0_Q4,-toolParameters.Z_0_Q4));
     T_0_FL = T_0_Q4*T_Q4_FL;

@@ -17,6 +17,7 @@ public:
     double getQ4(){ return q4Tar;}
     double getQ5(){ return q5Tar;}
     double getQ6(){ return q6Tar;}
+    Eigen::Affine3d getRCM(){ return RCM;}
 
 private:
     //help functions

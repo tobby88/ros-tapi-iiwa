@@ -26,7 +26,7 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     ROS_INFO("Namespace: %s",globalNH.getNamespace().c_str());
     globalNH.param<std::string>("/MasterSlave/Mode", mode,"Laparoscope");
     globalNH.param("/MasterSlave/gripper_vel",gripperVelocityValue,5.0);
-    globalNH.param("ros_rate",rosRate,200.0);
+    globalNH.param("ros_rate",rosRate,2000.0);
 
     // TODO: Laparoskop-Kinematik einbinden
     if(strcmp(controlDeviceNH.getNamespace().c_str(),"/Joy")==0)
@@ -59,7 +59,6 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     Q6pStateSub = globalNH.subscribe("Q6P/joint_states",1,&MasterSlave::Q6pStateCallback, this);
     startSub = globalNH.subscribe("startMasterSlave",1,&MasterSlave::startCallback,this);
     stopSub = globalNH.subscribe("stopMasterSlave",1,&MasterSlave::stopCallback,this);
-    tcpSub = globalNH.subscribe("TCPTarget",1,&MasterSlave::tcpCallback,this);
     flangeSub = globalNH.subscribe("flangeLBR",1,&MasterSlave::flangeCallback,this);
 
     Q4Pub = globalNH.advertise<std_msgs::Float64>("Q4/setPointVelocity",1);
@@ -67,6 +66,7 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     Q6nPub = globalNH.advertise<std_msgs::Float64>("Q6N/setPointVelocity",1);
     Q6pPub = globalNH.advertise<std_msgs::Float64>("Q6P/setPointVelocity",1);
     flangeTargetPub = globalNH.advertise<geometry_msgs::PoseStamped>("flangeTarget",1);
+    rcmPub = globalNH.advertise<geometry_msgs::PoseStamped>("/RCM",1);
 
     ROS_INFO("Mode: %s",mode.c_str());
     buttonCheck();
@@ -115,6 +115,7 @@ void MasterSlave::doWorkRobot()
     bool first = true;
     Laparoscope* tool;
     geometry_msgs::Pose poseFL;
+    Eigen::Affine3d TCPist;
     ros::Rate rate(rosRate);
     while(ros::ok())
     {
@@ -124,18 +125,22 @@ void MasterSlave::doWorkRobot()
             if(first)
             {
                 tool = new Laparoscope(lbrFlange);
+                tool->setAngles(Q4_act,Q5_act,Q6_act);
                 first = false;
-
+                TCPist = lbrFlange*tool->getT_FL_EE();
+                geometry_msgs::PoseStamped RCM;
+                tf::poseEigenToMsg(tool->getRCM(),RCM.pose);
+                rcmPub.publish(RCM);
             }
             else
             {
-                Eigen::Affine3d TCPist;
+
                 calcQ6();
-                tool->setAngles(Q4_act,Q5_act,Q6_act);
-                TCPist = lbrFlange*tool->getT_FL_EE();
+                //tool->setAngles(Q4_act,Q5_act,Q6_act);
+                TCPist = moveEEFrame(TCPist);
                 //tool->buildDebugFrameFromTM(TCPist,"DK_TCP");
                // tool->buildDebugFrameFromTM(lbrFlange,"lbrFlange");
-                tool->setT_0_EE(moveEEFrame(TCPist));
+                tool->setT_0_EE(TCPist);
                 //ROS_INFO("Q5_calc: %f",tool->getQ6());
                 getTargetAngles(tool);
                 commandVelocities();             
@@ -159,7 +164,7 @@ void MasterSlave::getTargetAngles(Laparoscope* tool)
 void MasterSlave::commandVelocities()
 {
     double gripperVelocity;
-    //Q4Vel.data = (Q4_target - Q4_act)*cycleTime;
+    Q4Vel.data = (Q4_target - Q4_act)*cycleTime;
     Q5Vel.data = (Q5_target - Q5_act);
     if(gripper_close && !gripper_open)
     {
@@ -174,8 +179,8 @@ void MasterSlave::commandVelocities()
         gripperVelocity = 0;
     }
     //Hier ist noch ein Fehler ;) Achsen?
-    Q6nVel.data = (Q6_target-Q6_act) + gripperVelocity;
-    Q6pVel.data = (Q6_target-Q6_act) - gripperVelocity;
+    Q6nVel.data = (Q6_target-Q6_act) + gripperVelocity*cycleTime;
+    Q6pVel.data = (Q6_target-Q6_act) - gripperVelocity*cycleTime;
 
     Q5Pub.publish(Q5Vel);
     Q6nPub.publish(Q6nVel);

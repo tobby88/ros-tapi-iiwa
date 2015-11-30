@@ -65,6 +65,7 @@ class MasterSlave
         ros::Publisher  Q6pPub;
         ros::Publisher  Q6nPub;
         ros::Publisher  flangeTargetPub;
+        ros::Publisher  rcmPub;
 
 
         Eigen::Affine3d lbrFlange;

@@ -98,11 +98,11 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
     }
     if(strcmp(curDeviceType.c_str(),"/Spacenav")==0)
     {
-        output.twist.linear.y = transGain*filteredInput.axes[0];
-        output.twist.linear.x = transGain*filteredInput.axes[1];
+        output.twist.linear.y = -transGain*filteredInput.axes[1];
+        output.twist.linear.x = -transGain*filteredInput.axes[0];
         output.twist.linear.z = transGain*filteredInput.axes[2];
-        output.twist.angular.y = rotGain*filteredInput.axes[3];
-        output.twist.angular.x = rotGain*filteredInput.axes[4];
+        output.twist.angular.y = -rotGain*filteredInput.axes[4];
+        output.twist.angular.x = -rotGain*filteredInput.axes[3];
         output.twist.angular.z = rotGain*filteredInput.axes[5];
     }
     else if(strcmp(curDeviceType.c_str(),"/Joy")==0)
