@@ -3,6 +3,7 @@
 
 
 #define MM_TO_M 1/1000
+#define DEG_TO_RAD M_PI/180
 #define ORIENTATIONBOOST 1
 #define RADTORPM (2*M_PI)/60
 #define TRANSMISSION_G 169
@@ -25,8 +26,8 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     XmlRpc::XmlRpcValue deviceList;
     ROS_INFO("Namespace: %s",globalNH.getNamespace().c_str());
     globalNH.param<std::string>("/MasterSlave/Mode", mode,"Laparoscope");
-    globalNH.param("/MasterSlave/gripper_vel",gripperVelocityValue,5.0);
-    globalNH.param("ros_rate",rosRate,2000.0);
+    globalNH.param("/MasterSlave/gripper_vel",gripperVelocityValue,0.1);
+    globalNH.param("ros_rate",rosRate,2500.0);
 
     // TODO: Laparoskop-Kinematik einbinden
     if(strcmp(controlDeviceNH.getNamespace().c_str(),"/Joy")==0)
@@ -125,21 +126,21 @@ void MasterSlave::doWorkRobot()
             if(first)
             {
                 tool = new Laparoscope(lbrFlange);
-                tool->setAngles(Q4_act,Q5_act,Q6_act);
+                tool->setAngles(0,Q5_act,Q6_act);
                 first = false;
                 TCPist = lbrFlange*tool->getT_FL_EE();
                 geometry_msgs::PoseStamped RCM;
                 tf::poseEigenToMsg(tool->getRCM(),RCM.pose);
                 rcmPub.publish(RCM);
+                rcm  = tool->getRCM().translation();
             }
             else
             {
 
                 calcQ6();
-                //tool->setAngles(Q4_act,Q5_act,Q6_act);
+                shaftBottom = tool->getT_0_Q4().translation();
                 TCPist = moveEEFrame(TCPist);
-                //tool->buildDebugFrameFromTM(TCPist,"DK_TCP");
-               // tool->buildDebugFrameFromTM(lbrFlange,"lbrFlange");
+
                 tool->setT_0_EE(TCPist);
                 //ROS_INFO("Q5_calc: %f",tool->getQ6());
                 getTargetAngles(tool);
@@ -150,6 +151,10 @@ void MasterSlave::doWorkRobot()
                 flangeTargetPub.publish(T_0_FL_msg);
             }
             rate.sleep();
+        }
+        else
+        {
+            first = true;
         }
     }
 }
@@ -164,13 +169,13 @@ void MasterSlave::getTargetAngles(Laparoscope* tool)
 void MasterSlave::commandVelocities()
 {
     double gripperVelocity;
-    Q4Vel.data = (Q4_target - Q4_act)*cycleTime;
+    Q4Vel.data = (Q4_target - Q4_act);
     Q5Vel.data = (Q5_target - Q5_act);
-    if(gripper_close && !gripper_open)
+    if(gripper_close && !gripper_open && !gripper_stop)
     {
         gripperVelocity = gripperVelocityValue;
     }
-    else if(gripper_open && !gripper_close)
+    else if(gripper_open && !gripper_close && !gripper_stop)
     {
         gripperVelocity = -gripperVelocityValue;
     }
@@ -179,9 +184,10 @@ void MasterSlave::commandVelocities()
         gripperVelocity = 0;
     }
     //Hier ist noch ein Fehler ;) Achsen?
-    Q6nVel.data = (Q6_target-Q6_act) + gripperVelocity*cycleTime;
-    Q6pVel.data = (Q6_target-Q6_act) - gripperVelocity*cycleTime;
+    Q6nVel.data = ((Q6_target-Q6_act) + gripperVelocity);
+    Q6pVel.data = ((Q6_target-Q6_act) - gripperVelocity);
 
+    Q4Pub.publish(Q4Vel);
     Q5Pub.publish(Q5Vel);
     Q6nPub.publish(Q6nVel);
     Q6pPub.publish(Q6pVel);
@@ -286,11 +292,16 @@ void MasterSlave::calcQ6()
 
 Eigen::Affine3d MasterSlave::moveEEFrame(Eigen::Affine3d oldFrame)
 {
+    Eigen::Vector3d rcm_shaftBottom = rcm - shaftBottom;
+    double angle = asin(sqrt(pow(rcm_shaftBottom[0],2)+pow(rcm_shaftBottom[1],2))/rcm_shaftBottom[2]);
+
     Eigen::Affine3d newFrame;
     newFrame.setIdentity();
     newFrame.translate(oldFrame.translation());
-    newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x,velocity_.twist.linear.y,velocity_.twist.linear.z));
-    newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x,velocity_.twist.angular.y,velocity_.twist.angular.z),false));
+    newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x,velocity_.twist.linear.y,0));
+
+    newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z));
+    newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x,velocity_.twist.angular.y,velocity_.twist.angular.z),true));
     newFrame.rotate(oldFrame.rotation());
     return newFrame;
 }

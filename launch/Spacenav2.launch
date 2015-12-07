@@ -13,7 +13,7 @@
 		<!--<param name="autorepeat_rate" value="60"/>-->
 	</node>
 	<node pkg="masterslave" type="masterslave" name="MasterSlave" args="$(arg TestDevice)" output="screen">
-		<param name="gripper_vel" value="20"/>
+		<param name="gripper_vel" value="0.1"/>
 		<param name="Mode" type="string" value="Robot"/>
 		<param name="ros_rate" value="5"/>
 	</node>

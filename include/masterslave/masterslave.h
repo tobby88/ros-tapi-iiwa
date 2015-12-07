@@ -70,6 +70,10 @@ class MasterSlave
 
         Eigen::Affine3d lbrFlange;
         Eigen::Affine3d tcpAct;
+        Eigen::Vector3d shaftTop;
+        Eigen::Vector3d shaftBottom;
+        Eigen::Vector3d rcm;
+
         double Q4_act;
         double Q5_act;
         double Q6n_act;
