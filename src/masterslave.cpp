@@ -27,7 +27,10 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     ROS_INFO("Namespace: %s",globalNH.getNamespace().c_str());
     globalNH.param<std::string>("/MasterSlave/Mode", mode,"Laparoscope");
     globalNH.param("/MasterSlave/gripper_vel",gripperVelocityValue,0.1);
-    globalNH.param("ros_rate",rosRate,2500.0);
+    globalNH.param("/MasterSlave/ros_rate",rosRate,2500.0);
+    globalNH.param("/MasterSlave/height_safety",heightSafety,0.05);
+    // in degree
+    globalNH.param("/MasterSlave/aperture_limit",apertureLimit,60);
 
     // TODO: Laparoskop-Kinematik einbinden
     if(strcmp(controlDeviceNH.getNamespace().c_str(),"/Joy")==0)
@@ -86,8 +89,8 @@ void MasterSlave::doWorkTool()
     double gripperVelocity;
     while(ros::ok())
     {
-        Q5Vel.data =velocity_.twist.angular.y;
-        Q4Vel.data =velocity_.twist.angular.z;
+        Q5Vel.data =velocity_.twist.angular.y*cycleTime;
+        Q4Vel.data =velocity_.twist.angular.z*cycleTime;
         if(gripper_close && !gripper_open)
         {
             gripperVelocity = gripperVelocityValue;
@@ -101,8 +104,8 @@ void MasterSlave::doWorkTool()
             gripperVelocity = 0;
         }
 
-        Q6nVel.data = velocity_.twist.angular.x + gripperVelocity*cycleTime;
-        Q6pVel.data = velocity_.twist.angular.x - gripperVelocity*cycleTime;
+        Q6nVel.data = (velocity_.twist.angular.x + gripperVelocity)*cycleTime;
+        Q6pVel.data = (velocity_.twist.angular.x - gripperVelocity)*cycleTime;
         Q5Pub.publish(Q5Vel);
         Q4Pub.publish(Q4Vel);
         Q6nPub.publish(Q6nVel);
@@ -126,7 +129,7 @@ void MasterSlave::doWorkRobot()
             if(first)
             {
                 tool = new Laparoscope(lbrFlange);
-                tool->setAngles(0,Q5_act,Q6_act);
+                tool->setAngles(Q4_act,Q5_act,Q6_act);
                 first = false;
                 TCPist = lbrFlange*tool->getT_FL_EE();
                 geometry_msgs::PoseStamped RCM;
@@ -292,15 +295,27 @@ void MasterSlave::calcQ6()
 
 Eigen::Affine3d MasterSlave::moveEEFrame(Eigen::Affine3d oldFrame)
 {
-    Eigen::Vector3d rcm_shaftBottom = rcm - shaftBottom;
-    double angle = asin(sqrt(pow(rcm_shaftBottom[0],2)+pow(rcm_shaftBottom[1],2))/rcm_shaftBottom[2]);
+    Eigen::Vector3d rcm_shaftBottom = shaftBottom-rcm;
+    // calculation of the aperture of the frustum
+    double aperture = asin(sqrt(pow(rcm_shaftBottom[0],2)+pow(rcm_shaftBottom[1],2))/-rcm_shaftBottom[2]);
+    // polar angle in the frustum plane
+    double polarAngle = atan2(rcm_shaftBottom[1],rcm_shaftBottom[0]);
 
     Eigen::Affine3d newFrame;
     newFrame.setIdentity();
     newFrame.translate(oldFrame.translation());
-    newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x,velocity_.twist.linear.y,0));
 
-    newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z));
+    if(aperture<=apertureLimit*DEG_TO_RAD || (velocity_.twist.linear.x/cos(polarAngle)<0 || velocity_.twist.linear.y/sin(polarAngle)<0))
+    {
+        newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x,velocity_.twist.linear.y,0));
+    }
+
+    if((shaftBottom[2]+heightSafety<rcm[2] || velocity_.twist.linear.z <0))
+    {
+        newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z));
+    }
+
+
     newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x,velocity_.twist.angular.y,velocity_.twist.angular.z),true));
     newFrame.rotate(oldFrame.rotation());
     return newFrame;

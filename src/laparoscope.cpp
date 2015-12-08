@@ -166,14 +166,10 @@ void Laparoscope::calcInvKin()
         q4Tar  = 0.0;
     }
 
-    /*if(z_FL.cross(y_FL).dot(x_Q4)<0)
+    if(z_FL.cross(x_Q4).dot(p_Q4_RCM)<0)
     {
         q4Tar = -q4Tar;
-    }*/
-
-
-    ROS_INFO("q4Tar: %f",q4Tar);
-
+    }
 
     Eigen::Affine3d T_Q4_FL = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(-toolParameters.A_0_Q4*DEG_TO_RAD,-toolParameters.B_0_Q4*DEG_TO_RAD,-toolParameters.C_0_Q4*DEG_TO_RAD-q4Tar),true);
     T_Q4_FL.translate(Eigen::Vector3d(-toolParameters.X_0_Q4,-toolParameters.Y_0_Q4,-toolParameters.Z_0_Q4));

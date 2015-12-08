@@ -85,6 +85,8 @@ class MasterSlave
         double cycleTime;
         double lastTime;
         double rosRate;
+        double heightSafety;
+        int apertureLimit;
 
         std_msgs::Float64 Q4Vel;
         std_msgs::Float64 Q5Vel;
