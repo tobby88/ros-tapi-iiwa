@@ -13,7 +13,14 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   tf
   tf_conversions
+  dynamic_reconfigure
 )
+
+generate_dynamic_reconfigure_options(
+  cfg/masterslave.cfg
+  cfg/controldevice.cfg
+)
+
 find_package(Eigen REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -52,7 +59,6 @@ find_package(Eigen REQUIRED)
 add_message_files(
    FILES
    Button.msg
-   state.msg
    #Message2.msg
 )
 
@@ -139,11 +145,16 @@ include_directories(
 ## Declare a C++ executable
 # add_executable(masterslave_node src/masterslave_node.cpp)
 add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
+add_dependencies(controldevice controldevice_gencfg)
+
 add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/laprascopictool.cpp src/laparoscope.cpp include/masterslave/laparoscope.h)
+add_dependencies(masterslave $(PROJECT_NAME)_gencfg)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(masterslave_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(masterslave masterslave_generate_messages_cpp)
+add_dependencies(controldevice controldevice_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(controldevice

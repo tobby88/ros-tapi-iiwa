@@ -3,15 +3,19 @@
 #include <ros/ros.h>
 
 
-ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
+ControlDevice::ControlDevice(ros::NodeHandle &globalNH, ros::NodeHandle &nh): globalNH_(globalNH), nh_(nh)
 {
     std::stringstream namespace_sstr;
     errorShown = false;
     curDeviceNum=0;
 
-    nh_.param("rotGain",rotGain,1.0);
-    nh_.param("transGain",transGain,1.0);
-    nh_.param("joyThresh",joyThresh,0.05);
+    dynamic_reconfigure::Server<masterslave::controldeviceConfig> server;
+    dynamic_reconfigure::Server<masterslave::controldeviceConfig>::CallbackType f;
+
+
+    f = boost::bind(&ControlDevice::configurationCallback, this,_1,_2);
+    server.setCallback(f);
+
     registration();
     curDeviceType = nh_.getNamespace();
 
@@ -39,6 +43,12 @@ ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
     buttonCheck();
 }
 
+ControlDevice::~ControlDevice()
+{
+    /*nh_.deleteParam(apiDevice.c_str());
+    nh_.shutdown();*/
+}
+
 //Registration of the ControlDevice at the API
 void ControlDevice::registration()
 {
@@ -52,6 +62,7 @@ void ControlDevice::registration()
     }
     while(nh_.hasParam(param_sstr.str().c_str()));
     nh_.setParam(param_sstr.str().c_str(),"ControlDevice");
+    apiDevice = param_sstr.str();
 }
 
 void ControlDevice::buttonCheck()
@@ -72,9 +83,12 @@ void ControlDevice::buttonCheck()
 
 }
 
-ControlDevice::~ControlDevice()
+void ControlDevice::configurationCallback(masterslave::controldeviceConfig &config, uint32_t level)
 {
-
+    rotGain = config.rotGain;
+    transGain = config.transGain;
+    joyThresh = config.joyThresh;
+    ROS_INFO("Arsch");
 }
 
 void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
@@ -152,8 +166,9 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
 int main(int argc, char** argv)
 {
     ros::init(argc,argv, "ControlDevice");
+    ros::NodeHandle globalNH;
     ros::NodeHandle ControlDeviceNH(argv[1]);
-    ControlDevice device(ControlDeviceNH);
+    ControlDevice device(globalNH, ControlDeviceNH);
     ros::spin();
     return 0;
 }

@@ -12,11 +12,13 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <dynamic_reconfigure/server.h>
+#include <masterslave/controldeviceConfig.h>
 
 
 class ControlDevice {
 public:
-    ControlDevice(ros::NodeHandle& nh);
+    ControlDevice(ros::NodeHandle& globalNH, ros::NodeHandle& nh);
     ~ControlDevice();
 
 
@@ -24,7 +26,9 @@ private:
     void controlDeviceCallback(const sensor_msgs::Joy::ConstPtr& joy);
     void registration();
     void buttonCheck();
+    void configurationCallback(masterslave::controldeviceConfig &config, uint32_t level);
     bool errorShown;
+    ros::NodeHandle globalNH_;
     ros::NodeHandle nh_;
     ros::Subscriber deviceSub;
     ros::Publisher  axisPub;
@@ -34,6 +38,7 @@ private:
     double transGain;
     double joyThresh;
     std::string curDeviceType;
+    std::string apiDevice;
     int curDeviceNum;
     sensor_msgs::Joy joy_old;
 

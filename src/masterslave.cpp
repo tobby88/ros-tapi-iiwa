@@ -22,15 +22,17 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     Q5_act = 0.00000;
     Q4_act = 0.00000;
 
+    dynamic_reconfigure::Server<masterslave::masterslaveConfig> server;
+    dynamic_reconfigure::Server<masterslave::masterslaveConfig>::CallbackType f;
+
+    f = boost::bind(&MasterSlave::configurationCallback,this,_1,_2);
+
+    server.setCallback(f);
+
+
     std::stringstream device_sstream;
     XmlRpc::XmlRpcValue deviceList;
     ROS_INFO("Namespace: %s",globalNH.getNamespace().c_str());
-    globalNH.param<std::string>("/MasterSlave/Mode", mode,"Laparoscope");
-    globalNH.param("/MasterSlave/gripper_vel",gripperVelocityValue,0.1);
-    globalNH.param("/MasterSlave/ros_rate",rosRate,2500.0);
-    globalNH.param("/MasterSlave/height_safety",heightSafety,0.05);
-    // in degree
-    globalNH.param("/MasterSlave/aperture_limit",apertureLimit,60);
 
     // TODO: Laparoskop-Kinematik einbinden
     if(strcmp(controlDeviceNH.getNamespace().c_str(),"/Joy")==0)
@@ -359,6 +361,15 @@ tf::StampedTransform MasterSlave::lookupROSTransform(const std::string from, con
     }
 
     return transform;
+}
+
+void MasterSlave::configurationCallback(masterslave::masterslaveConfig &config, uint32_t level)
+{
+    apertureLimit = config.apertureLimit;
+    gripperVelocityValue = config.gripperVelocity;
+    mode = config.Mode;
+    rosRate = config.rosRate;
+    heightSafety = config.safetyHeight;
 }
 
 int main(int argc, char** argv)

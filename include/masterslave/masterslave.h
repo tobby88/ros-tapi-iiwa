@@ -6,7 +6,6 @@
 #include <sstream>
 #include "masterslave/Button.h"
 #include <faulhaber_driver/state.h>
-#include "masterslave/laprascopictool.h"
 #include "masterslave/laparoscope.h"
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/Joy.h>
@@ -18,6 +17,9 @@
 #include <tf_conversions/tf_eigen.h>
 #include <eigen_conversions/eigen_msg.h>
 #include <tf/transform_listener.h>
+
+#include <dynamic_reconfigure/server.h>
+#include <masterslave/masterslaveConfig.h>
 
 class MasterSlave
 {
@@ -35,6 +37,7 @@ class MasterSlave
         void Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state);
         void tcpCallback(const geometry_msgs::PoseStampedConstPtr &pose);
+        void configurationCallback(masterslave::masterslaveConfig &config, uint32_t level);
         Eigen::Affine3d moveEEFrame(Eigen::Affine3d);
         void getTargetAngles(Laparoscope*);
         Eigen::Quaternion<double> QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX);
