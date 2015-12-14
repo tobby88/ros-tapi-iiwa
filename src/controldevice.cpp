@@ -9,12 +9,6 @@ ControlDevice::ControlDevice(ros::NodeHandle &globalNH, ros::NodeHandle &nh): gl
     errorShown = false;
     curDeviceNum=0;
 
-    dynamic_reconfigure::Server<masterslave::controldeviceConfig> server;
-    dynamic_reconfigure::Server<masterslave::controldeviceConfig>::CallbackType f;
-
-
-    f = boost::bind(&ControlDevice::configurationCallback, this,_1,_2);
-    server.setCallback(f);
 
     registration();
     curDeviceType = nh_.getNamespace();
@@ -166,9 +160,17 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
 int main(int argc, char** argv)
 {
     ros::init(argc,argv, "ControlDevice");
+    dynamic_reconfigure::Server<masterslave::controldeviceConfig> server;
+    dynamic_reconfigure::Server<masterslave::controldeviceConfig>::CallbackType f;
+
     ros::NodeHandle globalNH;
-    ros::NodeHandle ControlDeviceNH(argv[1]);
+    ros::NodeHandle ControlDeviceNH(globalNH, argv[1]);
+
     ControlDevice device(globalNH, ControlDeviceNH);
+    f = boost::bind(&ControlDevice::configurationCallback,device ,_1,_2);
+    server.setCallback(f);
+
+
     ros::spin();
     return 0;
 }

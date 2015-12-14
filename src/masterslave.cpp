@@ -138,6 +138,7 @@ void MasterSlave::doWorkRobot()
                 tf::poseEigenToMsg(tool->getRCM(),RCM.pose);
                 rcmPub.publish(RCM);
                 rcm  = tool->getRCM().translation();
+                ROS_INFO("MasterSlave Node is spinning");
             }
             else
             {
@@ -370,6 +371,8 @@ void MasterSlave::configurationCallback(masterslave::masterslaveConfig &config, 
     mode = config.Mode;
     rosRate = config.rosRate;
     heightSafety = config.safetyHeight;
+    stop_ = config.stop;
+    start_ = config.start;
 }
 
 int main(int argc, char** argv)

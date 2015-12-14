@@ -19,6 +19,7 @@
 class ControlDevice {
 public:
     ControlDevice(ros::NodeHandle& globalNH, ros::NodeHandle& nh);
+    void configurationCallback(masterslave::controldeviceConfig &config, uint32_t level);
     ~ControlDevice();
 
 
@@ -26,7 +27,7 @@ private:
     void controlDeviceCallback(const sensor_msgs::Joy::ConstPtr& joy);
     void registration();
     void buttonCheck();
-    void configurationCallback(masterslave::controldeviceConfig &config, uint32_t level);
+
     bool errorShown;
     ros::NodeHandle globalNH_;
     ros::NodeHandle nh_;
