@@ -17,6 +17,9 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     gripper_open = false;
     start_ = false;
     stop_ = false;
+    apertureLimit = 45;
+    heightSafety = 0.05;
+
 
     Q6_act = 0.00000;
     Q5_act = 0.00000;
@@ -160,7 +163,11 @@ void MasterSlave::doWorkRobot()
         }
         else
         {
-            first = true;
+            if(!first)
+            {
+                first = true;
+                ROS_INFO("MasterSlave Node is shutting down!");
+            }
         }
     }
 }
@@ -313,14 +320,14 @@ Eigen::Affine3d MasterSlave::moveEEFrame(Eigen::Affine3d oldFrame)
         newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x,velocity_.twist.linear.y,0));
     }
 
-    if((shaftBottom[2]+heightSafety<rcm[2] || velocity_.twist.linear.z <0))
+    if((shaftBottom[2]+heightSafety<rcm[2] || velocity_.twist.linear.z <0) && (oldFrame.translation().z() > heightSafety || velocity_.twist.linear.z > 0))
     {
         newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z));
     }
 
-
     newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x,velocity_.twist.angular.y,velocity_.twist.angular.z),true));
     newFrame.rotate(oldFrame.rotation());
+    //Plausibilitätskontrolle
     return newFrame;
 }
 

@@ -18,7 +18,7 @@
 
 class ControlDevice {
 public:
-    ControlDevice(ros::NodeHandle& globalNH, ros::NodeHandle& nh);
+    ControlDevice(ros::NodeHandle& nh);
     void configurationCallback(masterslave::controldeviceConfig &config, uint32_t level);
     ~ControlDevice();
 

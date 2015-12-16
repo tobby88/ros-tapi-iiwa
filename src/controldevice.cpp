@@ -3,11 +3,19 @@
 #include <ros/ros.h>
 
 
-ControlDevice::ControlDevice(ros::NodeHandle &globalNH, ros::NodeHandle &nh): globalNH_(globalNH), nh_(nh)
+ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
 {
     std::stringstream namespace_sstr;
     errorShown = false;
     curDeviceNum=0;
+
+    rotGain = 0.001;
+    transGain = 0.0001;
+
+    dynamic_reconfigure::Server<masterslave::controldeviceConfig> server;
+    dynamic_reconfigure::Server<masterslave::controldeviceConfig>::CallbackType f;
+    f = boost::bind(&ControlDevice::configurationCallback,this ,_1,_2);
+    server.setCallback(f);
 
 
     registration();
@@ -35,12 +43,13 @@ ControlDevice::ControlDevice(ros::NodeHandle &globalNH, ros::NodeHandle &nh): gl
 
     // Check if there are some buttons
     buttonCheck();
+    ros::spin();
 }
 
 ControlDevice::~ControlDevice()
 {
-    /*nh_.deleteParam(apiDevice.c_str());
-    nh_.shutdown();*/
+    nh_.deleteParam(apiDevice.c_str());
+    nh_.shutdown();
 }
 
 //Registration of the ControlDevice at the API
@@ -160,17 +169,8 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
 int main(int argc, char** argv)
 {
     ros::init(argc,argv, "ControlDevice");
-    dynamic_reconfigure::Server<masterslave::controldeviceConfig> server;
-    dynamic_reconfigure::Server<masterslave::controldeviceConfig>::CallbackType f;
+    ros::NodeHandle ControlDeviceNH(argv[1]);
 
-    ros::NodeHandle globalNH;
-    ros::NodeHandle ControlDeviceNH(globalNH, argv[1]);
-
-    ControlDevice device(globalNH, ControlDeviceNH);
-    f = boost::bind(&ControlDevice::configurationCallback,device ,_1,_2);
-    server.setCallback(f);
-
-
-    ros::spin();
+    ControlDevice device(ControlDeviceNH);
     return 0;
 }

@@ -16,44 +16,23 @@ find_package(catkin REQUIRED COMPONENTS
   dynamic_reconfigure
 )
 
-generate_dynamic_reconfigure_options(
-  cfg/masterslave.cfg
-  cfg/controldevice.cfg
-)
+set(OpenIGTLink_DIR "/usr/local/lib/igtl/")
+find_package(OpenIGTLink REQUIRED)
+include(${OpenIGTLink_USE_FILE})
+
+
 
 find_package(Eigen REQUIRED)
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
+
 
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
 
-## To declare and build messages, services or actions from within this
-## package, follow these steps:
-## * Let MSG_DEP_SET be the set of packages whose message types you use in
-##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
-## * In the file package.xml:
-##   * add a build_depend tag for "message_generation"
-##   * add a build_depend and a run_depend tag for each package in MSG_DEP_SET
-##   * If MSG_DEP_SET isn't empty the following dependency has been pulled in
-##     but can be declared for certainty nonetheless:
-##     * add a run_depend tag for "message_runtime"
-## * In this file (CMakeLists.txt):
-##   * add "message_generation" and every package in MSG_DEP_SET to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * add "message_runtime" and every package in MSG_DEP_SET to
-##     catkin_package(CATKIN_DEPENDS ...)
-##   * uncomment the add_*_files sections below as needed
-##     and list every .msg/.srv/.action file to be processed
-##   * uncomment the generate_messages entry below
-##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
 add_message_files(
@@ -61,20 +40,6 @@ add_message_files(
    Button.msg
    #Message2.msg
 )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
@@ -86,31 +51,15 @@ generate_messages(
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
 
-## To declare and build dynamic reconfigure parameters within this
-## package, follow these steps:
-## * In the file package.xml:
-##   * add a build_depend and a run_depend tag for "dynamic_reconfigure"
-## * In this file (CMakeLists.txt):
-##   * add "dynamic_reconfigure" to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * uncomment the "generaEigen REQUIREDte_dynamic_reconfigure_options" section below
-##     and list every .cfg file to be processed
-
-## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
+generate_dynamic_reconfigure_options(
+  cfg/masterslave.cfg
+  cfg/controldevice.cfg
+  cfg/rosopenigtlbridge.cfg
+)
 
 ###################################
 ## catkin specific configuration ##
 ###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES masterslave
@@ -118,6 +67,7 @@ catkin_package(
   DEPENDS Eigen
 #  DEPENDS system_lib
 )
+
 
 ###########
 ## Build ##
@@ -132,27 +82,20 @@ include_directories(
   include
 )
 
-## Declare a C++ library
-# add_library(masterslave
-#   src/${PROJECT_NAME}/masterslave.cpp
-# )
-
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-# add_dependencies(masterslave ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(masterslave_node src/masterslave_node.cpp)
 add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
 add_dependencies(controldevice controldevice_gencfg)
 
-add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/laprascopictool.cpp src/laparoscope.cpp include/masterslave/laparoscope.h)
+add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/laparoscope.cpp include/masterslave/laparoscope.h)
 add_dependencies(masterslave $(PROJECT_NAME)_gencfg)
 
+add_executable(rosopenigtlbridge src/rosopenigtlbridge.cpp include/masterslave/rosopenigtlbridge.h)
+add_dependencies(rosopenigtlbridge rosopenigtlbridge_gencfg)
+
+
 ## Add cmake target dependencies of the executable
-## same as for the library above
-# add_dependencies(masterslave_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 add_dependencies(masterslave masterslave_generate_messages_cpp)
 add_dependencies(controldevice controldevice_generate_messages_cpp)
 
@@ -167,6 +110,11 @@ target_link_libraries(masterslave
     ${Eigen_LIBRARIES}
 )
 
+target_link_libraries(rosopenigtlbridge
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+    OpenIGTLink
+)
 #############
 ## Install ##
 #############
