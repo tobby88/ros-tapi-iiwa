@@ -1,63 +1,115 @@
 #include "masterslave/rosopenigtlbridge.h"
 #include "ros/ros.h"
 
+#define M_TO_MM 1.0/1000.0f
+
+#define MM_TO_M 1000
+
 RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
 {
-    nh_.subscribe("/flangeTarget",1,&RosOpenIgtlBridge::transformCallback,this);
-    nh_.advertise<geometry_msgs::PoseStamped>("/flangeLBR",1);
+    dynamic_reconfigure::Server<masterslave::rosigtlbridgeConfig> serverIGTL;
+    dynamic_reconfigure::Server<masterslave::rosigtlbridgeConfig>::CallbackType cbIGTL;
+
+    cbIGTL = boost::bind(&RosOpenIgtlBridge::configurationIGTLCallback,this,_1,_2);
+
+    serverIGTL.setCallback(cbIGTL);
+
+    this->flangeTargetSub = nh_.subscribe("/flangeTarget",1,&RosOpenIgtlBridge::transformCallback,this);
+    this->flangePub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeLBR",1);
     sendTransformFlag = false;
+    start_ = false;
+    stop_ = false;
     CMD_UID=0;
     sampleTime_  = 0.02;
     commandPort_ = 49001;
     transformPort_ = 49002;
     commandIP_ = "172.31.1.147";
     transformIP_ = "172.31.1.147";
+    transformReceived_ = false;
 
+    boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkTransformThread,this));
+    //openIGTLinkTransformThread();
     openIGTLinkThread();
-
 }
 
 void RosOpenIgtlBridge::transformCallback(geometry_msgs::PoseStampedConstPtr transform)
 {
     std::stringstream sstream;
     std::vector<double> transformVector;
+    // hier wird der OpenIGTLink-String zusammengeschrieben
     sstream << "MoveToPose;" << "rob;";
     transformVector = this->rosPoseToIGTL(transform->pose);
     for(std::vector<double>::iterator it=transformVector.begin(); it!=transformVector.end();it++)
     {
+        //Hinzufügen einer Koordinate der Transformationsmatrix
         sstream << *it << ";";
     }
+    this->poseFL_new = transform->pose;
     openIGTLCommandString = sstream.str();
     sstream.str(std::string());
+    transformReceived_ = true;
+}
+
+//second thread to get transform messages from the OpenIGTL-Interface
+void RosOpenIgtlBridge::openIGTLinkTransformThread()
+{
+    ROS_INFO("Entering Transformation Thread");
+    transformSocket_ = igtl::ClientSocket::New();
+    rTransform = transformSocket_->ConnectToServer(transformIP_.c_str(),transformPort_);
+    if(rTransform==-1)
+    {
+        ROS_ERROR("OpenIGTLink Transform Interface is not available");
+        //exit(-1);
+    }
+
+    while(rTransform!=-1 && ros::ok())
+    {
+        igtl::MessageHeader::Pointer messageHeaderTransform;
+        messageHeaderTransform = igtl::MessageHeader::New();
+        this->receiveTransform(transformSocket_,messageHeaderTransform);
+
+    }
+    transformSocket_->CloseSocket();
 }
 
 void RosOpenIgtlBridge::openIGTLinkThread()
 {
+    ROS_INFO("Entering Command Thread");
     commandSocket_ = igtl::ClientSocket::New();
-    transformSocket_ = igtl::ClientSocket::New();
     rCommand = commandSocket_->ConnectToServer(commandIP_.c_str(),commandPort_);
-    rTransform = transformSocket_->ConnectToServer(transformIP_.c_str(),transformPort_);
+    ROS_INFO_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
+    if(rCommand==-1)
+    {
+        ROS_ERROR("OpenIGTLink Interface is not available");
+        exit(-1);
+    }
     this->sendIdleState(commandSocket_);
     ros::Rate rate(1/sampleTime_);
-    while(rCommand!=0 && rTransform!=0 && ros::ok())
+    while(rCommand!=-1 && ros::ok())
     {
         ros::spinOnce();
         if(sendTransformFlag)
         {
+            sendTransformFlag = false;
             igtl::MessageHeader::Pointer messageHeaderCommand;
             messageHeaderCommand = igtl::MessageHeader::New();
-            this->positionReached(commandSocket_,messageHeaderCommand);
-
-            igtl::MessageHeader::Pointer messageHeaderTransform;
-            messageHeaderTransform = igtl::MessageHeader::New();
-            this->receiveTransform(transformSocket_,messageHeaderTransform);
+            positionReached_ = this->positionReached(commandSocket_,messageHeaderCommand);
         }
-
-        this->sendTransformFlag = this->sendTransform(commandSocket_);
+        // Get pose of flange
+        this->transformUpdateMutex_.lock();
+            geometry_msgs::PoseStamped poseFLmsg;
+            poseFLmsg.header.stamp = ros::Time::now();
+            poseFLmsg.pose = poseFL;
+            this->flangePub.publish(poseFLmsg);
+        this->transformUpdateMutex_.unlock();
+        if(transformReceived_)
+        {
+            this->sendTransform(commandSocket_);
+            transformReceived_ = false;
+        }
         rate.sleep();
-
     }
-
+    commandSocket_->CloseSocket();
 
 }
 
@@ -90,10 +142,12 @@ int RosOpenIgtlBridge::receiveTransform(igtl::ClientSocket::Pointer &socket, igt
     transformMsg->AllocatePack();
     socket->Receive(transformMsg->GetPackBodyPointer(), transformMsg->GetPackBodySize());
     transformMsg->Unpack();
-    if(transformMsg->GetDeviceName() == "T_EE")
+    if(strcmp(transformMsg->GetDeviceName(),"T_EE")==0)
     {
+        boost::mutex::scoped_lock lock(this->transformUpdateMutex_);
         transformMsg->GetMatrix(T_FL);
         poseFL = this->igtlMatrixToRosPose(T_FL);
+
         return 1;
     }
     return 0;
@@ -101,11 +155,15 @@ int RosOpenIgtlBridge::receiveTransform(igtl::ClientSocket::Pointer &socket, igt
 
 int RosOpenIgtlBridge::sendIdleState(igtl::ClientSocket::Pointer &socket)
 {
+    std::stringstream sstream;
     igtl::StringMessage::Pointer commandString;
+    CMD_UID++;
+    sstream << "CMD_" << CMD_UID;
     commandString = igtl::StringMessage::New();
+    commandString->SetDeviceName(sstream.str().c_str());
     commandString->SetString("Idle;");
     commandString->Pack();
-    CMD_UID++;
+    ROS_INFO("Send Idle State");
     return socket->Send(commandString->GetPackPointer(),commandString->GetPackSize());
 }
 
@@ -114,36 +172,34 @@ int RosOpenIgtlBridge::sendTransform(igtl::ClientSocket::Pointer &socket)
     igtl::StringMessage::Pointer transformStringMsg;
     transformStringMsg = igtl::StringMessage::New();
     std::stringstream transformStream;
-    std::string transformString;
-    transformStream << CMD_UID;
+    CMD_UID++;
+    transformStream << "CMD_" << CMD_UID;
     // Set UID
     transformStringMsg->SetDeviceName(transformStream.str().c_str());
     transformStream.str(std::string());
 
-    std::vector<double> transformVector = this->rosPoseToIGTL(T_FL_new);
-    transformStream << "MoveToPose;" << "rob;";
-    for(std::vector<double>::iterator it=transformVector.begin(); it!=transformVector.end();it++)
-    {
-        transformStream << *it << ";";
-    }
-    transformString = transformStream.str();
-    // Set Transform as a String
-    transformStringMsg->SetString(transformString);
+    transformStringMsg->SetString(openIGTLCommandString);
     transformStream.str(std::string());
     transformStringMsg->Pack();
-    CMD_UID++;
-    return socket->Send(transformStringMsg->GetPackPointer(),transformStringMsg->GetPackSize());
-
+    ROS_INFO_STREAM("Send Transform" << " string: " << openIGTLCommandString) ;
+    //return socket->Send(transformStringMsg->GetPackPointer(),transformStringMsg->GetPackSize());
+    return 0;
 }
 
 std::vector<double> RosOpenIgtlBridge::rosPoseToIGTL(geometry_msgs::Pose pose)
 {
+    pose.position.x*=MM_TO_M;
+    pose.position.y*=MM_TO_M;
+    pose.position.z*=MM_TO_M;
     Eigen::Affine3d poseToEigen;
     tf::poseMsgToEigen(pose,poseToEigen);
     std::vector<double> returnValue;
+    returnValue.push_back(poseToEigen.translation().x());
+    returnValue.push_back(poseToEigen.translation().y());
+    returnValue.push_back(poseToEigen.translation().z());
     for(int row=0;row<3;row++)
     {
-        for(int col; col<4; col++)
+        for(int col=0; col<3; col++)
         {
             returnValue.push_back(poseToEigen.matrix()(row,col));
         }
@@ -164,13 +220,28 @@ geometry_msgs::Pose RosOpenIgtlBridge::igtlMatrixToRosPose(igtl::Matrix4x4& igtl
         }
     }
     tf::poseEigenToMsg(eigenMatrix,returnValue);
+    returnValue.position.x *= M_TO_MM;
+    returnValue.position.y *= M_TO_MM;
+    returnValue.position.z *= M_TO_MM;
     return returnValue;
+}
+
+void RosOpenIgtlBridge::configurationIGTLCallback(masterslave::rosigtlbridgeConfig &config, uint32_t level)
+{
+    commandIP_ = config.controlIP;
+    transformIP_ = config.transformIP;
+
+    commandPort_ = config.controlPort;
+    transformPort_ = config.transformPort;
+
+    start_ = config.start;
+    stop_ = config.stop;
 }
 
 int main(int argc, char** argv)
 {
     ros::init(argc,argv, "RosOpenIGTLBridge");
-    ros::NodeHandle RosOpenIGTLBridgeHandle(argv[1]);
+    ros::NodeHandle RosOpenIGTLBridgeHandle;
 
     RosOpenIgtlBridge bridge(RosOpenIGTLBridgeHandle);
     return 0;
