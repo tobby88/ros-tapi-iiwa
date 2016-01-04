@@ -41,16 +41,6 @@ Eigen::Affine3d Laparoscope::buildAffine3d(const Eigen::Vector3d &translXYZ, con
     return transl;
 }
 
-/*void Laparoscope::buildDebugFrameFromTM(const Eigen::Affine3d &T_0_XX, const std::string &name)
-{
-    tf::TransformBroadcaster br;
-    tf::Transform transform;
-
-    tf::transformEigenToTF(T_0_XX, transform);
-
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", name));
-}*/
-
 void Laparoscope::setAngles(double q4, double q5, double q6)
 {
     q4Act = q4;

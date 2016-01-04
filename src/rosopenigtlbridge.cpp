@@ -28,7 +28,6 @@ RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
     transformReceived_ = false;
 
     boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkTransformThread,this));
-    //openIGTLinkTransformThread();
     openIGTLinkThread();
 }
 
@@ -67,7 +66,7 @@ void RosOpenIgtlBridge::openIGTLinkTransformThread()
         igtl::MessageHeader::Pointer messageHeaderTransform;
         messageHeaderTransform = igtl::MessageHeader::New();
         this->receiveTransform(transformSocket_,messageHeaderTransform);
-
+        rTransform = transformSocket_->GetConnected();
     }
     transformSocket_->CloseSocket();
 }
@@ -77,6 +76,7 @@ void RosOpenIgtlBridge::openIGTLinkThread()
     ROS_INFO("Entering Command Thread");
     commandSocket_ = igtl::ClientSocket::New();
     rCommand = commandSocket_->ConnectToServer(commandIP_.c_str(),commandPort_);
+
     ROS_INFO_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
     if(rCommand==-1)
     {
@@ -88,6 +88,7 @@ void RosOpenIgtlBridge::openIGTLinkThread()
     while(rCommand!=-1 && ros::ok())
     {
         ros::spinOnce();
+        ROS_INFO("ALIVE!");
         if(sendTransformFlag)
         {
             sendTransformFlag = false;
@@ -107,9 +108,13 @@ void RosOpenIgtlBridge::openIGTLinkThread()
             this->sendTransform(commandSocket_);
             transformReceived_ = false;
         }
+        rCommand = commandSocket_->GetConnected();
         rate.sleep();
     }
+    ROS_INFO("control thread is not alive!");
     commandSocket_->CloseSocket();
+    stop_ = true;
+    ros::shutdown();
 
 }
 
@@ -144,10 +149,10 @@ int RosOpenIgtlBridge::receiveTransform(igtl::ClientSocket::Pointer &socket, igt
     transformMsg->Unpack();
     if(strcmp(transformMsg->GetDeviceName(),"T_EE")==0)
     {
-        boost::mutex::scoped_lock lock(this->transformUpdateMutex_);
+        this->transformUpdateMutex_.lock();
         transformMsg->GetMatrix(T_FL);
         poseFL = this->igtlMatrixToRosPose(T_FL);
-
+        this->transformUpdateMutex_.unlock();
         return 1;
     }
     return 0;
@@ -173,17 +178,18 @@ int RosOpenIgtlBridge::sendTransform(igtl::ClientSocket::Pointer &socket)
     transformStringMsg = igtl::StringMessage::New();
     std::stringstream transformStream;
     CMD_UID++;
+    if(this->CMD_UID > 999999999999) this->CMD_UID =0;
     transformStream << "CMD_" << CMD_UID;
     // Set UID
     transformStringMsg->SetDeviceName(transformStream.str().c_str());
     transformStream.str(std::string());
-
+    ROS_INFO_STREAM("Send Transform" << " string: " << openIGTLCommandString) ;
     transformStringMsg->SetString(openIGTLCommandString);
     transformStream.str(std::string());
     transformStringMsg->Pack();
-    ROS_INFO_STREAM("Send Transform" << " string: " << openIGTLCommandString) ;
-    //return socket->Send(transformStringMsg->GetPackPointer(),transformStringMsg->GetPackSize());
-    return 0;
+    int retVal = socket->Send(transformStringMsg->GetPackPointer(),transformStringMsg->GetPackSize());
+    //transformStringMsg->Delete();
+    return retVal;
 }
 
 std::vector<double> RosOpenIgtlBridge::rosPoseToIGTL(geometry_msgs::Pose pose)
@@ -234,8 +240,6 @@ void RosOpenIgtlBridge::configurationIGTLCallback(masterslave::rosigtlbridgeConf
     commandPort_ = config.controlPort;
     transformPort_ = config.transformPort;
 
-    start_ = config.start;
-    stop_ = config.stop;
 }
 
 int main(int argc, char** argv)

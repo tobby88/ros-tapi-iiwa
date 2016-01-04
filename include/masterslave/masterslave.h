@@ -29,8 +29,6 @@ class MasterSlave
     private:
         void flangeCallback(const geometry_msgs::PoseStampedConstPtr&);
         void velocityCallback(const geometry_msgs::TwistStampedConstPtr&);
-        void startCallback(const std_msgs::BoolConstPtr&);
-        void stopCallback(const std_msgs::BoolConstPtr&);
         void buttonCallback(const masterslave::ButtonConstPtr&);
         void Q4StateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q5StateCallback(const sensor_msgs::JointStateConstPtr &state);

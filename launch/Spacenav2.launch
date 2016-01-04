@@ -17,7 +17,8 @@
 		<param name="Mode" type="string" value="Robot"/>
 		<param name="ros_rate" value="2500"/>
 	</node>
-
+	<remap from="vrep/flangeLBR" to="/flangeLBR"/>
+	<remap from="/flangeTarget" to="/vrep/flangeTarget"/> 
 
 </launch>
 

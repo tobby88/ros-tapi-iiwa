@@ -19,6 +19,7 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     stop_ = false;
     apertureLimit = 45;
     heightSafety = 0.05;
+    rosRate = 50;
 
 
     Q6_act = 0.00000;
@@ -66,8 +67,6 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     Q5StateSub = globalNH.subscribe("Q5/joint_states",1,&MasterSlave::Q5StateCallback, this);
     Q6nStateSub = globalNH.subscribe("Q6N/joint_states",1,&MasterSlave::Q6nStateCallback, this);
     Q6pStateSub = globalNH.subscribe("Q6P/joint_states",1,&MasterSlave::Q6pStateCallback, this);
-    startSub = globalNH.subscribe("startMasterSlave",1,&MasterSlave::startCallback,this);
-    stopSub = globalNH.subscribe("stopMasterSlave",1,&MasterSlave::stopCallback,this);
     flangeSub = globalNH.subscribe("flangeLBR",1,&MasterSlave::flangeCallback,this);
 
     Q4Pub = globalNH.advertise<std_msgs::Float64>("Q4/setPointVelocity",1);
@@ -117,6 +116,7 @@ void MasterSlave::doWorkTool()
         Q6pPub.publish(Q6pVel);
         ros::spinOnce();
     }
+    ros::shutdown();
 }
 
 void MasterSlave::doWorkRobot()
@@ -125,7 +125,7 @@ void MasterSlave::doWorkRobot()
     Laparoscope* tool;
     geometry_msgs::Pose poseFL;
     Eigen::Affine3d TCPist;
-    ros::Rate rate(rosRate);
+    ros::Rate rate(50);
     while(ros::ok())
     {
         ros::spinOnce();
@@ -145,7 +145,8 @@ void MasterSlave::doWorkRobot()
             }
             else
             {
-
+                cycleTime = ros::Time::now().toSec() - lastTime;
+                lastTime = ros::Time::now().toSec();
                 calcQ6();
                 shaftBottom = tool->getT_0_Q4().translation();
                 TCPist = moveEEFrame(TCPist);
@@ -170,6 +171,7 @@ void MasterSlave::doWorkRobot()
             }
         }
     }
+    ros::shutdown();
 }
 
 void MasterSlave::getTargetAngles(Laparoscope* tool)
@@ -182,8 +184,8 @@ void MasterSlave::getTargetAngles(Laparoscope* tool)
 void MasterSlave::commandVelocities()
 {
     double gripperVelocity;
-    Q4Vel.data = (Q4_target - Q4_act);
-    Q5Vel.data = (Q5_target - Q5_act);
+    Q4Vel.data = (Q4_target - Q4_act)/cycleTime;
+    Q5Vel.data = (Q5_target - Q5_act)/cycleTime;
     if(gripper_close && !gripper_open && !gripper_stop)
     {
         gripperVelocity = gripperVelocityValue;
@@ -197,8 +199,8 @@ void MasterSlave::commandVelocities()
         gripperVelocity = 0;
     }
     //Hier ist noch ein Fehler ;) Achsen?
-    Q6nVel.data = ((Q6_target-Q6_act) + gripperVelocity);
-    Q6pVel.data = ((Q6_target-Q6_act) - gripperVelocity);
+    Q6nVel.data = ((Q6_target-Q6_act) + gripperVelocity)/cycleTime;
+    Q6pVel.data = ((Q6_target-Q6_act) - gripperVelocity)/cycleTime;
 
     Q4Pub.publish(Q4Vel);
     Q5Pub.publish(Q5Vel);
@@ -209,21 +211,16 @@ void MasterSlave::commandVelocities()
 
 void MasterSlave::tcpCallback(const geometry_msgs::PoseStampedConstPtr &pose)
 {
+    if(!start_)
+    {
+        start_ = true;
+    }
     tf::poseMsgToEigen(pose->pose,tcpAct);
-}
-
-void MasterSlave::startCallback(const std_msgs::BoolConstPtr &val)
-{
-    start_ = val->data;
-}
-
-void MasterSlave::stopCallback(const std_msgs::BoolConstPtr &val)
-{
-    stop_ = val->data;
 }
 
 void MasterSlave::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
 {
+
     tf::poseMsgToEigen(flangePose->pose,lbrFlange);
 }
 
@@ -251,9 +248,9 @@ void MasterSlave::buttonCallback(const masterslave::ButtonConstPtr &button)
 
 void MasterSlave::velocityCallback(const geometry_msgs::TwistStampedConstPtr &velocity)
 {
-    cycleTime = ros::Time::now().toSec() - lastTime;
+
     velocity_ = *velocity;
-    lastTime = ros::Time::now().toSec();
+
 }
 
 void MasterSlave::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
@@ -297,7 +294,7 @@ void MasterSlave::calcQ6()
 {
     Q6_act = (Q6p_act + Q6n_act) / 2;
 
-    if(Q6p_act < Q6n_act)
+    if(fabs(Q6p_act- Q6n_act)<0)
         gripper_stop = true;
     else
         gripper_stop = false;
@@ -317,15 +314,15 @@ Eigen::Affine3d MasterSlave::moveEEFrame(Eigen::Affine3d oldFrame)
 
     if(aperture<=apertureLimit*DEG_TO_RAD || (velocity_.twist.linear.x/cos(polarAngle)<0 || velocity_.twist.linear.y/sin(polarAngle)<0))
     {
-        newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x,velocity_.twist.linear.y,0));
+        newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
     }
 
     if((shaftBottom[2]+heightSafety<rcm[2] || velocity_.twist.linear.z <0) && (oldFrame.translation().z() > heightSafety || velocity_.twist.linear.z > 0))
     {
-        newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z));
+        newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
     }
 
-    newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x,velocity_.twist.angular.y,velocity_.twist.angular.z),true));
+    newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x*cycleTime,velocity_.twist.angular.y*cycleTime,velocity_.twist.angular.z*cycleTime),true));
     newFrame.rotate(oldFrame.rotation());
     //Plausibilitätskontrolle
     return newFrame;
@@ -378,7 +375,6 @@ void MasterSlave::configurationCallback(masterslave::masterslaveConfig &config, 
     mode = config.Mode;
     rosRate = config.rosRate;
     heightSafety = config.safetyHeight;
-    stop_ = config.stop;
     start_ = config.start;
 }
 

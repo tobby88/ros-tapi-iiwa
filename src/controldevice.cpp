@@ -9,8 +9,8 @@ ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
     errorShown = false;
     curDeviceNum=0;
 
-    rotGain = 0.001;
-    transGain = 0.0001;
+    rotGain = 0.1;
+    transGain = 0.01;
 
     dynamic_reconfigure::Server<masterslave::controldeviceConfig> server;
     dynamic_reconfigure::Server<masterslave::controldeviceConfig>::CallbackType f;
@@ -91,7 +91,7 @@ void ControlDevice::configurationCallback(masterslave::controldeviceConfig &conf
     rotGain = config.rotGain;
     transGain = config.transGain;
     joyThresh = config.joyThresh;
-    ROS_INFO("Arsch");
+    ROS_INFO_STREAM("Dynamic Reconfigure: rotGain: " << rotGain << " transGain: " << transGain << " joyThresh: " << joyThresh);
 }
 
 void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
