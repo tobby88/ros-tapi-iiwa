@@ -64,6 +64,7 @@ private:
         double C_0_Q4;
         double L_Q5_Q6;
         double L_Q6_EE;
+        double X_RCM;
     } toolParameters;
 
 

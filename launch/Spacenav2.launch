@@ -2,8 +2,8 @@
 <launch>
 	<arg name="TestDevice" value="Spacenav"/>
 	<node pkg="masterslave" type="controldevice" name="$(arg TestDevice)" args="$(arg TestDevice)" output="screen">
-		<param name="rotGain" value="0.0002"/>
-		<param name="transGain" value="0.0001"/>
+		<param name="rotGain" value="0.2"/>
+		<param name="transGain" value="0.1"/>
 		<param name="button/0" type="string" value="close_gripper"/>
 		<param name="button/1" type="string" value="open_gripper"/>
 	</node>

@@ -4,19 +4,13 @@
 
 #define MM_TO_M 1/1000
 #define DEG_TO_RAD M_PI/180
-#define ORIENTATIONBOOST 1
-#define RADTORPM (2*M_PI)/60
-#define TRANSMISSION_G 169
-#define TRANSMISSION_Q5 8.26/6.79
-#define TRANSMISSION_Q6N 8.26/5.92
-#define TRANSMISSION_Q6P 8.26/6.66
 
 MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& controlDeviceNH): globalNH(masterSlaveNH), controlDeviceNH(controlDeviceNH)
 {
+    state = IDLE;
     gripper_close = false;
     gripper_open = false;
     start_ = false;
-    stop_ = false;
     apertureLimit = 45;
     heightSafety = 0.05;
     rosRate = 50;
@@ -62,7 +56,7 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
         buttonSub = controlDeviceNH.subscribe(device_sstream.str().c_str(),10,&MasterSlave::buttonCallback, this);
         device_sstream.str(std::string());
     }
-    // Winkel werden in Rad übergeben (siehe server.cpp)
+    // Winkel werden in Rad/s übergeben (siehe server.cpp)
     Q4StateSub = globalNH.subscribe("Q4/joint_states",1,&MasterSlave::Q4StateCallback, this);
     Q5StateSub = globalNH.subscribe("Q5/joint_states",1,&MasterSlave::Q5StateCallback, this);
     Q6nStateSub = globalNH.subscribe("Q6N/joint_states",1,&MasterSlave::Q6nStateCallback, this);
@@ -75,6 +69,8 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     Q6pPub = globalNH.advertise<std_msgs::Float64>("Q6P/setPointVelocity",1);
     flangeTargetPub = globalNH.advertise<geometry_msgs::PoseStamped>("flangeTarget",1);
     rcmPub = globalNH.advertise<geometry_msgs::PoseStamped>("/RCM",1);
+    statePub = globalNH.advertise<std_msgs::UInt8>("/openIGTLState",1);
+
 
     ROS_INFO("Mode: %s",mode.c_str());
     buttonCheck();
@@ -84,40 +80,11 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
     }
     else if (mode=="Laparoscope")
     {
-        doWorkTool();
     }
 }
 
-void MasterSlave::doWorkTool()
-{
-    double gripperVelocity;
-    while(ros::ok())
-    {
-        Q5Vel.data =velocity_.twist.angular.y*cycleTime;
-        Q4Vel.data =velocity_.twist.angular.z*cycleTime;
-        if(gripper_close && !gripper_open)
-        {
-            gripperVelocity = gripperVelocityValue;
-        }
-        else if(gripper_open && !gripper_close)
-        {
-            gripperVelocity = -gripperVelocityValue;
-        }
-        else
-        {
-            gripperVelocity = 0;
-        }
 
-        Q6nVel.data = (velocity_.twist.angular.x + gripperVelocity)*cycleTime;
-        Q6pVel.data = (velocity_.twist.angular.x - gripperVelocity)*cycleTime;
-        Q5Pub.publish(Q5Vel);
-        Q4Pub.publish(Q4Vel);
-        Q6nPub.publish(Q6nVel);
-        Q6pPub.publish(Q6pVel);
-        ros::spinOnce();
-    }
-    ros::shutdown();
-}
+
 
 void MasterSlave::doWorkRobot()
 {
@@ -125,12 +92,12 @@ void MasterSlave::doWorkRobot()
     Laparoscope* tool;
     geometry_msgs::Pose poseFL;
     Eigen::Affine3d TCPist;
-    ros::Rate rate(50);
+    ros::Rate rate(rosRate);
     while(ros::ok())
     {
-        ros::spinOnce();
-        if(start_ && !stop_)
+        if(start_)
         {
+        ros::spinOnce();
             if(first)
             {
                 tool = new Laparoscope(lbrFlange);
@@ -152,7 +119,6 @@ void MasterSlave::doWorkRobot()
                 TCPist = moveEEFrame(TCPist);
 
                 tool->setT_0_EE(TCPist);
-                //ROS_INFO("Q5_calc: %f",tool->getQ6());
                 getTargetAngles(tool);
                 commandVelocities();             
                 tf::poseEigenToMsg(tool->getT_0_FL(),poseFL);
@@ -198,9 +164,21 @@ void MasterSlave::commandVelocities()
     {
         gripperVelocity = 0;
     }
-    //Hier ist noch ein Fehler ;) Achsen?
-    Q6nVel.data = ((Q6_target-Q6_act) + gripperVelocity)/cycleTime;
-    Q6pVel.data = ((Q6_target-Q6_act) - gripperVelocity)/cycleTime;
+
+    Q6nVel.data = (Q6_target-Q6_act)/cycleTime;
+    Q6pVel.data = (Q6_target-Q6_act)/cycleTime;
+    // Stoppen der Greiferbacken, wenn eine der beiden am Anschlag ist, um Greiferöffnungswinkel nicht zu ändern
+    if(Q6p_act>=0.95*M_PI && (Q6_target-Q6_act)>0)
+    {
+        Q6nVel.data = 0;
+    }
+    if(Q6n_act<=-0.95*M_PI && (Q6_target-Q6_act)<0)
+    {
+        Q6pVel.data = 0;
+    }
+
+    Q6nVel.data += gripperVelocity/cycleTime;
+    Q6pVel.data -= gripperVelocity/cycleTime;
 
     Q4Pub.publish(Q4Vel);
     Q5Pub.publish(Q5Vel);
@@ -305,6 +283,7 @@ Eigen::Affine3d MasterSlave::moveEEFrame(Eigen::Affine3d oldFrame)
     Eigen::Vector3d rcm_shaftBottom = shaftBottom-rcm;
     // calculation of the aperture of the frustum
     double aperture = asin(sqrt(pow(rcm_shaftBottom[0],2)+pow(rcm_shaftBottom[1],2))/-rcm_shaftBottom[2]);
+
     // polar angle in the frustum plane
     double polarAngle = atan2(rcm_shaftBottom[1],rcm_shaftBottom[0]);
 
@@ -329,7 +308,6 @@ Eigen::Affine3d MasterSlave::moveEEFrame(Eigen::Affine3d oldFrame)
 }
 
 Eigen::Quaternion<double> MasterSlave::QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX=true)
-
 {
     Eigen::Quaternion<double> quat;
     quat.Identity();

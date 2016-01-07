@@ -1,10 +1,26 @@
 #include "masterslave/rosopenigtlbridge.h"
 #include "ros/ros.h"
 
+/*
+ * @file rosopenigtlbridge.cpp
+ *
+ * @author Fabian Baier
+ *
+ */
+
 #define M_TO_MM 1.0/1000.0f
 
 #define MM_TO_M 1000
 
+/*
+ * @class ROS-OpenIGTLink-Bridge-Klasse
+ *
+ * @brief Diese Klasse sorgt zur Anbindung des OpenIGTLink-Protokolls an ROS für das URSULA-Projekt.
+ *
+ * Mithilfe dieser Klasse wird der LBR iiwa des URSULA-Versuchsstandes an das URSULA-System angebunden.
+ * Hier wird die aktuelle Roboterflanschlage von der Robotersteuerung übermittelt und an ROS übergeben.
+ * Die neuberechnete Sollflanschlage des LBR wird über ein ROS-Topic empfangen und über OpenIGTLink versendet.
+ */
 RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
 {
     dynamic_reconfigure::Server<masterslave::rosigtlbridgeConfig> serverIGTL;
@@ -20,7 +36,7 @@ RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
     start_ = false;
     stop_ = false;
     CMD_UID=0;
-    sampleTime_  = 0.02;
+    sampleTime_  = 0.05;
     commandPort_ = 49001;
     transformPort_ = 49002;
     commandIP_ = "172.31.1.147";
@@ -35,7 +51,8 @@ void RosOpenIgtlBridge::transformCallback(geometry_msgs::PoseStampedConstPtr tra
 {
     std::stringstream sstream;
     std::vector<double> transformVector;
-    // hier wird der OpenIGTLink-String zusammengeschrieben
+
+    // hier wird der OpenIGTLink-String zusammengestellt
     sstream << "MoveToPose;" << "rob;";
     transformVector = this->rosPoseToIGTL(transform->pose);
     for(std::vector<double>::iterator it=transformVector.begin(); it!=transformVector.end();it++)
@@ -58,7 +75,7 @@ void RosOpenIgtlBridge::openIGTLinkTransformThread()
     if(rTransform==-1)
     {
         ROS_ERROR("OpenIGTLink Transform Interface is not available");
-        //exit(-1);
+        exit(-1);
     }
 
     while(rTransform!=-1 && ros::ok())
@@ -77,7 +94,7 @@ void RosOpenIgtlBridge::openIGTLinkThread()
     commandSocket_ = igtl::ClientSocket::New();
     rCommand = commandSocket_->ConnectToServer(commandIP_.c_str(),commandPort_);
 
-    ROS_INFO_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
+    ROS_DEBUG_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
     if(rCommand==-1)
     {
         ROS_ERROR("OpenIGTLink Interface is not available");
@@ -88,7 +105,6 @@ void RosOpenIgtlBridge::openIGTLinkThread()
     while(rCommand!=-1 && ros::ok())
     {
         ros::spinOnce();
-        ROS_INFO("ALIVE!");
         if(sendTransformFlag)
         {
             sendTransformFlag = false;
@@ -111,7 +127,6 @@ void RosOpenIgtlBridge::openIGTLinkThread()
         rCommand = commandSocket_->GetConnected();
         rate.sleep();
     }
-    ROS_INFO("control thread is not alive!");
     commandSocket_->CloseSocket();
     stop_ = true;
     ros::shutdown();
@@ -183,13 +198,13 @@ int RosOpenIgtlBridge::sendTransform(igtl::ClientSocket::Pointer &socket)
     // Set UID
     transformStringMsg->SetDeviceName(transformStream.str().c_str());
     transformStream.str(std::string());
-    ROS_INFO_STREAM("Send Transform" << " string: " << openIGTLCommandString) ;
+
+    ROS_DEBUG_STREAM("Send Transform" << " string: " << openIGTLCommandString);
+
     transformStringMsg->SetString(openIGTLCommandString);
     transformStream.str(std::string());
     transformStringMsg->Pack();
-    int retVal = socket->Send(transformStringMsg->GetPackPointer(),transformStringMsg->GetPackSize());
-    //transformStringMsg->Delete();
-    return retVal;
+    return socket->Send(transformStringMsg->GetPackPointer(),transformStringMsg->GetPackSize());
 }
 
 std::vector<double> RosOpenIgtlBridge::rosPoseToIGTL(geometry_msgs::Pose pose)

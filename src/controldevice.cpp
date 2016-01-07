@@ -9,8 +9,8 @@ ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
     errorShown = false;
     curDeviceNum=0;
 
-    rotGain = 0.1;
-    transGain = 0.01;
+    rotGain = 0.2;
+    transGain = 0.1;
 
     dynamic_reconfigure::Server<masterslave::controldeviceConfig> server;
     dynamic_reconfigure::Server<masterslave::controldeviceConfig>::CallbackType f;
@@ -64,6 +64,7 @@ void ControlDevice::registration()
         param_sstr << "/API" << param_str << "/node" << curDeviceNum;
     }
     while(nh_.hasParam(param_sstr.str().c_str()));
+
     nh_.setParam(param_sstr.str().c_str(),"ControlDevice");
     apiDevice = param_sstr.str();
 }
@@ -79,7 +80,7 @@ void ControlDevice::buttonCheck()
         for(XmlRpc::XmlRpcValue::iterator it=buttonList.begin();it!=buttonList.end();it++)
         {
             buttons[std::atoi(it->first.c_str())] = (std::string&)(it->second);
-            ROS_INFO_NAMED("ButtonCheck","found: Functions %s (Button: %s)", ((std::string&)(it->second)).c_str(), it->first.c_str());
+            ROS_WARN_NAMED("ButtonCheck","found: Functions %s (Button: %s)", ((std::string&)(it->second)).c_str(), it->first.c_str());
         }
 
     }
@@ -91,7 +92,7 @@ void ControlDevice::configurationCallback(masterslave::controldeviceConfig &conf
     rotGain = config.rotGain;
     transGain = config.transGain;
     joyThresh = config.joyThresh;
-    ROS_INFO_STREAM("Dynamic Reconfigure: rotGain: " << rotGain << " transGain: " << transGain << " joyThresh: " << joyThresh);
+    ROS_WARN_STREAM_NAMED("Dynamic Reconfigure","rotGain: " << rotGain << " transGain: " << transGain << " joyThresh: " << joyThresh);
 }
 
 void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
@@ -105,7 +106,7 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
     masterslave::Button outputButton;
     output.header.stamp = ros::Time::now();
     output.header.frame_id = joy->header.frame_id;
-    //TODO: Achsenbelegung per Launchfile oder GUI
+
     for(int i=0;i<6;i++)
     {
         filteredInput.axes.push_back(joy->axes[i]);

@@ -2,6 +2,8 @@
 
 #define DEG_TO_RAD M_PI/180
 
+
+
 Laparoscope::Laparoscope(const Eigen::Affine3d startPositionLBR)
 {
     toolParameters.A_0_Q4 = 0;
@@ -12,13 +14,15 @@ Laparoscope::Laparoscope(const Eigen::Affine3d startPositionLBR)
     toolParameters.Z_0_Q4 = 0.062;
     toolParameters.L_Q5_Q6 = 0.0088;
     toolParameters.L_Q6_EE = 0.017;
+    toolParameters.X_RCM = 0.305;
 
     q4Act=0.0;
     q5Act=0.0;
     q6Act=0.0;
 
-    Eigen::Affine3d T_FL_RCM = buildAffine3d(Eigen::Vector3d(0.32,toolParameters.Y_0_Q4,toolParameters.Z_0_Q4),Eigen::Vector3d(toolParameters.A_0_Q4*DEG_TO_RAD,toolParameters.B_0_Q4*DEG_TO_RAD,toolParameters.C_0_Q4*DEG_TO_RAD),true);
+    Eigen::Affine3d T_FL_RCM = buildAffine3d(Eigen::Vector3d(toolParameters.X_RCM,toolParameters.Y_0_Q4,toolParameters.Z_0_Q4),Eigen::Vector3d(toolParameters.A_0_Q4*DEG_TO_RAD,toolParameters.B_0_Q4*DEG_TO_RAD,toolParameters.C_0_Q4*DEG_TO_RAD),true);
     RCM = startPositionLBR*T_FL_RCM;
+    ROS_WARN_STREAM_NAMED("Remote Center of Motion","Position: " << RCM.translation());
 }
 
 Eigen::Affine3d Laparoscope::buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx=true)
@@ -132,7 +136,6 @@ void Laparoscope::calcInvKin()
         q5Tar = M_PI/2;
     }
 
-    // check if the angle is correct TODO: test!
     if(x_Q4.cross(y_Q5).dot(z_Q5)<0)
     {
         q5Tar = -q5Tar;
@@ -165,6 +168,5 @@ void Laparoscope::calcInvKin()
     T_Q4_FL.translate(Eigen::Vector3d(-toolParameters.X_0_Q4,-toolParameters.Y_0_Q4,-toolParameters.Z_0_Q4));
     T_0_FL = T_0_Q4*T_Q4_FL;
 
-
-    //ROS_INFO_STREAM("Q5: " << q5Tar << " Q6: " << q6Tar << " Q5old: " << q5Old);
+    ROS_DEBUG_STREAM("Q5: " << q5Tar << " Q6: " << q6Tar << " Q5old: " << q5Old);
 }

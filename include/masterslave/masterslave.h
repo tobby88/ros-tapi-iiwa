@@ -11,6 +11,7 @@
 #include <sensor_msgs/Joy.h>
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/UInt8.h>
 #include <std_msgs/Bool.h>
 #include <Eigen/Geometry>
 #include <tf/tf.h>
@@ -20,6 +21,13 @@
 
 #include <dynamic_reconfigure/server.h>
 #include <masterslave/masterslaveConfig.h>
+
+enum OPENIGTL_STATE
+{
+    IDLE,
+    FREE,
+    MASTERSLAVE
+};
 
 class MasterSlave
 {
@@ -44,7 +52,6 @@ class MasterSlave
         void calcQ6();
         void commandVelocities();
         void buttonCheck(void);
-        void doWorkTool(void);
         void doWorkRobot();
 
         ros::NodeHandle globalNH;
@@ -67,6 +74,7 @@ class MasterSlave
         ros::Publisher  Q6nPub;
         ros::Publisher  flangeTargetPub;
         ros::Publisher  rcmPub;
+        ros::Publisher  statePub;
 
 
         Eigen::Affine3d lbrFlange;
@@ -106,7 +114,7 @@ class MasterSlave
         std::vector<std::string> buttons;
 
         std::string mode;
-
+        OPENIGTL_STATE state;
 
 
 };
