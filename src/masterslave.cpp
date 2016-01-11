@@ -74,13 +74,7 @@ MasterSlave::MasterSlave(ros::NodeHandle& masterSlaveNH, ros::NodeHandle& contro
 
     ROS_INFO("Mode: %s",mode.c_str());
     buttonCheck();
-    if(mode=="Robot")
-    {
         doWorkRobot();
-    }
-    else if (mode=="Laparoscope")
-    {
-    }
 }
 
 
@@ -92,12 +86,12 @@ void MasterSlave::doWorkRobot()
     Laparoscope* tool;
     geometry_msgs::Pose poseFL;
     Eigen::Affine3d TCPist;
-    ros::Rate rate(rosRate);
+    ros::Rate rate(50);
     while(ros::ok())
     {
+        ros::spinOnce();
         if(start_)
         {
-        ros::spinOnce();
             if(first)
             {
                 tool = new Laparoscope(lbrFlange);
@@ -117,7 +111,6 @@ void MasterSlave::doWorkRobot()
                 calcQ6();
                 shaftBottom = tool->getT_0_Q4().translation();
                 TCPist = moveEEFrame(TCPist);
-
                 tool->setT_0_EE(TCPist);
                 getTargetAngles(tool);
                 commandVelocities();             
@@ -354,6 +347,7 @@ void MasterSlave::configurationCallback(masterslave::masterslaveConfig &config, 
     rosRate = config.rosRate;
     heightSafety = config.safetyHeight;
     start_ = config.start;
+    ROS_WARN_STREAM("start: " << start_);
 }
 
 int main(int argc, char** argv)

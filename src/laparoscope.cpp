@@ -6,16 +6,6 @@
 
 Laparoscope::Laparoscope(const Eigen::Affine3d startPositionLBR)
 {
-    toolParameters.A_0_Q4 = 0;
-    toolParameters.B_0_Q4 = 90.0;
-    toolParameters.C_0_Q4 = 0.0;
-    toolParameters.X_0_Q4 = 0.438;
-    toolParameters.Y_0_Q4 = 0.0;
-    toolParameters.Z_0_Q4 = 0.062;
-    toolParameters.L_Q5_Q6 = 0.0088;
-    toolParameters.L_Q6_EE = 0.017;
-    toolParameters.X_RCM = 0.305;
-
     q4Act=0.0;
     q5Act=0.0;
     q6Act=0.0;
@@ -25,38 +15,12 @@ Laparoscope::Laparoscope(const Eigen::Affine3d startPositionLBR)
     ROS_WARN_STREAM_NAMED("Remote Center of Motion","Position: " << RCM.translation());
 }
 
-Eigen::Affine3d Laparoscope::buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx=true)
-{
-    Eigen::Affine3d transl;
-    transl.setIdentity();
-    transl.translate(translXYZ);
-    if(zyx)
-    {
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(2), Eigen::Vector3d::UnitZ()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(1), Eigen::Vector3d::UnitY()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(0), Eigen::Vector3d::UnitX()));
-    }
-    else
-    {
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(0), Eigen::Vector3d::UnitX()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(1), Eigen::Vector3d::UnitY()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(2), Eigen::Vector3d::UnitZ()));
-    }
-    return transl;
-}
-
 void Laparoscope::setAngles(double q4, double q5, double q6)
 {
     q4Act = q4;
     q5Act = q5;
     q6Act = q6;
     calcDirKin();
-}
-
-void Laparoscope::setT_0_EE(Eigen::Affine3d value)
-{
-    T_0_EE = value;
-    calcInvKin();
 }
 
 void Laparoscope::calcDirKin()
@@ -152,7 +116,7 @@ void Laparoscope::calcInvKin()
 
     Eigen::Vector3d z_FL = y_FL.cross(p_Q4_RCM);
 
-    q4Tar = acos(z_FL.dot(x_Q4)/(z_FL.norm()*x_Q4.norm()));
+    q4Tar = 0; //acos(z_FL.dot(x_Q4)/(z_FL.norm()*x_Q4.norm()));
 
     if(isnan(q4Tar))
     {

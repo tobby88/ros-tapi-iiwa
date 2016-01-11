@@ -87,7 +87,7 @@ include_directories(
 add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
 add_dependencies(controldevice controldevice_gencfg)
 
-add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/laparoscope.cpp include/masterslave/laparoscope.h)
+add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/laparoscope.cpp include/masterslave/laparoscope.h include/masterslave/kinematics.h src/kinematics.cpp)
 add_dependencies(masterslave $(PROJECT_NAME)_gencfg)
 
 add_executable(rosopenigtlbridge src/rosopenigtlbridge.cpp include/masterslave/rosopenigtlbridge.h)

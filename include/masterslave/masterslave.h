@@ -7,6 +7,7 @@
 #include "masterslave/Button.h"
 #include <faulhaber_driver/state.h>
 #include "masterslave/laparoscope.h"
+#include "masterslave/kinematics.h"
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/Joy.h>
 #include <sensor_msgs/JointState.h>
