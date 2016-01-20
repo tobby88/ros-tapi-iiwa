@@ -25,9 +25,6 @@ void UrsulaKinematics::calcDirKin()
 
     //Laparoskop Kinematik
     T_FL_EE = calcLaparoscopeDirKin();
-
-
-
     T_0_EE = T_0_FL*T_FL_EE;
 }
 
