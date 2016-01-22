@@ -12,6 +12,7 @@ private:
     //void calcInvKin();
     static const lbrDescriptionParameters LBR_PARAMETERS;
     lbrJointAngles lbrJointAnglesAct;
+    Eigen::Affine3d T_0_FL;
 };
 
 #endif // URSULAKINEMATICS_H

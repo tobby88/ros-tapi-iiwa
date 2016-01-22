@@ -9,7 +9,8 @@
 #include "sensor_msgs/JointState.h"
 
 #include <dynamic_reconfigure/server.h>
-#include <masterslave/masterslaveConfig.h>
+
+#include <masterslave/kinematicConfig.h>
 
 
 class Task
@@ -49,8 +50,10 @@ class Task
         double cycleTime;
         double gripperVelocityValue;
 
-        void configurationCallback(masterslave::masterslaveConfig &config, uint32_t level);
+        void configurationCallback(masterslave::kinematicConfig &config, uint32_t level);
         Eigen::Quaternion<double> QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX);
+
+        static const double DEG_TO_RAD;
 
 };
 

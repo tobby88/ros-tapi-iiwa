@@ -5,12 +5,13 @@
 #include <ros/console.h>
 #include <sstream>
 #include "masterslave/Button.h"
+#include "masterslave/state.h"
 #include <faulhaber_driver/state.h>
 #include "masterslave/task/task.h"
 #include "masterslave/task/laparoscopetask.h"
 #include <sensor_msgs/Joy.h>
 #include <sensor_msgs/JointState.h>
-#include <std_msgs/UInt8.h>
+#include <std_msgs/String.h>
 #include <std_msgs/Bool.h>
 #include <Eigen/Geometry>
 #include <tf/tf.h>
@@ -25,7 +26,8 @@ enum OPENIGTL_STATE
 {
     IDLE,
     FREE,
-    MASTERSLAVE
+    MASTERSLAVE_LAPAROSCOPE,
+    MASTERSLAVE_URSULA
 };
 
 class MasterSlave
@@ -40,6 +42,8 @@ class MasterSlave
         void getTargetAngles(Laparoscope*);
         tf::StampedTransform lookupROSTransform(const std::string from, const std::string to);
 
+        void statemachineThread(const ros::TimerEvent&);
+
         void calcQ6();
 
         void buttonCheck(void);
@@ -50,10 +54,9 @@ class MasterSlave
 
         ros::Subscriber startSub;
         ros::Subscriber stopSub;
-        ros::Subscriber tcpSub;
 
         ros::Publisher  rcmPub;
-        ros::Publisher  statePub;
+        ros::ServiceClient  stateService;
 
 
         Eigen::Affine3d tcpAct;
@@ -64,6 +67,8 @@ class MasterSlave
         double heightSafety;
         int apertureLimit;
         bool start_;
+        bool statemachineIsRunning;
+        OPENIGTL_STATE curState;
 
         geometry_msgs::TwistStamped velocity_;
 

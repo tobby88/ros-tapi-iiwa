@@ -13,6 +13,8 @@ class Kinematics
         void setRCM(Eigen::Affine3d);
         void setT_0_EE(Eigen::Affine3d);
         Eigen::Affine3d getT_0_Q4(){return T_0_Q4;}
+        Eigen::Affine3d getT_FL_EE(){return T_FL_EE;}
+        toolAngles getAngles(){ return toolAnglesTar;}
 
 
     protected:
@@ -26,7 +28,7 @@ class Kinematics
         Eigen::Affine3d T_0_EE;
 
         Eigen::Affine3d T_0_Q4;
-        Eigen::Affine3d T_0_FL;
+
         toolAngles toolAnglesTar;
         toolAngles toolAnglesAct;
 

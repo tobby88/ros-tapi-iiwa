@@ -19,11 +19,17 @@ class LaparoscopeTask : public Task
     public:
         LaparoscopeTask(ros::NodeHandle& nh, double rosRate);
 
+
     private:
+        Eigen::Affine3d startPositionLBR;
+        Eigen::Affine3d TCP;
         double rosRate_;
+
         ros::Subscriber lbrPositionSub;
         ros::Subscriber velocitySub;
         ros::Subscriber buttonSub;
+
+        ros::Publisher lbrTargetPositionPub;
         geometry_msgs::TwistStamped velocity_;
         Eigen::Affine3d moveEEFrame(Eigen::Affine3d);
         void flangeCallback(const geometry_msgs::PoseStampedConstPtr&);
@@ -37,6 +43,7 @@ class LaparoscopeTask : public Task
         void buttonCallback(const masterslave::ButtonConstPtr&);
         void buttonCheck();
         std::vector<std::string> buttons;
+
         Laparoscope* kinematic;
 
 

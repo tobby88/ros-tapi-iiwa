@@ -20,16 +20,49 @@ MasterSlave::MasterSlave(ros::NodeHandle& controlDeviceNH): nh_(controlDeviceNH)
     server.setCallback(f);
 
     // Winkel werden in Rad/s übergeben (siehe server.cpp)
-    statePub = nh_.advertise<std_msgs::UInt8>("/openIGTLState",1);
-    task = new LaparoscopeTask(nh_,rosRate);
+    stateService = nh_.serviceClient<masterslave::state>("/openIGTLState");
+    statemachineIsRunning = true;
+    ros::Timer timer = nh_.createTimer(ros::Duration(0.02), &MasterSlave::statemachineThread, this);
+    ros::spin();
+
+}
+
+void MasterSlave::statemachineThread(const ros::TimerEvent& event)
+{
+    masterslave::state stateStringMsg;
+    switch(curState)
+    {
+        case IDLE:
+            stateStringMsg.request.state = "Idle;";
+            break;
+        case FREE:
+            stateStringMsg.request.state = "Free;";
+            break;
+        case MASTERSLAVE_LAPAROSCOPE:
+            stateStringMsg.request.state = "MoveToPose;rob;";
+            task = new LaparoscopeTask(nh_,rosRate);
+            break;
+        case MASTERSLAVE_URSULA:
+            if(curState==MASTERSLAVE_LAPAROSCOPE) break;
+            stateStringMsg.request.state = "MoveToJointAngles;";
+            // URSULA-Task
+            break;
+    }
+    if(stateService.exists())
+    {
+        stateService.call(stateStringMsg);
+        statemachineIsRunning = stateStringMsg.response.alive;
+    }
+
 
 }
 
 void MasterSlave::configurationCallback(masterslave::masterslaveConfig &config, uint32_t level)
 {
+    curState = static_cast<OPENIGTL_STATE>(config.cur_state);
     rosRate = config.rosRate;
     start_ = config.start;
-    ROS_WARN_STREAM("start: " << start_);
+    ROS_INFO_STREAM("current State: " << curState);
 }
 
 int main(int argc, char** argv)

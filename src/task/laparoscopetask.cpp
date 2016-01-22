@@ -1,15 +1,13 @@
 #include "masterslave/task/laparoscopetask.h"
 
-#define DEG_TO_RAD M_PI/180
-
 LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(rosRate), nh_(nh)
 {
-    dynamic_reconfigure::Server<masterslave::masterslaveConfig> server;
-    dynamic_reconfigure::Server<masterslave::masterslaveConfig>::CallbackType f;
+    //dynamic_reconfigure::Server<masterslave::kinematicConfig> server;
+    //dynamic_reconfigure::Server<masterslave::kinematicConfig>::CallbackType f;
 
-    f = boost::bind(&LaparoscopeTask::configurationCallback,this,_1,_2);
+    //f = boost::bind(&LaparoscopeTask::configurationCallback,this,_1,_2);
 
-    server.setCallback(f);
+    //server.setCallback(f);
 
 
     std::stringstream device_sstream;
@@ -44,31 +42,35 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(ro
     Q5StateSub = nh_.subscribe("/Q5/joint_states",1,&LaparoscopeTask::Q5StateCallback, this);
     Q6nStateSub = nh_.subscribe("/Q6N/joint_states",1,&LaparoscopeTask::Q6nStateCallback, this);
     Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&LaparoscopeTask::Q6pStateCallback, this);
-    lbrPositionSub = nh_.subscribe("/flange",1,&LaparoscopeTask::flangeCallback, this);
+    lbrPositionSub = nh_.subscribe("/flangeLBR",1,&LaparoscopeTask::flangeCallback, this);
 
     Q4Pub = nh_.advertise<std_msgs::Float64>("/Q4/setPointVelocity",1);
     Q5Pub = nh_.advertise<std_msgs::Float64>("/Q5/setPointVelocity",1);
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
+    lbrTargetPositionPub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeTarget",1);
 
 
     ros::Rate waiteRate(0.5);
-    while(!kinematic)
+    while(ros::ok() && !kinematic)
     {
         ROS_INFO("LaparoscopeTask is waiting for a start position of the robot");
         ros::spinOnce();
         waiteRate.sleep();
     }
     ROS_INFO_COND(kinematic,"LaroscopeTask has found the start position of the robot!");
-    loop();
+
+
 }
 
 void LaparoscopeTask::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
 {
-    Eigen::Affine3d startPositionLBR;
+
     tf::poseMsgToEigen(flangePose->pose,startPositionLBR);
     kinematic = new Laparoscope(startPositionLBR);
+
     lbrPositionSub.shutdown();
+    loop();
 }
 
 Eigen::Affine3d LaparoscopeTask::moveEEFrame(Eigen::Affine3d oldFrame)
@@ -106,12 +108,23 @@ Eigen::Affine3d LaparoscopeTask::moveEEFrame(Eigen::Affine3d oldFrame)
 void LaparoscopeTask::loop()
 {
     double lastTime = ros::Time::now().toSec();
+    kinematic->setAngles(toolAnglesAct);
+    TCP = startPositionLBR*kinematic->getT_FL_EE();
+    geometry_msgs::PoseStamped poseFLmsg;
     while(ros::ok())
     {
         ros::spinOnce();
         cycleTime = ros::Time::now().toSec() - lastTime;
         lastTime = ros::Time::now().toSec();
+        kinematic->setT_0_EE(TCP);
+        TCP = moveEEFrame(TCP);
+        kinematic->getAngles();
+        commandVelocities();
+        tf::poseEigenToMsg(kinematic->getT_0_FL(),poseFLmsg.pose);
+        lbrTargetPositionPub.publish(poseFLmsg);
+
     }
+    ros::shutdown();
 
 }
 

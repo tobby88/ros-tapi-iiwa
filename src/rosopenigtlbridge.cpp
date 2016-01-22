@@ -23,13 +23,6 @@
  */
 RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
 {
-    dynamic_reconfigure::Server<masterslave::rosigtlbridgeConfig> serverIGTL;
-    dynamic_reconfigure::Server<masterslave::rosigtlbridgeConfig>::CallbackType cbIGTL;
-
-    cbIGTL = boost::bind(&RosOpenIgtlBridge::configurationIGTLCallback,this,_1,_2);
-
-    serverIGTL.setCallback(cbIGTL);
-
     this->flangeTargetSub = nh_.subscribe("/flangeTarget",1,&RosOpenIgtlBridge::transformCallback,this);
     this->flangePub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeLBR",1);
     sendTransformFlag = false;
@@ -37,33 +30,17 @@ RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
     stop_ = false;
     CMD_UID=0;
     sampleTime_  = 0.05;
-    commandPort_ = 49001;
-    transformPort_ = 49002;
-    commandIP_ = "172.31.1.147";
-    transformIP_ = "172.31.1.147";
     transformReceived_ = false;
 
+    stateServiceServer = nh_.advertiseService("/openIGTLState",&RosOpenIgtlBridge::stateService,this);
     boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkTransformThread,this));
     openIGTLinkThread();
 }
 
 void RosOpenIgtlBridge::transformCallback(geometry_msgs::PoseStampedConstPtr transform)
 {
-    std::stringstream sstream;
-    std::vector<double> transformVector;
-
-    // hier wird der OpenIGTLink-String zusammengestellt
-    sstream << "MoveToPose;" << "rob;";
-    transformVector = this->rosPoseToIGTL(transform->pose);
-    for(std::vector<double>::iterator it=transformVector.begin(); it!=transformVector.end();it++)
-    {
-        //Hinzufügen einer Koordinate der Transformationsmatrix
-        sstream << *it << ";";
-    }
-    this->poseFL_new = transform->pose;
-    openIGTLCommandString = sstream.str();
-    sstream.str(std::string());
-    transformReceived_ = true;
+    poseFL_new = transform->pose;
+    rosTransformReceived_ = true;
 }
 
 //second thread to get transform messages from the OpenIGTL-Interface
@@ -71,11 +48,21 @@ void RosOpenIgtlBridge::openIGTLinkTransformThread()
 {
     ROS_INFO("Entering Transformation Thread");
     transformSocket_ = igtl::ClientSocket::New();
-    rTransform = transformSocket_->ConnectToServer(transformIP_.c_str(),transformPort_);
+    transformSocket_->DebugOff();
+
+    double startTime = ros::Time::now().toSec();
+    double endTime = ros::Time::now().toSec();
+    do
+    {
+        rTransform = transformSocket_->ConnectToServer(TRANSFORM_IP,TRANSFORM_PORT);
+        endTime = ros::Time::now().toSec();
+        ROS_WARN_NAMED("ROSOpenIGTL","Trying to connect to OpenIGTL-Server");
+    }
+    while(rTransform==-1 && ros::ok() && endTime - startTime <= CONNECTION_TIMEOUT);
     if(rTransform==-1)
     {
-        ROS_ERROR("OpenIGTLink Transform Interface is not available");
-        exit(-1);
+        ROS_ERROR("No OpenIGTLink-Server available");
+        ros::shutdown();
     }
 
     while(rTransform!=-1 && ros::ok())
@@ -92,14 +79,26 @@ void RosOpenIgtlBridge::openIGTLinkThread()
 {
     ROS_INFO("Entering Command Thread");
     commandSocket_ = igtl::ClientSocket::New();
-    rCommand = commandSocket_->ConnectToServer(commandIP_.c_str(),commandPort_);
-
-    ROS_DEBUG_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
+    commandSocket_->DebugOff();
+    rCommand=-1;
+    double startTime = ros::Time::now().toSec();
+    double endTime = ros::Time::now().toSec();
+    ROS_INFO_STREAM("rCommand: " << rCommand);
+    do
+    {
+        rCommand = commandSocket_->ConnectToServer(COMMAND_IP,COMMAND_PORT);
+        endTime = ros::Time::now().toSec();
+        ROS_WARN_NAMED("ROSOpenIGTL","Trying to connect to OpenIGTL-Server");
+    }
+    while(rCommand==-1 && ros::ok() && endTime - startTime <= CONNECTION_TIMEOUT);
     if(rCommand==-1)
     {
-        ROS_ERROR("OpenIGTLink Interface is not available");
-        exit(-1);
+        ROS_ERROR("No OpenIGTLink-Server available");
+        ros::shutdown();
     }
+
+    ROS_DEBUG_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
+
     this->sendIdleState(commandSocket_);
     ros::Rate rate(1/sampleTime_);
     while(rCommand!=-1 && ros::ok())
@@ -207,25 +206,26 @@ int RosOpenIgtlBridge::sendTransform(igtl::ClientSocket::Pointer &socket)
     return socket->Send(transformStringMsg->GetPackPointer(),transformStringMsg->GetPackSize());
 }
 
-std::vector<double> RosOpenIgtlBridge::rosPoseToIGTL(geometry_msgs::Pose pose)
+std::string RosOpenIgtlBridge::rosPoseToIGTL(geometry_msgs::Pose pose)
 {
+    std::stringstream sstream;
     pose.position.x*=MM_TO_M;
     pose.position.y*=MM_TO_M;
     pose.position.z*=MM_TO_M;
     Eigen::Affine3d poseToEigen;
     tf::poseMsgToEigen(pose,poseToEigen);
-    std::vector<double> returnValue;
-    returnValue.push_back(poseToEigen.translation().x());
-    returnValue.push_back(poseToEigen.translation().y());
-    returnValue.push_back(poseToEigen.translation().z());
+
+    sstream << poseToEigen.translation().x();
+    sstream << poseToEigen.translation().y();
+    sstream << poseToEigen.translation().z();
     for(int row=0;row<3;row++)
     {
         for(int col=0; col<3; col++)
         {
-            returnValue.push_back(poseToEigen.matrix()(row,col));
+            sstream << poseToEigen.matrix()(row,col);
         }
     }
-    return returnValue;
+    return sstream.str();
 
 }
 
@@ -247,15 +247,35 @@ geometry_msgs::Pose RosOpenIgtlBridge::igtlMatrixToRosPose(igtl::Matrix4x4& igtl
     return returnValue;
 }
 
-void RosOpenIgtlBridge::configurationIGTLCallback(masterslave::rosigtlbridgeConfig &config, uint32_t level)
+bool RosOpenIgtlBridge::stateService(masterslave::state::Request &req, masterslave::state::Response &res)
 {
-    commandIP_ = config.controlIP;
-    transformIP_ = config.transformIP;
-
-    commandPort_ = config.controlPort;
-    transformPort_ = config.transformPort;
-
+    std::stringstream sstream;
+    if(rTransform==-1)
+    {
+        res.alive = false;
+    }
+    else
+    {
+        res.alive = true;
+    }
+    stateString = req.state;
+    sstream << stateString;
+    if(rosTransformReceived_ && stateString == "MoveToPose;rob;")
+    {
+        sstream << rosPoseToIGTL(poseFL_new);
+    }
+    else if(stateString == "MoveToJointAngles;")
+    {
+        // Hier die Gelenkwinkel in den String packen
+    }
+    openIGTLCommandString = sstream.str();
+    sstream.str(std::string());
+    return true;
 }
+
+
+const char* RosOpenIgtlBridge::COMMAND_IP="172.31.1.147";
+const char* RosOpenIgtlBridge::TRANSFORM_IP="172.31.1.147";
 
 int main(int argc, char** argv)
 {

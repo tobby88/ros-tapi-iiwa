@@ -32,6 +32,9 @@ find_package(Boost REQUIRED COMPONENTS system)
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
+add_service_files(FILES
+    state.srv
+  )
 
 
 ## Generate messages in the 'msg' folder
@@ -52,6 +55,7 @@ generate_messages(
 ################################################
 
 generate_dynamic_reconfigure_options(
+  cfg/kinematic.cfg
   cfg/masterslave.cfg
   cfg/controldevice.cfg
   cfg/rosopenigtlbridge.cfg

@@ -51,7 +51,7 @@ void Task::commandVelocities()
 
 }
 
-void Task::configurationCallback(masterslave::masterslaveConfig &config, uint32_t level)
+void Task::configurationCallback(masterslave::kinematicConfig &config, uint32_t level)
 {
     apertureLimit = config.apertureLimit;
     gripperVelocityValue = config.gripperVelocity;
@@ -72,3 +72,5 @@ Eigen::Quaternion<double> Task::QuaternionFromEuler(const Eigen::Vector3d &euler
 
     return quat;
 }
+
+const double Task::DEG_TO_RAD = M_PI/180;
