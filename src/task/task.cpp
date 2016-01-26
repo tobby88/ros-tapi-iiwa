@@ -73,4 +73,6 @@ Eigen::Quaternion<double> Task::QuaternionFromEuler(const Eigen::Vector3d &euler
     return quat;
 }
 
+
+
 const double Task::DEG_TO_RAD = M_PI/180;

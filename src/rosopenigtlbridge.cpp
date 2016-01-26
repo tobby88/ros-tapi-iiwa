@@ -26,10 +26,9 @@ RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
     this->flangeTargetSub = nh_.subscribe("/flangeTarget",1,&RosOpenIgtlBridge::transformCallback,this);
     this->flangePub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeLBR",1);
     sendTransformFlag = false;
-    start_ = false;
-    stop_ = false;
+
     CMD_UID=0;
-    sampleTime_  = 0.05;
+
     transformReceived_ = false;
 
     stateServiceServer = nh_.advertiseService("/openIGTLState",&RosOpenIgtlBridge::stateService,this);
@@ -99,7 +98,7 @@ void RosOpenIgtlBridge::openIGTLinkThread()
 
     ROS_DEBUG_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
 
-    this->sendIdleState(commandSocket_);
+    this->sendCommand(commandSocket_,"Idle;");
     ros::Rate rate(1/sampleTime_);
     while(rCommand!=-1 && ros::ok())
     {
@@ -120,7 +119,7 @@ void RosOpenIgtlBridge::openIGTLinkThread()
         this->transformUpdateMutex_.unlock();
         if(transformReceived_)
         {
-            this->sendTransform(commandSocket_);
+            this->sendCommand(commandSocket_,openIGTLCommandString);
             transformReceived_ = false;
         }
         rCommand = commandSocket_->GetConnected();
@@ -172,21 +171,8 @@ int RosOpenIgtlBridge::receiveTransform(igtl::ClientSocket::Pointer &socket, igt
     return 0;
 }
 
-int RosOpenIgtlBridge::sendIdleState(igtl::ClientSocket::Pointer &socket)
-{
-    std::stringstream sstream;
-    igtl::StringMessage::Pointer commandString;
-    CMD_UID++;
-    sstream << "CMD_" << CMD_UID;
-    commandString = igtl::StringMessage::New();
-    commandString->SetDeviceName(sstream.str().c_str());
-    commandString->SetString("Idle;");
-    commandString->Pack();
-    ROS_INFO("Send Idle State");
-    return socket->Send(commandString->GetPackPointer(),commandString->GetPackSize());
-}
 
-int RosOpenIgtlBridge::sendTransform(igtl::ClientSocket::Pointer &socket)
+int RosOpenIgtlBridge::sendCommand(igtl::ClientSocket::Pointer &socket, std::string command)
 {
     igtl::StringMessage::Pointer transformStringMsg;
     transformStringMsg = igtl::StringMessage::New();
@@ -197,11 +183,7 @@ int RosOpenIgtlBridge::sendTransform(igtl::ClientSocket::Pointer &socket)
     // Set UID
     transformStringMsg->SetDeviceName(transformStream.str().c_str());
     transformStream.str(std::string());
-
-    ROS_DEBUG_STREAM("Send Transform" << " string: " << openIGTLCommandString);
-
-    transformStringMsg->SetString(openIGTLCommandString);
-    transformStream.str(std::string());
+    transformStringMsg->SetString(command);
     transformStringMsg->Pack();
     return socket->Send(transformStringMsg->GetPackPointer(),transformStringMsg->GetPackSize());
 }
@@ -263,12 +245,14 @@ bool RosOpenIgtlBridge::stateService(masterslave::state::Request &req, mastersla
     if(rosTransformReceived_ && stateString == "MoveToPose;rob;")
     {
         sstream << rosPoseToIGTL(poseFL_new);
+        rosTransformReceived_ = false;
     }
     else if(stateString == "MoveToJointAngles;")
     {
         // Hier die Gelenkwinkel in den String packen
     }
     openIGTLCommandString = sstream.str();
+    ROS_INFO_STREAM("Commandstring: " << openIGTLCommandString);
     sstream.str(std::string());
     return true;
 }

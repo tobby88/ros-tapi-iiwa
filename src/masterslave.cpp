@@ -5,14 +5,12 @@
 #define MM_TO_M 1/1000
 #define DEG_TO_RAD M_PI/180
 
-MasterSlave::MasterSlave(ros::NodeHandle& controlDeviceNH): nh_(controlDeviceNH)
+MasterSlave::MasterSlave(ros::NodeHandle& controlDeviceNH, ros::NodeHandle& taskNodeHandle): nh_(controlDeviceNH), taskNH_(taskNodeHandle)
 {
     start_ = false;
-    apertureLimit = 45;
-    heightSafety = 0.05;
     rosRate = 50;
 
-    dynamic_reconfigure::Server<masterslave::masterslaveConfig> server;
+    dynamic_reconfigure::Server<masterslave::masterslaveConfig> server(taskNH_);
     dynamic_reconfigure::Server<masterslave::masterslaveConfig>::CallbackType f;
 
     f = boost::bind(&MasterSlave::configurationCallback,this,_1,_2);
@@ -52,6 +50,7 @@ void MasterSlave::statemachineThread(const ros::TimerEvent& event)
     {
         stateService.call(stateStringMsg);
         statemachineIsRunning = stateStringMsg.response.alive;
+        ROS_DEBUG_STREAM("Service Call: alive: " << statemachineIsRunning);
     }
 
 
@@ -70,7 +69,8 @@ int main(int argc, char** argv)
     ros::init(argc,argv,"MasterSlave");
 
     ros::NodeHandle ControlDeviceNH(argv[1]);
-    MasterSlave MasterSlaveControl(ControlDeviceNH);
+    ros::NodeHandle nodeHandle;
+    MasterSlave MasterSlaveControl(ControlDeviceNH, nodeHandle);
 
     return 0;
 }

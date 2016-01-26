@@ -95,6 +95,7 @@ add_dependencies(controldevice controldevice_gencfg)
 
 add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h src/kinematic/kinematics.cpp include/masterslave/kinematic/ursulakinematics.h src/kinematic/ursulakinematics.cpp src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h)
 add_dependencies(masterslave $(PROJECT_NAME)_gencfg)
+add_dependencies(masterslave kinematic_gencfg)
 
 add_executable(rosopenigtlbridge src/rosopenigtlbridge.cpp include/masterslave/rosopenigtlbridge.h)
 add_dependencies(rosopenigtlbridge rosopenigtlbridge_gencfg)

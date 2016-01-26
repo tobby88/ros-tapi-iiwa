@@ -42,7 +42,9 @@ class LaparoscopeTask : public Task
         void velocityCallback(const geometry_msgs::TwistStampedConstPtr&);
         void buttonCallback(const masterslave::ButtonConstPtr&);
         void buttonCheck();
+        void getControlDevice();
         std::vector<std::string> buttons;
+
 
         Laparoscope* kinematic;
 

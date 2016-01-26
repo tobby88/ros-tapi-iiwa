@@ -2,42 +2,14 @@
 
 LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(rosRate), nh_(nh)
 {
-    //dynamic_reconfigure::Server<masterslave::kinematicConfig> server;
-    //dynamic_reconfigure::Server<masterslave::kinematicConfig>::CallbackType f;
+    dynamic_reconfigure::Server<masterslave::kinematicConfig> server(nh_);
+    dynamic_reconfigure::Server<masterslave::kinematicConfig>::CallbackType f;
 
-    //f = boost::bind(&LaparoscopeTask::configurationCallback,this,_1,_2);
+    f = boost::bind(&LaparoscopeTask::configurationCallback,this,_1,_2);
 
-    //server.setCallback(f);
+    server.setCallback(f);
 
-
-    std::stringstream device_sstream;
-    XmlRpc::XmlRpcValue deviceList;
-
-    // TODO: Laparoskop-Kinematik einbinden
-    if(strcmp(nh_.getNamespace().c_str(),"/Joy")==0)
-    {
-       nh_.getParam("/API/Joy",deviceList);
-    }
-    else if(strcmp(nh_.getNamespace().c_str(),"/Spacenav")==0)
-    {
-        nh_.getParam("/API/Spacenav",deviceList);
-    }
-    else
-    {
-        ROS_ERROR("No ControlDevice found!");
-        return;
-    }
-    //TODO: Auswahl des gewünschten Steuerungsgeräts
-    for(XmlRpc::XmlRpcValue::iterator it = deviceList.begin(); it!=deviceList.end();it++)
-    {
-        device_sstream << it->first << "/Velocity";
-        velocitySub = nh_.subscribe(device_sstream.str().c_str(),10,&LaparoscopeTask::velocityCallback,this);
-        device_sstream.str(std::string());
-        device_sstream << it->first << "/Buttons";
-        buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&LaparoscopeTask::buttonCallback, this);
-        device_sstream.str(std::string());
-    }
-
+    getControlDevice();
     Q4StateSub = nh_.subscribe("/Q4/joint_states",1,&LaparoscopeTask::Q4StateCallback, this);
     Q5StateSub = nh_.subscribe("/Q5/joint_states",1,&LaparoscopeTask::Q5StateCallback, this);
     Q6nStateSub = nh_.subscribe("/Q6N/joint_states",1,&LaparoscopeTask::Q6nStateCallback, this);
@@ -59,18 +31,18 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(ro
         waiteRate.sleep();
     }
     ROS_INFO_COND(kinematic,"LaroscopeTask has found the start position of the robot!");
-
+    if(kinematic)
+    {
+        loop();
+    }
 
 }
 
 void LaparoscopeTask::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
 {
-
     tf::poseMsgToEigen(flangePose->pose,startPositionLBR);
     kinematic = new Laparoscope(startPositionLBR);
-
     lbrPositionSub.shutdown();
-    loop();
 }
 
 Eigen::Affine3d LaparoscopeTask::moveEEFrame(Eigen::Affine3d oldFrame)
@@ -174,11 +146,39 @@ void LaparoscopeTask::buttonCallback(const masterslave::ButtonConstPtr &button)
 
 void LaparoscopeTask::velocityCallback(const geometry_msgs::TwistStampedConstPtr &velocity)
 {
-
     velocity_ = *velocity;
-
 }
 
+void LaparoscopeTask::getControlDevice()
+{
+    std::stringstream device_sstream;
+    XmlRpc::XmlRpcValue deviceList;
+
+    // TODO: Laparoskop-Kinematik einbinden
+    if(strcmp(nh_.getNamespace().c_str(),"/Joy")==0)
+    {
+       nh_.getParam("/API/Joy",deviceList);
+    }
+    else if(strcmp(nh_.getNamespace().c_str(),"/Spacenav")==0)
+    {
+        nh_.getParam("/API/Spacenav",deviceList);
+    }
+    else
+    {
+        ROS_ERROR("No ControlDevice found!");
+        return;
+    }
+    //TODO: Auswahl des gewünschten Steuerungsgeräts
+    for(XmlRpc::XmlRpcValue::iterator it = deviceList.begin(); it!=deviceList.end();it++)
+    {
+        device_sstream << it->first << "/Velocity";
+        velocitySub = nh_.subscribe(device_sstream.str().c_str(),10,&LaparoscopeTask::velocityCallback,this);
+        device_sstream.str(std::string());
+        device_sstream << it->first << "/Buttons";
+        buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&LaparoscopeTask::buttonCallback, this);
+        device_sstream.str(std::string());
+    }
+}
 
 
 void LaparoscopeTask::buttonCheck()

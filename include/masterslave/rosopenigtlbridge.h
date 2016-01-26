@@ -38,8 +38,7 @@ private:
     void openIGTLinkThread();
     void openIGTLinkTransformThread();
     // command socket methods
-    int sendTransform(igtl::ClientSocket::Pointer&);
-    int sendIdleState(igtl::ClientSocket::Pointer&);
+    int sendCommand(igtl::ClientSocket::Pointer&, std::string);
     int positionReached(igtl::ClientSocket::Pointer&, igtl::MessageBase::Pointer&);
 
     // transform socket methods

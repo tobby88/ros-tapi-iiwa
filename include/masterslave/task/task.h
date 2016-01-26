@@ -25,6 +25,7 @@ class Task
         double heightSafety;
         void calcQ6();
 
+
         virtual void loop()=0;
 
         ros::Subscriber Q4StateSub;

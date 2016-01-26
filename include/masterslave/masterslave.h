@@ -22,18 +22,20 @@
 #include <dynamic_reconfigure/server.h>
 #include <masterslave/masterslaveConfig.h>
 
+
+// important and used states for the OpenIGTLink-Communication @see rosopenigtlbridge.h
 enum OPENIGTL_STATE
 {
-    IDLE,
-    FREE,
-    MASTERSLAVE_LAPAROSCOPE,
-    MASTERSLAVE_URSULA
+    IDLE, //Idle state
+    FREE, //Gravitation compensation
+    MASTERSLAVE_LAPAROSCOPE, // first kinematic approach
+    MASTERSLAVE_URSULA // second kinematic approach
 };
 
 class MasterSlave
 {
     public:
-        MasterSlave(ros::NodeHandle&);
+        MasterSlave(ros::NodeHandle&,ros::NodeHandle&);
 
     private:
         void tcpCallback(const geometry_msgs::PoseStampedConstPtr &pose);
@@ -44,37 +46,27 @@ class MasterSlave
 
         void statemachineThread(const ros::TimerEvent&);
 
-        void calcQ6();
-
-        void buttonCheck(void);
-        void doWorkRobot();
-
-        ros::NodeHandle globalNH;
+        ros::NodeHandle taskNH_;
         ros::NodeHandle nh_;
-
-        ros::Subscriber startSub;
-        ros::Subscriber stopSub;
 
         ros::Publisher  rcmPub;
         ros::ServiceClient  stateService;
 
 
-        Eigen::Affine3d tcpAct;
-
         double cycleTime;
         double lastTime;
         double rosRate;
-        double heightSafety;
-        int apertureLimit;
+
         bool start_;
+        // flag that shows if the OpenIGTL-Statemachine is running
         bool statemachineIsRunning;
+
+        // current state of the LBR iiwa
         OPENIGTL_STATE curState;
 
-        geometry_msgs::TwistStamped velocity_;
-
-        OPENIGTL_STATE state;
-
         double gripperVelocityValue;
+
+        //pointer on the current task-instance
         Task* task;
 
 
