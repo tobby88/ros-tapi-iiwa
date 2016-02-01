@@ -54,6 +54,10 @@ class Kinematics
         //Transformation from robot base to joint Q4
         Eigen::Affine3d T_0_Q4;
 
+        Eigen::Affine3d T_FL_Q4;
+        Eigen::Affine3d T_FL_Q5;
+        Eigen::Affine3d T_FL_Q6;
+
         toolAngles toolAnglesTar;
         toolAngles toolAnglesAct;
 
