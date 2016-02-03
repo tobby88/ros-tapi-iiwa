@@ -4,6 +4,7 @@
 #include <ros/ros.h>
 #include <stdlib.h>
 #include "geometry_msgs/PoseStamped.h"
+#include "geometry_msgs/PoseArray.h"
 #include <dynamic_reconfigure/server.h>
 #include <masterslave/rosigtlbridgeConfig.h>
 #include "masterslave/state.h"

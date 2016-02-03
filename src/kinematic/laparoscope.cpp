@@ -28,14 +28,10 @@ void Laparoscope::calcInvKin()
 {
     Eigen::Affine3d T_0_Q6 = T_0_EE.translate(Eigen::Vector3d(-TOOL_PARAMETERS.L_Q6_EE,0,0));
     Eigen::Vector3d p_RCM_Q6 = T_0_Q6.translation()-RCM.translation();
-    Eigen::Vector4d z_Q6_h = T_0_Q6.matrix()*Eigen::Vector4d(0,0,1,0);
-    Eigen::Vector3d z_Q6;
-    z_Q6 << z_Q6_h(0), z_Q6_h(1), z_Q6_h(2);
+    Eigen::Vector3d z_Q6 = T_0_Q6.matrix().col(3).head(3);
     Eigen::Vector3d nPlane = p_RCM_Q6.cross(z_Q6);
 
-    Eigen::Vector4d y_Q6_h = T_0_Q6.matrix()*Eigen::Vector4d(0,-1,0,0);
-    Eigen::Vector3d y_Q6;
-    y_Q6 << y_Q6_h(0), y_Q6_h(1), y_Q6_h(2);
+    Eigen::Vector3d y_Q6 = -T_0_Q6.matrix().col(2).head(3);
 
     toolAnglesTar.Q6 = acos(nPlane.dot(y_Q6)/(nPlane.norm()*y_Q6.norm()));
 
@@ -58,18 +54,11 @@ void Laparoscope::calcInvKin()
     T_EE_Q5.translate(Eigen::Vector3d(-TOOL_PARAMETERS.L_Q5_Q6,0,0));
     Eigen::Affine3d T_0_Q5 = T_0_EE*T_EE_Q5;
 
-    Eigen::Vector4d RCM_x_h = RCM.matrix()*Eigen::Vector4d(0,0,1,0);
-    Eigen::Vector3d RCM_x;
-    RCM_x << RCM_x_h(0), RCM_x_h(1), RCM_x_h(2);
+    Eigen::Vector3d RCM_x = RCM.matrix().col(3).head(3);
 
-    Eigen::Vector4d z_Q5_h = T_0_Q5.matrix() * Eigen::Vector4d(0,0,1,0);
-    Eigen::Vector3d z_Q5;
-    z_Q5 << z_Q5_h(0), z_Q5_h(1), z_Q5_h(2);
+    Eigen::Vector3d z_Q5 = T_0_Q5.matrix().col(3).head(3);
 
-    Eigen::Vector4d y_Q5_h = T_0_Q5.matrix() * Eigen::Vector4d(0,-1,0,0);
-    Eigen::Vector3d y_Q5;
-    y_Q5 << y_Q5_h(0), y_Q5_h(1), y_Q5_h(2);
-
+    Eigen::Vector3d y_Q5 = -T_0_Q5.matrix().col(3).head(3);
 
     Eigen::Vector3d p_Q5_RCM = T_0_Q5.translation() - RCM.translation();
 

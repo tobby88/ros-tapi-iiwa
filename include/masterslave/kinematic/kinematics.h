@@ -33,7 +33,6 @@ class Kinematics
     protected:
 
         // pure virtual methods for kinematic calculation
-        virtual void calcDirKin()=0;
         virtual void calcInvKin()=0;
 
         //method to calculate the direct kinematic of the Laparoscope

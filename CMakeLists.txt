@@ -86,6 +86,7 @@ include_directories(
   include
   include/masterslave
   include/masterslave/kinematic
+  include/masterslave/optimization
 )
 
 
@@ -93,7 +94,7 @@ include_directories(
 add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
 add_dependencies(controldevice controldevice_gencfg)
 
-add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h src/kinematic/kinematics.cpp include/masterslave/kinematic/ursulakinematics.h src/kinematic/ursulakinematics.cpp src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h)
+add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h src/kinematic/kinematics.cpp include/masterslave/kinematic/ursulakinematics.h src/kinematic/ursulakinematics.cpp src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h src/task/ursulatask.cpp include/masterslave/task/ursulatask.h include/masterslave/optimization/eiquadprog.hpp)
 add_dependencies(masterslave $(PROJECT_NAME)_gencfg)
 add_dependencies(masterslave kinematic_gencfg)
 
