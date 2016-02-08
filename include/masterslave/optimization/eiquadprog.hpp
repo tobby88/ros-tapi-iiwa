@@ -85,7 +85,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <Eigen/Dense>
 #include <Eigen/Core>
 
-
 namespace Eigen {
 
 // namespace internal {
@@ -134,13 +133,13 @@ void delete_constraint(MatrixXd& R, MatrixXd& J, VectorXi& A, VectorXd& u,  int 
 inline double solve_quadprog(MatrixXd & G,  VectorXd & g0,  
                       const MatrixXd & CE, const VectorXd & ce0,  
                       const MatrixXd & CI, const VectorXd & ci0, 
-                      VectorXd& x, double maxIterations)
+                      VectorXd& x, unsigned int maxIterations)
 {
   int i, j, k, l; /* indices */
   int ip, me, mi;
   int n=g0.size();  int p=ce0.size();  int m=ci0.size();  
   MatrixXd R(G.rows(),G.cols()), J(G.rows(),G.cols());
-  
+
   LLT<MatrixXd,Lower> chol(G.cols());
  
   VectorXd s(m+p), z(n), r(m + p), d(n),  np(n), u(m + p);
@@ -242,7 +241,7 @@ inline double solve_quadprog(MatrixXd & G,  VectorXd & g0,
 		iai(i) = i;
   
 l1:	iter++;
-  if(iter>=maxIterations) return f_value;
+  if(iter>maxIterations) return f_value;
 #ifdef TRACE_SOLVER
   print_vector("x", x, n);
 #endif

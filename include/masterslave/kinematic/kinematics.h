@@ -27,16 +27,14 @@ class Kinematics
 
         //inline definition of the getter
         Eigen::Affine3d getT_FL_EE(){return T_FL_EE;}
-        toolAngles getAngles(){ return toolAnglesTar;}
+        Eigen::VectorXd getAngles(){ return jointAnglesTar;}
+
 
 
     protected:
 
         // pure virtual methods for kinematic calculation
         virtual void calcInvKin()=0;
-
-        //method to calculate the direct kinematic of the Laparoscope
-        Eigen::Affine3d calcLaparoscopeDirKin();
 
         // help method to build up Eigen::Affine3d-Transformations
         Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
@@ -57,10 +55,13 @@ class Kinematics
         Eigen::Affine3d T_FL_Q5;
         Eigen::Affine3d T_FL_Q6;
 
-        toolAngles toolAnglesTar;
-        toolAngles toolAnglesAct;
+        Eigen::VectorXd jointAnglesTar;
+        Eigen::VectorXd jointAnglesAct;
 
         static const toolDescriptionParameters TOOL_PARAMETERS;
+
+        static const double DEG_TO_RAD = M_PI/180;
+        static const double MM_TO_M = 1/1000;
 };
 
 #endif // KINEMATICS_H

@@ -4,8 +4,6 @@
 #include "task.h"
 #include "masterslave/kinematic/laparoscope.h"
 #include "ros/ros.h"
-#include "masterslave/Button.h"
-#include <geometry_msgs/TwistStamped.h>
 
 
 
@@ -21,17 +19,23 @@ class LaparoscopeTask : public Task
 
 
     private:
-        Eigen::Affine3d startPositionLBR;
-        Eigen::Affine3d TCP;
+
         double rosRate_;
 
-        ros::Subscriber lbrPositionSub;
+        void calcQ6();
+        void commandVelocities();
+
+        void buttonCheck();
+        void getControlDevice();
+        std::vector<std::string> buttons;
+
+
         ros::Subscriber velocitySub;
         ros::Subscriber buttonSub;
 
         ros::Publisher lbrTargetPositionPub;
         geometry_msgs::TwistStamped velocity_;
-        Eigen::Affine3d moveEEFrame(Eigen::Affine3d);
+
         void flangeCallback(const geometry_msgs::PoseStampedConstPtr&);
         void loop();
         ros::NodeHandle nh_;
@@ -41,10 +45,8 @@ class LaparoscopeTask : public Task
         void Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state);
         void velocityCallback(const geometry_msgs::TwistStampedConstPtr&);
         void buttonCallback(const masterslave::ButtonConstPtr&);
-        void buttonCheck();
-        void getControlDevice();
-        std::vector<std::string> buttons;
 
+        Eigen::Affine3d moveEEFrame(Eigen::Affine3d);
 
         Laparoscope* kinematic;
 

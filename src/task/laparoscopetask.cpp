@@ -80,7 +80,7 @@ Eigen::Affine3d LaparoscopeTask::moveEEFrame(Eigen::Affine3d oldFrame)
 void LaparoscopeTask::loop()
 {
     double lastTime = ros::Time::now().toSec();
-    kinematic->setAngles(toolAnglesAct);
+    kinematic->setAngles(jointAnglesAct);
     TCP = startPositionLBR*kinematic->getT_FL_EE();
     geometry_msgs::PoseStamped poseFLmsg;
     while(ros::ok())
@@ -103,23 +103,23 @@ void LaparoscopeTask::loop()
 
 void LaparoscopeTask::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
-    motorAngles.Q4 = state->position.at(0);
+    motorAngles(0) = state->position.at(0);
 }
 
 
 void LaparoscopeTask::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
-    motorAngles.Q5 = state->position.at(0);
+    motorAngles(1) = state->position.at(0);
 }
 
 void LaparoscopeTask::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
-    motorAngles.Q6N= state->position.at(0);
+    motorAngles(2) = state->position.at(0);
 }
 
 void LaparoscopeTask::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
-    motorAngles.Q6P= state->position.at(0);
+    motorAngles(3)= state->position.at(0);
 }
 
 void LaparoscopeTask::buttonCallback(const masterslave::ButtonConstPtr &button)
@@ -180,19 +180,56 @@ void LaparoscopeTask::getControlDevice()
     }
 }
 
-
-void LaparoscopeTask::buttonCheck()
+void LaparoscopeTask::calcQ6()
 {
-    std::stringstream button_sstream;
-    button_sstream << "button";
-    if(nh_.hasParam(button_sstream.str().c_str()))
-    {
-        XmlRpc::XmlRpcValue buttonList;
-        nh_.getParam(button_sstream.str().c_str(),buttonList);
-        for(XmlRpc::XmlRpcValue::iterator it=buttonList.begin();it!=buttonList.end();it++)
-        {
-            buttons.push_back((std::string&)(it->second));
-        }
+    jointAnglesAct(2) = (motorAngles(4) + motorAngles(3)) / 2;
 
-    }
+    if(fabs(motorAngles(4) + motorAngles(3))<0)
+        gripper_stop = true;
+    else
+        gripper_stop = false;
 }
+
+void LaparoscopeTask::commandVelocities()
+{
+    double gripperVelocity;
+    std_msgs::Float64 Q4Vel, Q5Vel, Q6nVel, Q6pVel;
+    Q4Vel.data = (jointAnglesTar(0) - jointAnglesAct(0))/cycleTime;
+    Q5Vel.data = (jointAnglesTar(1) - jointAnglesAct(1))/cycleTime;
+    if(gripper_close && !gripper_open && !gripper_stop)
+    {
+        gripperVelocity = gripperVelocityValue;
+    }
+    else if(gripper_open && !gripper_close && !gripper_stop)
+    {
+        gripperVelocity = -gripperVelocityValue;
+    }
+    else
+    {
+        gripperVelocity = 0;
+    }
+
+    Q6nVel.data = (jointAnglesTar(2)-jointAnglesAct(2))/cycleTime;
+    Q6pVel.data = (jointAnglesTar(2)-jointAnglesAct(2))/cycleTime;
+    // Stoppen der Greiferbacken, wenn eine der beiden am Anschlag ist, um Greiferöffnungswinkel nicht zu ändern
+    if(motorAngles(4)>=0.95*M_PI && (jointAnglesTar(2)-jointAnglesAct(2))>0)
+    {
+        Q6nVel.data = 0;
+    }
+    if(motorAngles(3)<=-0.95*M_PI && (jointAnglesTar(2)-jointAnglesAct(2))<0)
+    {
+        Q6pVel.data = 0;
+    }
+
+    Q6nVel.data += gripperVelocity/cycleTime;
+    Q6pVel.data -= gripperVelocity/cycleTime;
+
+    Q4Pub.publish(Q4Vel);
+    Q5Pub.publish(Q5Vel);
+    Q6nPub.publish(Q6nVel);
+    Q6pPub.publish(Q6pVel);
+}
+
+
+
+

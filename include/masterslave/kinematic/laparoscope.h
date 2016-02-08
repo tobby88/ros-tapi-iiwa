@@ -9,8 +9,10 @@ class Laparoscope: public Kinematics {
     public:
         Laparoscope(Eigen::Affine3d);
         Eigen::Affine3d getT_0_FL(){return T_0_FL;}
-        void setAngles(const toolAngles value);
+
         Eigen::Affine3d getT_0_Q4(){return T_0_Q4;}
+
+        void setAngles(const Eigen::VectorXd value);
 
     private:
         //Implementation of the inhereted methods of Kinematics class

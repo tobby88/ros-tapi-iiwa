@@ -9,6 +9,8 @@ MasterSlave::MasterSlave(ros::NodeHandle& controlDeviceNH, ros::NodeHandle& task
 {
     start_ = false;
     rosRate = 50;
+    taskCounter = 0;
+    curState = NOSTATE;
 
     dynamic_reconfigure::Server<masterslave::masterslaveConfig> server(taskNH_);
     dynamic_reconfigure::Server<masterslave::masterslaveConfig>::CallbackType f;
@@ -19,6 +21,7 @@ MasterSlave::MasterSlave(ros::NodeHandle& controlDeviceNH, ros::NodeHandle& task
 
     // Winkel werden in Rad/s übergeben (siehe server.cpp)
     stateService = nh_.serviceClient<masterslave::state>("/openIGTLState");
+
     statemachineIsRunning = true;
     ros::Timer timer = nh_.createTimer(ros::Duration(0.02), &MasterSlave::statemachineThread, this);
     ros::spin();
@@ -28,23 +31,34 @@ MasterSlave::MasterSlave(ros::NodeHandle& controlDeviceNH, ros::NodeHandle& task
 void MasterSlave::statemachineThread(const ros::TimerEvent& event)
 {
     masterslave::state stateStringMsg;
-    switch(curState)
+    if(newState!=curState)
     {
-        case IDLE:
-            stateStringMsg.request.state = "Idle;";
-            break;
-        case FREE:
-            stateStringMsg.request.state = "Free;";
-            break;
-        case MASTERSLAVE_LAPAROSCOPE:
-            stateStringMsg.request.state = "MoveToPose;rob;";
-            task = new LaparoscopeTask(nh_,rosRate);
-            break;
-        case MASTERSLAVE_URSULA:
-            if(curState==MASTERSLAVE_LAPAROSCOPE) break;
-            stateStringMsg.request.state = "MoveToJointAngles;";
-            // URSULA-Task
-            break;
+        if(taskCounter>0) delete task;
+        switch(newState)
+        {
+            case IDLE:
+                if(stateService.exists()) stateStringMsg.request.state = "Idle;";
+                curState = newState;
+                break;
+            case FREE:
+                if(stateService.exists())  stateStringMsg.request.state = "Free;";
+                curState = newState;
+                break;
+            case MASTERSLAVE_LAPAROSCOPE:
+                if(stateService.exists()) stateStringMsg.request.state = "MoveToPose;rob;";
+                task = new LaparoscopeTask(nh_,rosRate);
+                curState = newState;
+                taskCounter++;
+                break;
+            case MASTERSLAVE_URSULA:
+                if(stateService.exists()) if(curState==MASTERSLAVE_LAPAROSCOPE) break;
+                stateStringMsg.request.state = "MoveToJointAngles;";
+                task = new UrsulaTask(nh_,rosRate);
+                curState = newState;
+                taskCounter++;
+                // URSULA-Task
+                break;
+        }
     }
     if(stateService.exists())
     {
@@ -58,18 +72,18 @@ void MasterSlave::statemachineThread(const ros::TimerEvent& event)
 
 void MasterSlave::configurationCallback(masterslave::masterslaveConfig &config, uint32_t level)
 {
-    curState = static_cast<OPENIGTL_STATE>(config.cur_state);
+    newState = static_cast<OPENIGTL_STATE>(config.cur_state);
     rosRate = config.rosRate;
-    start_ = config.start;
-    ROS_INFO_STREAM("current State: " << curState);
+    ROS_INFO_STREAM("current State: " << curState << " new State: " << newState);
 }
 
 int main(int argc, char** argv)
 {
     ros::init(argc,argv,"MasterSlave");
 
+    ros::NodeHandle nodeHandle("~");
     ros::NodeHandle ControlDeviceNH(argv[1]);
-    ros::NodeHandle nodeHandle;
+
     MasterSlave MasterSlaveControl(ControlDeviceNH, nodeHandle);
 
     return 0;

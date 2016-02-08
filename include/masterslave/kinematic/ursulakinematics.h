@@ -8,10 +8,18 @@
 class UrsulaKinematics: public Kinematics
 {
 public:
-    UrsulaKinematics(const Eigen::Affine3d);
-private:
+    UrsulaKinematics(Eigen::Affine3d);
+    Eigen::Affine3d getT_0_Q8(){ return T_0_Q8;}
+    Eigen::Affine3d getFlange(){ return T_0_FL;}
     void setT_0_EE(Eigen::Affine3d);
+    void setAngles(Eigen::VectorXd);
+    void setToolAngles(Eigen::VectorXd);
+    Eigen::Affine3d calcStartPos(Eigen::Affine3d, Eigen::VectorXd);
+
+private:
+
     Eigen::VectorXd calcDirKin(Eigen::VectorXd);
+
     Eigen::MatrixXd calcAnalyticalJacobian(Eigen::VectorXd jointAngles);
     void calcInvKin();
     Eigen::MatrixXd angleMonitoring(Eigen::VectorXd q, double Hmax);
@@ -36,7 +44,6 @@ private:
     //Endeffector Position in translation and rotation in euler angles (DLR-Convention)
     Eigen::Matrix<double, 6, 1> curEEPosition;
     Eigen::Matrix<double, 6, 1> desEEPosition;
-    Eigen::Matrix<double, 10, 1> jointAngles;
 
     Eigen::Affine3d T_0_Q1;
     Eigen::Affine3d T_0_Q2;
@@ -55,6 +62,8 @@ private:
 
 
     bool isDirKinCalced;
+
+    Eigen::VectorXd rotation2RPY(Eigen::Affine3d);
 };
 
 #endif // URSULAKINEMATICS_H

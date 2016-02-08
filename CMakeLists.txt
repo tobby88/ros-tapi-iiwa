@@ -8,6 +8,7 @@ project(masterslave)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  sensor_msgs
   message_generation
   eigen_conversions
   cmake_modules
@@ -48,6 +49,7 @@ add_message_files(
 generate_messages(
    DEPENDENCIES
    std_msgs
+   sensor_msgs
 )
 
 ################################################
@@ -94,6 +96,8 @@ include_directories(
 add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
 add_dependencies(controldevice controldevice_gencfg)
 
+
+
 add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h src/kinematic/kinematics.cpp include/masterslave/kinematic/ursulakinematics.h src/kinematic/ursulakinematics.cpp src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h src/task/ursulatask.cpp include/masterslave/task/ursulatask.h include/masterslave/optimization/eiquadprog.hpp)
 add_dependencies(masterslave $(PROJECT_NAME)_gencfg)
 add_dependencies(masterslave kinematic_gencfg)
@@ -102,10 +106,14 @@ add_executable(rosopenigtlbridge src/rosopenigtlbridge.cpp include/masterslave/r
 add_dependencies(rosopenigtlbridge rosopenigtlbridge_gencfg)
 
 
+
 ## Add cmake target dependencies of the executable
 
 add_dependencies(masterslave masterslave_generate_messages_cpp)
+add_dependencies(masterslave faulhaber_driver_generate_messages_cpp)
 add_dependencies(controldevice controldevice_generate_messages_cpp)
+add_dependencies(rosopenigtlbridge rosopenigtlbridge_generate_messages_cpp)
+add_dependencies(rosopenigtlbridge masterslave_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(controldevice
