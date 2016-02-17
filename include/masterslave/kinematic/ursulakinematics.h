@@ -14,6 +14,8 @@ public:
     void setT_0_EE(Eigen::Affine3d);
     void setAngles(Eigen::VectorXd);
     void setToolAngles(Eigen::VectorXd);
+    Eigen::Affine3d getT_0_EE(){ return T_0_EE;}
+    void setCycleTime(double);
     Eigen::Affine3d calcStartPos(Eigen::Affine3d, Eigen::VectorXd);
 
 private:
@@ -22,9 +24,12 @@ private:
 
     Eigen::MatrixXd calcAnalyticalJacobian(Eigen::VectorXd jointAngles);
     void calcInvKin();
-    Eigen::MatrixXd angleMonitoring(Eigen::VectorXd q, double Hmax);
+    //Optimization constraint methods
+    Eigen::VectorXd angleMonitoring(Eigen::VectorXd deltaQ, Eigen::VectorXd q, double Hmax, double& a);
     Eigen::MatrixXd collisionControl(Eigen::VectorXd q);
-    Eigen::MatrixXd trocarMonitoring(Eigen::VectorXd q); // and RCM is needed
+    Eigen::VectorXd trocarMonitoring(Eigen::VectorXd qAct, Eigen::VectorXd deltaQ, Eigen::MatrixXd& A); // and RCM is needed
+    Eigen::MatrixXd minimizeVelocities(double, Eigen::MatrixXd);
+    Eigen::MatrixXd minimizeAcceleration(double cycleTime, Eigen::MatrixXd weightMatrix, Eigen::VectorXd deltaQ, Eigen::MatrixXd& a);
 
     //geometric description parameters of the LBR iiwa 14 R820
     static const lbrDescriptionParameters LBR_PARAMETERS;
@@ -39,7 +44,12 @@ private:
     static const double minDistance = 0.05; // minimal distance between some objects before collision control starts working
 
     //max iterations for inverse kinematics
-    static const int maxIterations = 50;
+    static const int maxIterations = 10;
+
+    //last cycle time
+    double cycleTime;
+
+    static const double residualMax= 10000;
 
     //Endeffector Position in translation and rotation in euler angles (DLR-Convention)
     Eigen::Matrix<double, 6, 1> curEEPosition;
@@ -53,6 +63,7 @@ private:
     Eigen::Affine3d T_0_Q6;
     Eigen::Affine3d T_0_Q7;
     Eigen::Affine3d T_0_FL;
+    Eigen::Affine3d T_0_SCH;
     Eigen::Affine3d T_0_Q8;
     Eigen::Affine3d T_0_Q9;
     Eigen::Affine3d T_0_Q10;

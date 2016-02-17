@@ -57,16 +57,23 @@ void UrsulaTask::loop()
     double lastTime = ros::Time::now().toSec();
     kinematic->setAngles(jointAnglesAct);
     ROS_INFO_STREAM("toolAngles " << jointAnglesAct);
-    TCP = kinematic->calcStartPos(startPositionLBR,jointAnglesAct.tail(3));
+    TCP = kinematic->getT_0_EE();
     ROS_INFO_STREAM("TCP: " << TCP.translation());
+    ros::Rate rate(50);
+    {
         ros::spinOnce();
+        kinematic->setAngles(jointAnglesAct);
+        TCP = kinematic->getT_0_EE();
         cycleTime = ros::Time::now().toSec() - lastTime;
         lastTime = ros::Time::now().toSec();
+        kinematic->setCycleTime(cycleTime);
+        TCP = moveEEFrame(TCP);
         kinematic->setT_0_EE(TCP);
-        //TCP = moveEEFrame(TCP);
-        //kinematic->getAngles();
-        //commandVelocities();
-
+        jointAnglesTar = kinematic->getAngles();
+        ROS_INFO_STREAM("jointAnglesTar: \n" << jointAnglesTar << "\n jointAnglesAct: \n" << jointAnglesAct);
+        commandVelocities();
+        rate.sleep();
+    }
     ros::shutdown();
 }
 
@@ -81,13 +88,11 @@ void UrsulaTask::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flange
 void UrsulaTask::lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr &state, int number)
 {
     jointAnglesAct(number) = state->position[0];
-    ROS_INFO_STREAM("number: " << number << " angle: " << jointAnglesAct(number));
 }
 
 void UrsulaTask::calcQ6()
 {
     jointAnglesAct.tail(3)(2) = (motorAngles(0) + motorAngles(1)) / 2;
-    ROS_INFO_STREAM("test: " <<jointAnglesAct.tail(3)(2));
     if(fabs(motorAngles(0) + motorAngles(1))<0)
         gripper_stop = true;
     else
@@ -103,7 +108,6 @@ void UrsulaTask::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 void UrsulaTask::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(1) = state->position.at(0);
-    ROS_INFO_STREAM("test: " <<jointAnglesAct.tail(3)(1));
 }
 
 void UrsulaTask::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
@@ -191,15 +195,19 @@ Eigen::Affine3d UrsulaTask::moveEEFrame(Eigen::Affine3d oldFrame)
     newFrame.setIdentity();
     newFrame.translate(oldFrame.translation());
 
-    if(aperture<=apertureLimit*DEG_TO_RAD || (velocity_.twist.linear.x/cos(polarAngle)<0 || velocity_.twist.linear.y/sin(polarAngle)<0))
+    /*if(aperture<=apertureLimit*DEG_TO_RAD || (velocity_.twist.linear.x/cos(polarAngle)<0 || velocity_.twist.linear.y/sin(polarAngle)<0))
     {
         newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
-    }
+    }*/
 
-    if((shaftBottom[2]+heightSafety<rcm[2] || velocity_.twist.linear.z <0) && (oldFrame.translation().z() > heightSafety || velocity_.twist.linear.z > 0))
+    newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
+
+    /*if((shaftBottom[2]+heightSafety<rcm[2] || velocity_.twist.linear.z <0) && (oldFrame.translation().z() > heightSafety || velocity_.twist.linear.z > 0))
     {
         newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
-    }
+    }*/
+
+    newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
 
     newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x*cycleTime,velocity_.twist.angular.y*cycleTime,velocity_.twist.angular.z*cycleTime),true));
     newFrame.rotate(oldFrame.rotation());
@@ -211,8 +219,8 @@ void UrsulaTask::commandVelocities()
 {
     double gripperVelocity;
     std_msgs::Float64 Q4Vel, Q5Vel, Q6nVel, Q6pVel;
-    Q4Vel.data = (jointAnglesTar(7) - jointAnglesAct(7))/cycleTime;
-    Q5Vel.data = (jointAnglesTar(8) - jointAnglesAct(8))/cycleTime;
+    Q4Vel.data = (jointAnglesTar(7) - jointAnglesAct(7));
+    Q5Vel.data = (jointAnglesTar(8) - jointAnglesAct(8));
     if(gripper_close && !gripper_open && !gripper_stop)
     {
         gripperVelocity = gripperVelocityValue;
@@ -226,14 +234,14 @@ void UrsulaTask::commandVelocities()
         gripperVelocity = 0;
     }
 
-    Q6nVel.data = (jointAnglesTar(9)-jointAnglesAct(9))/cycleTime;
-    Q6pVel.data = (jointAnglesTar(9)-jointAnglesAct(9))/cycleTime;
+    Q6nVel.data = (jointAnglesTar(9)-jointAnglesAct(9));
+    Q6pVel.data = (jointAnglesTar(9)-jointAnglesAct(9));
     // Stoppen der Greiferbacken, wenn eine der beiden am Anschlag ist, um Greiferöffnungswinkel nicht zu ändern
-    if(motorAngles(3)>=0.95*M_PI && (jointAnglesTar(9)-jointAnglesAct(9))>0)
+    if(motorAngles(1)>=0.95*M_PI && (jointAnglesTar(9)-jointAnglesAct(9))>0)
     {
         Q6nVel.data = 0;
     }
-    if(motorAngles(2)<=-0.95*M_PI && (jointAnglesTar(9)-jointAnglesAct(9))<0)
+    if(motorAngles(0)<=-0.95*M_PI && (jointAnglesTar(9)-jointAnglesAct(9))<0)
     {
         Q6pVel.data = 0;
     }
