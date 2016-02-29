@@ -19,6 +19,10 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, double rosRate): nh_(nh), rosRate_(r
     Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&UrsulaTask::Q6pStateCallback, this);
     lbrPositionSub = nh_.subscribe("/flangeLBR",1,&UrsulaTask::flangeCallback, this);
 
+    rcmClient = nh_.serviceClient<masterslave::rcmTest>("/RCM");
+    directKinematicsClient = nh_.serviceClient<masterslave::directKinematics>("/directKinematics");
+    inverseKinematicsClient = nh_.serviceClient<masterslave::inverseKinematics>("/inverseKinematics");
+
     for(int i=0; i < 7; i++)
     {
        std::stringstream sstream;
@@ -38,39 +42,68 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, double rosRate): nh_(nh), rosRate_(r
 
 
     ros::Rate waiteRate(0.5);
-    while(ros::ok() && !kinematic)
+    while(ros::ok() && lbrPositionSub.getNumPublishers() !=1)
     {
-        ROS_INFO("UrsulaTask is waiting for a start position of the robot");
         ros::spinOnce();
         waiteRate.sleep();
     }
-    ROS_INFO_COND(kinematic,"UrsulaTask has found the start position of the robot!");
-    if(kinematic)
-    {
-      loop();
-    }
+
+    loop();
 }
 
 void UrsulaTask::loop()
 {
     ros::spinOnce();
     double lastTime = ros::Time::now().toSec();
-    kinematic->setAngles(jointAnglesAct);
-    ROS_INFO_STREAM("toolAngles " << jointAnglesAct);
-    TCP = kinematic->getT_0_EE();
-    ROS_INFO_STREAM("TCP: " << TCP.translation());
-    ros::Rate rate(50);
+
+    masterslave::rcmTest rcmService;
+    for(int i=0; i<jointAnglesAct.rows();i++)
+    {
+        rcmService.request.trocarAngles.push_back(jointAnglesAct[i]);
+    }
+    rcmClient.call(rcmService);
+
+    rcmService.request.trocarAngles.clear();
+
+    masterslave::directKinematics directKinematicsService;
+
+    for(int i=0; i<jointAnglesAct.rows();i++)
+    {
+        directKinematicsService.request.jointAngles.push_back(jointAnglesAct[i]);
+    }
+
+    directKinematicsClient.call(directKinematicsService);
+    directKinematicsService.request.jointAngles.clear();
+    tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);
+    jointAnglesTar = jointAnglesAct;
+    ros::Rate rate(20);
+    while(ros::ok())
     {
         ros::spinOnce();
-        kinematic->setAngles(jointAnglesAct);
-        TCP = kinematic->getT_0_EE();
         cycleTime = ros::Time::now().toSec() - lastTime;
         lastTime = ros::Time::now().toSec();
-        kinematic->setCycleTime(cycleTime);
+        ROS_INFO_STREAM("cycleTime: " << cycleTime);
+        Eigen::Affine3d TCP_old = TCP;
         TCP = moveEEFrame(TCP);
-        kinematic->setT_0_EE(TCP);
-        jointAnglesTar = kinematic->getAngles();
-        ROS_INFO_STREAM("jointAnglesTar: \n" << jointAnglesTar << "\n jointAnglesAct: \n" << jointAnglesAct);
+        if(!TCP.isApprox(TCP_old))
+        {
+            for(int i=0; i<jointAnglesAct.rows();i++)
+            {
+                directKinematicsService.request.jointAngles.push_back(jointAnglesAct[i]);
+            }
+
+            directKinematicsClient.call(directKinematicsService);
+            directKinematicsService.request.jointAngles.clear();
+            masterslave::inverseKinematics inverseKinematicsService;
+            tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
+
+            inverseKinematicsClient.call(inverseKinematicsService);
+            for(int i=0;i<10;i++)
+            {
+                jointAnglesTar[i] = inverseKinematicsService.response.jointAnglesTarget.at(i);
+            }
+
+        }
         commandVelocities();
         rate.sleep();
     }
@@ -81,7 +114,6 @@ void UrsulaTask::loop()
 void UrsulaTask::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
 {
     tf::poseMsgToEigen(flangePose->pose,startPositionLBR);
-    kinematic = new UrsulaKinematics(startPositionLBR);
     lbrPositionSub.shutdown();
 }
 
@@ -182,16 +214,6 @@ void UrsulaTask::getControlDevice()
 Eigen::Affine3d UrsulaTask::moveEEFrame(Eigen::Affine3d oldFrame)
 {
     Eigen::Affine3d newFrame;
-    Eigen::Vector3d shaftBottom = kinematic->getT_0_Q8().translation();
-    Eigen::Vector3d rcm = kinematic->getRCM().translation();
-    Eigen::Vector3d rcm_shaftBottom = shaftBottom -rcm;
-    // calculation of the aperture of the frustum
-    double aperture = asin(sqrt(pow(rcm_shaftBottom[0],2)+pow(rcm_shaftBottom[1],2))/rcm_shaftBottom[2]);
-
-    // polar angle in the frustum plane
-    double polarAngle = atan2(rcm_shaftBottom[1],rcm_shaftBottom[0]);
-
-
     newFrame.setIdentity();
     newFrame.translate(oldFrame.translation());
 
@@ -211,6 +233,7 @@ Eigen::Affine3d UrsulaTask::moveEEFrame(Eigen::Affine3d oldFrame)
 
     newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x*cycleTime,velocity_.twist.angular.y*cycleTime,velocity_.twist.angular.z*cycleTime),true));
     newFrame.rotate(oldFrame.rotation());
+
     //Plausibilitätskontrolle*/
     return newFrame;
 }
@@ -245,9 +268,8 @@ void UrsulaTask::commandVelocities()
     {
         Q6pVel.data = 0;
     }
-
-    Q6nVel.data += gripperVelocity/cycleTime;
-    Q6pVel.data -= gripperVelocity/cycleTime;
+    Q6nVel.data += gripperVelocity;
+    Q6pVel.data -= gripperVelocity;
 
     Q4Pub.publish(Q4Vel);
     Q5Pub.publish(Q5Vel);

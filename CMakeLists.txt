@@ -35,7 +35,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 ################################################
 add_service_files(FILES
     state.srv
-    RCM.srv
+    rcmTest.srv
     inverseKinematics.srv
     directKinematics.srv
   )

@@ -7,6 +7,10 @@
 #include "sensor_msgs/JointState.h"
 #include "geometry_msgs/PoseStamped.h"
 
+#include "masterslave/directKinematics.h"
+#include "masterslave/inverseKinematics.h"
+#include "masterslave/rcmTest.h"
+
 
 #include <tf/tf.h>
 #include <tf_conversions/tf_eigen.h>
@@ -29,6 +33,9 @@ class UrsulaTask: public Task
 
         ros::Publisher lbrJointAnglePub[7];
         ros::Subscriber lbrJointAngleSub[7];
+        ros::ServiceClient rcmClient;
+        ros::ServiceClient directKinematicsClient;
+        ros::ServiceClient inverseKinematicsClient;
         void lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr& state, int number);
 
         geometry_msgs::TwistStamped velocity_;

@@ -9,8 +9,8 @@ ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
     errorShown = false;
     curDeviceNum=0;
 
-    rotGain = 0.2;
-    transGain = 0.1;
+    rotGain = 0.002;
+    transGain = 0.001;
 
     dynamic_reconfigure::Server<masterslave::controldeviceConfig> server;
     dynamic_reconfigure::Server<masterslave::controldeviceConfig>::CallbackType f;

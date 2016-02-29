@@ -33,7 +33,11 @@ void MasterSlave::statemachineThread(const ros::TimerEvent& event)
     masterslave::state stateStringMsg;
     if(newState!=curState)
     {
-        if(taskCounter>0) delete task;
+        if(taskCounter>0)
+        {
+            delete task;
+            taskCounter = 0;
+        }
         switch(newState)
         {
             case IDLE:
