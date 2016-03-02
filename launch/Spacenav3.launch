@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="TestDevice" value="Spacenav"/>
+	<node pkg="masterslave" type="controldevice" name="$(arg TestDevice)" args="$(arg TestDevice)" output="screen">
+		<param name="rotGain" value="0.2"/>
+		<param name="transGain" value="0.1"/>
+		<param name="button/0" type="string" value="close_gripper"/>
+		<param name="button/1" type="string" value="open_gripper"/>
+	</node>
+	<node respawn="true" pkg="spacenav_node" type="spacenav_node" name="$(arg TestDevice)_node">
+		<param name="dev" type="string" value="/dev/input/js1" />
+		<param name="deadzone" value="0.12"/>
+		<!--<param name="autorepeat_rate" value="60"/>-->
+	</node>
+	<node pkg="masterslave" type="masterslave" name="MasterSlave" args="$(arg TestDevice)" output="screen">
+		<param name="gripper_vel" value="0.1"/>
+		<param name="Mode" type="string" value="Robot"/>
+	</node>
+	<node pkg="masterslave" type="ursulakinematics" name="UrsulaKinematics" output="screen"/>
+	<remap from="vrep/flangeLBR" to="/flangeLBR"/>
+	<remap from="/flangeTarget" to="/vrep/flangeTarget"/> 
+
+</launch>
+

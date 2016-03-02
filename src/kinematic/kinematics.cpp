@@ -25,7 +25,6 @@ Eigen::Affine3d Kinematics::buildAffine3d(const Eigen::Vector3d &translXYZ, cons
 void Kinematics::setT_0_EE(Eigen::Affine3d value)
 {
     T_0_EE = value;
-    calcInvKin();
 }
 
 void Kinematics::setRCM(const Eigen::Affine3d startPose)

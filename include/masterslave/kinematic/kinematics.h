@@ -34,7 +34,6 @@ class Kinematics
     protected:
 
         // pure virtual methods for kinematic calculation
-        virtual void calcInvKin()=0;
 
         // help method to build up Eigen::Affine3d-Transformations
         Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);

@@ -241,7 +241,7 @@ inline double solve_quadprog(MatrixXd & G,  VectorXd & g0,
 		iai(i) = i;
   
 l1:	iter++;
-  if(iter>maxIterations) return f_value;
+  if(iter>maxIterations+1) return f_value;
 #ifdef TRACE_SOLVER
   print_vector("x", x, n);
 #endif

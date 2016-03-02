@@ -12,6 +12,9 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, double rosRate): nh_(nh), rosRate_(r
     jointAnglesAct = Eigen::VectorXd::Zero(10);
     jointAnglesTar = Eigen::VectorXd::Zero(10);
 
+    heightSafety = 0.05;
+
+    cycleTimePub = nh_.advertise<std_msgs::Float64>("/cycleTime",1);
     getControlDevice();
     Q4StateSub = nh_.subscribe("/Q4/joint_states",1,&UrsulaTask::Q4StateCallback, this);
     Q5StateSub = nh_.subscribe("/Q5/joint_states",1,&UrsulaTask::Q5StateCallback, this);
@@ -64,6 +67,7 @@ void UrsulaTask::loop()
     rcmClient.call(rcmService);
 
     rcmService.request.trocarAngles.clear();
+    tf::poseMsgToEigen(rcmService.response.trocar,RCM);
 
     masterslave::directKinematics directKinematicsService;
 
@@ -76,26 +80,31 @@ void UrsulaTask::loop()
     directKinematicsService.request.jointAngles.clear();
     tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);
     jointAnglesTar = jointAnglesAct;
-    ros::Rate rate(20);
+    ros::Rate rate(1000);
     while(ros::ok())
     {
         ros::spinOnce();
         cycleTime = ros::Time::now().toSec() - lastTime;
         lastTime = ros::Time::now().toSec();
-        ROS_INFO_STREAM("cycleTime: " << cycleTime);
+        std_msgs::Float64 timeMsg;
+        timeMsg.data = cycleTime;
+        cycleTimePub.publish(timeMsg);
+        //ROS_INFO_STREAM("cycleTime: " << cycleTime);
         Eigen::Affine3d TCP_old = TCP;
         TCP = moveEEFrame(TCP);
-        if(!TCP.isApprox(TCP_old))
+
+        //if(!TCP.isApprox(TCP_old))
         {
-            for(int i=0; i<jointAnglesAct.rows();i++)
+            /*for(int i=0; i<jointAnglesAct.rows();i++)
             {
                 directKinematicsService.request.jointAngles.push_back(jointAnglesAct[i]);
             }
 
             directKinematicsClient.call(directKinematicsService);
-            directKinematicsService.request.jointAngles.clear();
+            directKinematicsService.request.jointAngles.clear();*/
             masterslave::inverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
+            ROS_DEBUG_STREAM(inverseKinematicsService.request.T_0_EE.position);
 
             inverseKinematicsClient.call(inverseKinematicsService);
             for(int i=0;i<10;i++)
@@ -217,6 +226,8 @@ Eigen::Affine3d UrsulaTask::moveEEFrame(Eigen::Affine3d oldFrame)
     newFrame.setIdentity();
     newFrame.translate(oldFrame.translation());
 
+
+
     /*if(aperture<=apertureLimit*DEG_TO_RAD || (velocity_.twist.linear.x/cos(polarAngle)<0 || velocity_.twist.linear.y/sin(polarAngle)<0))
     {
         newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
@@ -224,14 +235,20 @@ Eigen::Affine3d UrsulaTask::moveEEFrame(Eigen::Affine3d oldFrame)
 
     newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
 
-    /*if((shaftBottom[2]+heightSafety<rcm[2] || velocity_.twist.linear.z <0) && (oldFrame.translation().z() > heightSafety || velocity_.twist.linear.z > 0))
+    ROS_INFO_STREAM(oldFrame.translation().z());
+
+
+
+
+    if((oldFrame.translation().z()+heightSafety<RCM.translation().z() || velocity_.twist.linear.z > 0) && (oldFrame.translation().z() > heightSafety || velocity_.twist.linear.z < 0))
     {
         newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
-    }*/
+    }
 
-    newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
 
     newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x*cycleTime,velocity_.twist.angular.y*cycleTime,velocity_.twist.angular.z*cycleTime),true));
+
+
     newFrame.rotate(oldFrame.rotation());
 
     //Plausibilitätskontrolle*/

@@ -49,6 +49,7 @@ class MasterSlave
 {
     public:
         MasterSlave(ros::NodeHandle&,ros::NodeHandle&);
+        ~MasterSlave();
 
     private:
         void configurationCallback(masterslave::masterslaveConfig &config, uint32_t level);

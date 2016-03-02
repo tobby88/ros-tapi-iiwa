@@ -1,7 +1,6 @@
 #ifndef URSULATASK_H
 #define URSULATASK_H
 
-#include "kinematic/ursulakinematics.h"
 #include "task.h"
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
@@ -32,6 +31,7 @@ class UrsulaTask: public Task
         std::vector<std::string> buttons;
 
         ros::Publisher lbrJointAnglePub[7];
+        ros::Publisher cycleTimePub;
         ros::Subscriber lbrJointAngleSub[7];
         ros::ServiceClient rcmClient;
         ros::ServiceClient directKinematicsClient;
@@ -52,8 +52,7 @@ class UrsulaTask: public Task
         void loop();
 
         Eigen::VectorXd lbrJointAngles;
-
-        UrsulaKinematics* kinematic;
+        Eigen::Affine3d RCM;
 };
 
 #endif // URSULATASK_H

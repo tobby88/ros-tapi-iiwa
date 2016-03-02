@@ -28,6 +28,14 @@ MasterSlave::MasterSlave(ros::NodeHandle& controlDeviceNH, ros::NodeHandle& task
 
 }
 
+MasterSlave::~MasterSlave()
+{
+    if(taskCounter>0)
+    {
+        delete task;
+    }
+}
+
 void MasterSlave::statemachineThread(const ros::TimerEvent& event)
 {
     masterslave::state stateStringMsg;

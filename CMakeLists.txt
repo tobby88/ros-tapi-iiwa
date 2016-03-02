@@ -101,13 +101,15 @@ add_dependencies(controldevice controldevice_gencfg)
 
 
 
-add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h src/kinematic/kinematics.cpp include/masterslave/kinematic/ursulakinematics.h src/kinematic/ursulakinematics.cpp src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h src/task/ursulatask.cpp include/masterslave/task/ursulatask.h include/masterslave/optimization/eiquadprog.hpp)
+add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h src/kinematic/kinematics.cpp src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h src/task/ursulatask.cpp include/masterslave/task/ursulatask.h include/masterslave/optimization/eiquadprog.hpp)
 add_dependencies(masterslave $(PROJECT_NAME)_gencfg)
 add_dependencies(masterslave kinematic_gencfg)
 
 add_executable(rosopenigtlbridge src/rosopenigtlbridge.cpp include/masterslave/rosopenigtlbridge.h)
 add_dependencies(rosopenigtlbridge rosopenigtlbridge_gencfg)
 
+add_executable(ursulakinematics src/kinematic/ursulakinematics.cpp include/masterslave/kinematic/ursulakinematics.h include/masterslave/kinematic/kinematics.h)
+add_dependencies(ursulakinematics ursulakinematics_gencfg)
 
 
 ## Add cmake target dependencies of the executable
@@ -133,6 +135,11 @@ target_link_libraries(rosopenigtlbridge
     ${catkin_LIBRARIES}
     ${Eigen_LIBRARIES}
     OpenIGTLink
+)
+
+target_link_libraries(ursulakinematics
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
 )
 #############
 ## Install ##
