@@ -53,6 +53,8 @@ class UrsulaTask: public Task
 
         Eigen::VectorXd lbrJointAngles;
         Eigen::Affine3d RCM;
+
+        int newJointAnglesArrived;
 };
 
 #endif // URSULATASK_H

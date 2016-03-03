@@ -129,8 +129,8 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
     Eigen::MatrixXd Aieq = Eigen::MatrixXd::Identity(10,20);
     Aieq.rightCols(10) = -Eigen::MatrixXd::Identity(10,10);
     Eigen::VectorXd bieq = Eigen::VectorXd(20);
-    bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*200;
-    bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*200;
+    bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*2;
+    bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*2;
     jointAnglesIterationPrevious = jointAnglesAct;
 
 
@@ -149,14 +149,14 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
         Eigen::MatrixXd C_trokar = Eigen::MatrixXd::Zero(2,10);
         Eigen::VectorXd d_trokar = trocarMonitoring(jointAnglesIterationPrevious,deltaQ,C_trokar);
 
-        Eigen::MatrixXd Aeq(Akin.cols(),Akin.rows()+C_trokar.rows());
-        Aeq << Akin.transpose(), 10*C_trokar.transpose();
+        Eigen::MatrixXd Aeq(C_trokar.cols(),Akin.rows()+C_trokar.rows());
+        Aeq <<C_trokar.transpose(), Akin.transpose();
         Eigen::VectorXd beq(bkin.rows()+d_trokar.rows());
-        beq << bkin, 10*d_trokar;
+        beq << d_trokar, bkin;
 
-        Aeq = 1/cycleTime*Aeq;
-        beq = 1/cycleTime*beq;
-
+        //Aeq = 1/cycleTime*Aeq;
+        //beq = 1/cycleTime*beq;
+        ROS_INFO_STREAM("Aeq: \n" << Aeq);
         ROS_INFO_STREAM(" beq: " << beq);
 
         double d_ang = 0;
@@ -172,13 +172,13 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
         d_acc = epsi*d_acc;
         ROS_DEBUG_STREAM("d_acc" << d_acc);
 
-        Eigen::MatrixXd C(C_acc.rows()+C_vel.rows()+C_ang.transpose().rows(),C_trokar.cols());
-        Eigen::VectorXd d(d_acc.rows()+d_vel.rows()+1);
+        Eigen::MatrixXd C(C_acc.rows()+C_vel.rows(),Akin.cols());
+        Eigen::VectorXd d(d_acc.rows()+d_vel.rows());
 
 
 
-        C << 1*C_acc, C_vel, C_ang.transpose();
-        d << -1*d_acc, -d_vel, -d_ang;
+        C << 0.000000001*C_acc, 0.00000000001*C_vel;
+        d <<-0.000000001*d_acc,-0.00000000001*d_vel;
         ROS_DEBUG_STREAM("C: " << C << "\n d: " << d);
 
         // https://forum.kde.org/viewtopic.php?f=74&t=102468
@@ -196,14 +196,15 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
                 break;
             }
         }
-        if(residualNorm == std::numeric_limits<double>::infinity()) break;
-        jointAnglesIterationPrevious += dQIteration;
+        if(residualNorm == std::numeric_limits<double>::infinity() || iterations >= maxIterations || std::abs(residualNorm - residualOld) < 1e-10) break;
+        jointAnglesIterationPrevious -= dQIteration;
 
 
     }
     //ROS_INFO_STREAM("residual: \n" << residual);
     //ROS_INFO_STREAM("iterations: " << iterations);
     jointAnglesTar = jointAnglesIterationPrevious;
+    jointAnglesAct = jointAnglesTar;
    // ROS_INFO_STREAM("jointAnglesTar: \n" << jointAnglesTar);
 }
 
@@ -360,52 +361,38 @@ Eigen::VectorXd UrsulaKinematics::trocarMonitoring(Eigen::VectorXd qAct, Eigen::
     Eigen::Affine3d trocar = Eigen::Affine3d::Identity();
     // Vermeidung Rotationsfehler, da sich das Trokar-KS mit dem Schaft mitdreht
     trocar.rotate(T_0_SCH.rotation());
+    ROS_INFO_STREAM(RCM.translation());
     trocar.translation() = RCM.translation();
 
     Eigen::Affine3d shaft(T_0_SCH);
     // Vermeidung Translationsfehler in z-Koordinate, da der Schaft virtuell auf der z-Koordinate des Trokars fixiert wird
 
     Eigen::Vector3d shaftVector = Eigen::Vector3d::Zero(3);
-    shaftVector(2) = (RCM.translation().z()-shaft.translation().z());
-    shaftVector = T_0_SCH.rotation()*shaftVector;
-    shaft.translate(shaftVector);
-    ROS_DEBUG_STREAM("trocar: \n" << trocar.matrix() << "\n shaft: \n" << shaft.matrix() << "\n shaft in trocar frame: \n"  << (trocar.inverse()*shaft).matrix() << "\n T_0_SCH rot: \n" << T_0_SCH.matrix());
+    double beta = (RCM.translation().z()-shaft.translation().z())/T_0_SCH.matrix()(2,2);
+    ROS_INFO_STREAM("Distance: " << Eigen::Vector3d(beta*T_0_SCH.matrix().col(2).head(3)));
+    shaft.translation() = shaft.translation() + Eigen::Vector3d(beta*T_0_SCH.matrix().col(2).head(3));
+    ROS_WARN_STREAM("trocar: \n" << trocar.matrix() << "\n shaft: \n" << shaft.matrix() << "\n shaftVector: \n" << shaftVector );
 
     // dH/dQ
-    Eigen::Vector3d z_Q1 = trocar.inverse().rotation()*T_0_Q1.matrix().col(2).head(3);
-    Eigen::Vector3d z_Q2 = trocar.inverse().rotation()*T_0_Q2.matrix().col(2).head(3);
-    Eigen::Vector3d z_Q3 = trocar.inverse().rotation()*T_0_Q3.matrix().col(2).head(3);
-    Eigen::Vector3d z_Q4 = trocar.inverse().rotation()*T_0_Q4.matrix().col(2).head(3);
-    Eigen::Vector3d z_Q5 = trocar.inverse().rotation()*T_0_Q5.matrix().col(2).head(3);
-    Eigen::Vector3d z_Q6 = trocar.inverse().rotation()*T_0_Q6.matrix().col(2).head(3);
-    Eigen::Vector3d z_Q7 = trocar.inverse().rotation()*T_0_Q7.matrix().col(2).head(3);
+    Eigen::Vector3d z_Q1 = T_0_Q1.matrix().col(2).head(3);
+    Eigen::Vector3d z_Q2 = T_0_Q2.matrix().col(2).head(3);
+    Eigen::Vector3d z_Q3 = T_0_Q3.matrix().col(2).head(3);
+    Eigen::Vector3d z_Q4 = T_0_Q4.matrix().col(2).head(3);
+    Eigen::Vector3d z_Q5 = T_0_Q5.matrix().col(2).head(3);
+    Eigen::Vector3d z_Q6 = T_0_Q6.matrix().col(2).head(3);
+    Eigen::Vector3d z_Q7 = T_0_Q7.matrix().col(2).head(3);
 
-    Eigen::Vector3d x_1_trocar = (trocar.inverse()*shaft).translation() - (trocar.inverse()*T_0_Q1).translation();
-    Eigen::Vector3d x_2_trocar = (trocar.inverse()*shaft).translation() - (trocar.inverse()*T_0_Q2).translation();
-    Eigen::Vector3d x_3_trocar = (trocar.inverse()*shaft).translation() - (trocar.inverse()*T_0_Q3).translation();
-    Eigen::Vector3d x_4_trocar = (trocar.inverse()*shaft).translation() - (trocar.inverse()*T_0_Q4).translation();
-    Eigen::Vector3d x_5_trocar = (trocar.inverse()*shaft).translation() - (trocar.inverse()*T_0_Q5).translation();
-    Eigen::Vector3d x_6_trocar = (trocar.inverse()*shaft).translation() - (trocar.inverse()*T_0_Q6).translation();
-    Eigen::Vector3d x_7_trocar = (trocar.inverse()*shaft).translation() - (trocar.inverse()*T_0_Q7).translation();
+    Eigen::Vector3d x_1_trocar = (shaft).translation() - (T_0_Q1).translation();
+    Eigen::Vector3d x_2_trocar = (shaft).translation() - (T_0_Q2).translation();
+    Eigen::Vector3d x_3_trocar = (shaft).translation() - (T_0_Q3).translation();
+    Eigen::Vector3d x_4_trocar = (shaft).translation() - (T_0_Q4).translation();
+    Eigen::Vector3d x_5_trocar = (shaft).translation() - (T_0_Q5).translation();
+    Eigen::Vector3d x_6_trocar = (shaft).translation() - (T_0_Q6).translation();
+    Eigen::Vector3d x_7_trocar = (shaft).translation() - (T_0_Q7).translation();
 
-    Eigen::MatrixXd omega = Eigen::MatrixXd::Zero(6,6);
+    Eigen::VectorXd shaftPositionRPY = rotation2RPY(shaft);
 
-    omega.topLeftCorner(3,3) = Eigen::MatrixXd::Identity(3,3);
-    omega.topRightCorner(3,3) = Eigen::MatrixXd::Zero(3,3);
-    omega.bottomLeftCorner(3,3) = Eigen::MatrixXd::Zero(3,3);
-
-    //Transformation from geometrical Jacobian to analytical Jacobian
-    Eigen::VectorXd shaftPositionRPY = rotation2RPY(trocar.inverse()*shaft);
-    double alpha = shaftPositionRPY.tail(3)(0);
-    double gamma = shaftPositionRPY.tail(3)(2);
-    double beta = shaftPositionRPY.tail(3)(1);
-
-    Eigen::Matrix3d omegaKard;
-    omegaKard.row(0) << cos(beta)*cos(gamma), -sin(gamma), 0;
-    omegaKard.row(1) << sin(gamma)*cos(beta), cos(gamma), 0;
-    omegaKard.row(2) << -sin(beta), 0, 1;
-
-    omega.bottomRightCorner(3,3) = omegaKard;
+    Eigen::VectorXd trocarPositionRPY = rotation2RPY(trocar);
 
 
     // A = dH/dq
@@ -419,10 +406,8 @@ Eigen::VectorXd UrsulaKinematics::trocarMonitoring(Eigen::VectorXd qAct, Eigen::
     Ages.col(5) << z_Q6.cross(x_6_trocar), z_Q6;
     Ages.col(6) << z_Q7.cross(x_7_trocar), z_Q7;
 
-
-
-    Eigen::VectorXd ages = -(shaftPositionRPY + Ages*deltaQ); // - 0-Vektor im Trokarsystem da der gewünschte Punkt [0 0 0] im Trokar-KS ist.
-    //ROS_INFO_STREAM_NAMED("TrocarMonitoring","a:\n" << ages << "\n A: \n" << Ages << "\n shaftPos: \n" << shaftPositionRPY);
+    Eigen::VectorXd ages = -(shaftPositionRPY + Ages*deltaQ-trocarPositionRPY); // - 0-Vektor im Trokarsystem da der gewünschte Punkt [0 0 0] im Trokar-KS ist.
+    ROS_INFO_STREAM_NAMED("TrocarMonitoring","a:\n" << ages << "\n A: \n" << Ages << "\n shaftPos: \n" << shaftPositionRPY);
 
     A = Ages.topRows(2);
     Eigen::VectorXd a = ages.topRows(2);

@@ -93,15 +93,8 @@ void UrsulaTask::loop()
         Eigen::Affine3d TCP_old = TCP;
         TCP = moveEEFrame(TCP);
 
-        //if(!TCP.isApprox(TCP_old))
+        if(!TCP.isApprox(TCP_old))
         {
-            /*for(int i=0; i<jointAnglesAct.rows();i++)
-            {
-                directKinematicsService.request.jointAngles.push_back(jointAnglesAct[i]);
-            }
-
-            directKinematicsClient.call(directKinematicsService);
-            directKinematicsService.request.jointAngles.clear();*/
             masterslave::inverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
             ROS_DEBUG_STREAM(inverseKinematicsService.request.T_0_EE.position);
@@ -114,6 +107,21 @@ void UrsulaTask::loop()
 
         }
         commandVelocities();
+        /*if(newJointAnglesArrived == (1 << 10)-1)
+        {
+             ROS_INFO("new JointAngles");
+             std::vector<double> jointAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
+             masterslave::directKinematics directKinematicsService;
+
+             for(int i=0; i<jointAnglesAct.rows();i++)
+             {
+                 directKinematicsService.request.jointAngles.push_back(jointAnglesAct[i]);
+             }
+
+             directKinematicsClient.call(directKinematicsService);
+             directKinematicsService.request.jointAngles.clear();
+        }*/
+        newJointAnglesArrived = 0;
         rate.sleep();
     }
     ros::shutdown();
@@ -129,6 +137,7 @@ void UrsulaTask::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flange
 void UrsulaTask::lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr &state, int number)
 {
     jointAnglesAct(number) = state->position[0];
+    newJointAnglesArrived += 1 << number;
 }
 
 void UrsulaTask::calcQ6()
@@ -143,17 +152,20 @@ void UrsulaTask::calcQ6()
 void UrsulaTask::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(0) = state->position.at(0);
+    newJointAnglesArrived += 1 << 7;
 }
 
 
 void UrsulaTask::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(1) = state->position.at(0);
+    newJointAnglesArrived += 1 << 8;
 }
 
 void UrsulaTask::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(0)= state->position.at(0);
+    newJointAnglesArrived += 1 << 9;
 }
 
 void UrsulaTask::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
@@ -235,14 +247,14 @@ Eigen::Affine3d UrsulaTask::moveEEFrame(Eigen::Affine3d oldFrame)
 
     newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
 
-    ROS_INFO_STREAM(oldFrame.translation().z());
+    //ROS_INFO_STREAM(oldFrame.matrix());
 
-
+    newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
 
 
     if((oldFrame.translation().z()+heightSafety<RCM.translation().z() || velocity_.twist.linear.z > 0) && (oldFrame.translation().z() > heightSafety || velocity_.twist.linear.z < 0))
     {
-        newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
+
     }
 
 
