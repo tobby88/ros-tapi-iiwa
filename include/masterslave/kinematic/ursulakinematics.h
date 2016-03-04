@@ -43,9 +43,6 @@ private:
     Eigen::MatrixXd minimizeVelocities(double, Eigen::MatrixXd);
     Eigen::MatrixXd minimizeAcceleration(double cycleTime, Eigen::MatrixXd weightMatrix, Eigen::VectorXd deltaQ, Eigen::MatrixXd& a);
 
-    Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
-
-
     ros::ServiceServer rcmServiceServer;
     ros::ServiceServer directKinematicsServer;
     ros::ServiceServer inverseKinematicsServer;
@@ -64,9 +61,9 @@ private:
 
     //geometric description parameters of the LBR iiwa 14 R820 (angle limits and speed limits)
     Eigen::Matrix<double, 10, 1> URSULA_MAX_ANGLES;
-
     Eigen::Matrix<double, 10, 1> URSULA_MAX_ANGLES_SPEED;
 
+    //weightMatrix for the usage of different joints
     Eigen::Matrix<double, 10, 10> jointWeightMatrix;
 
     // Parameters for constraints
@@ -84,6 +81,7 @@ private:
     Eigen::Matrix<double, 6, 1> curEEPosition;
     Eigen::Matrix<double, 6, 1> desEEPosition;
 
+    // Direct Kinematics
     Eigen::Affine3d T_0_Q1;
     Eigen::Affine3d T_0_Q2;
     Eigen::Affine3d T_0_Q3;
@@ -105,12 +103,16 @@ private:
     double trocarGain=1;
     double tcpGain=1;
 
+    // Transformation RCM in 0
     Eigen::Affine3d RCM;
 
+    // Jacobians
     Eigen::MatrixXd geomJacobian;
     Eigen::MatrixXd analyticalJacobian;
 
+    // Helper Method
     Eigen::VectorXd rotation2RPY(Eigen::Affine3d);
+    Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
 };
 
 #endif // URSULAKINEMATICS_H

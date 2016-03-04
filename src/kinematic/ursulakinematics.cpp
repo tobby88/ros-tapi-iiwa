@@ -61,7 +61,6 @@ bool UrsulaKinematics::inverseKinematicsCallback(masterslave::UrsulaInverseKinem
     std::vector<double> jointAnglesTarget(jointAnglesTar.data(),jointAnglesTar.data()+jointAnglesTar.rows()*jointAnglesTar.cols());
 
     resp.jointAnglesTarget = jointAnglesTarget;
-
 }
 
 
@@ -188,7 +187,7 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
         d <<-accelerationGain*d_acc,-velocityGain*d_vel;
         ROS_DEBUG_STREAM("C: " << C << "\n d: " << d);
 
-        // https://forum.kde.org/viewtopic.php?f=74&t=102468
+        // https://forum.kde.org/viewtopic.php?f=74&t=102468 Normal equation form (transcript robotics 2)
         Eigen::MatrixXd cTc = C.transpose()*C;
         Eigen::VectorXd cTd = -C.transpose()*d;
         ROS_DEBUG_STREAM("cTc: " << cTc << " cTd: " << cTd);

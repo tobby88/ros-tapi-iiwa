@@ -34,5 +34,3 @@ void Kinematics::setRCM(const Eigen::Affine3d startPose)
 }
 
 
-const toolDescriptionParameters Kinematics::TOOL_PARAMETERS = {0.438, 0.0, 0.062, 0.0, 90.0, 0.0, 0.0088, 0.017, 0.305};
-

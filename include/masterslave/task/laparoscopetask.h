@@ -48,7 +48,11 @@ class LaparoscopeTask : public Task
 
         Eigen::Affine3d moveEEFrame(Eigen::Affine3d);
 
-        Laparoscope* kinematic;
+        ros::ServiceClient rcmClient;
+        ros::ServiceClient directKinematicsClient;
+        ros::ServiceClient inverseKinematicsClient;
+
+        Eigen::Affine3d T_0_FL;
 
 
 

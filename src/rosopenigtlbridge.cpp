@@ -23,11 +23,22 @@
  */
 RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
 {
-    this->flangeTargetSub = nh_.subscribe("/flangeTarget",1,&RosOpenIgtlBridge::transformCallback,this);
-    this->flangePub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeLBR",1);
+    flangeTargetSub = nh_.subscribe("/flangeTarget",1,&RosOpenIgtlBridge::transformCallback,this);
+
+    flangePub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeLBR",1);
     sendTransformFlag = false;
 
-    CMD_UID=0;
+    for(int i=0; i < 7; i++)
+    {
+       std::stringstream sstream;
+       sstream << "/LBR/des/joint" << i+1;
+       lbrJointAngleSub[i] = nh_.subscribe<std_msgs::Float64>(sstream.str().c_str(),1,boost::bind(&RosOpenIgtlBridge::lbrJointAngleCallback,this,_1,i));
+       sstream.str(std::string());
+
+       sstream << "/LBR/act/joint" << i+1;
+       lbrJointAnglePub[i] = nh_.advertise<sensor_msgs::JointState>(sstream.str().c_str(),1);
+       sstream.str(std::string());
+    }
 
     transformReceived_ = false;
 
@@ -249,12 +260,18 @@ bool RosOpenIgtlBridge::stateService(masterslave::state::Request &req, mastersla
     }
     else if(stateString == "MoveToJointAngles;")
     {
-        // Hier die Gelenkwinkel in den String packen
+        for(int i=0;i<jointAngles_new.rows();i++)
+            sstream << jointAngles_new(i) << ";";
     }
     openIGTLCommandString = sstream.str();
     ROS_INFO_STREAM("Commandstring: " << openIGTLCommandString);
     sstream.str(std::string());
     return true;
+}
+
+void RosOpenIgtlBridge::lbrJointAngleCallback(const std_msgs::Float64ConstPtr &jointAngle, int number)
+{
+    jointAngles_new(number) = jointAngle->data;
 }
 
 

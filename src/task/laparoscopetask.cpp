@@ -16,6 +16,10 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(ro
     Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&LaparoscopeTask::Q6pStateCallback, this);
     lbrPositionSub = nh_.subscribe("/flangeLBR",1,&LaparoscopeTask::flangeCallback, this);
 
+    rcmClient = nh_.serviceClient<masterslave::LaparoscopeRCM>("/RCM");
+    directKinematicsClient = nh_.serviceClient<masterslave::LaparoscopeDirectKinematics>("/directKinematics");
+    inverseKinematicsClient = nh_.serviceClient<masterslave::LaparoscopeInverseKinematics>("/inverseKinematics");
+
     Q4Pub = nh_.advertise<std_msgs::Float64>("/Q4/setPointVelocity",1);
     Q5Pub = nh_.advertise<std_msgs::Float64>("/Q5/setPointVelocity",1);
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
@@ -24,14 +28,14 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(ro
 
 
     ros::Rate waiteRate(0.5);
-    while(ros::ok() && !kinematic)
+    while(ros::ok() && lbrPositionSub.getNumPublishers()==1)
     {
         ROS_INFO("LaparoscopeTask is waiting for a start position of the robot");
         ros::spinOnce();
         waiteRate.sleep();
     }
-    ROS_INFO_COND(kinematic,"LaroscopeTask has found the start position of the robot!");
-    if(kinematic)
+    ROS_INFO("LaroscopeTask has found the start position of the robot!");
+    if(lbrPositionSub.getNumPublishers()!=1)
     {
         loop();
     }
@@ -41,34 +45,26 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(ro
 void LaparoscopeTask::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
 {
     tf::poseMsgToEigen(flangePose->pose,startPositionLBR);
-    kinematic = new Laparoscope(startPositionLBR);
     lbrPositionSub.shutdown();
 }
 
 Eigen::Affine3d LaparoscopeTask::moveEEFrame(Eigen::Affine3d oldFrame)
 {
-    Eigen::Vector3d shaftBottom = kinematic->getT_0_Q4().translation();
-    Eigen::Vector3d rcm = kinematic->getRCM().translation();
-    Eigen::Vector3d rcm_shaftBottom = shaftBottom -rcm;
+    //Eigen::Vector3d rcm_shaftBottom = shaftBottom -rcm;
     // calculation of the aperture of the frustum
-    double aperture = asin(sqrt(pow(rcm_shaftBottom[0],2)+pow(rcm_shaftBottom[1],2))/rcm_shaftBottom[2]);
+    //double aperture = asin(sqrt(pow(rcm_shaftBottom[0],2)+pow(rcm_shaftBottom[1],2))/rcm_shaftBottom[2]);
 
     // polar angle in the frustum plane
-    double polarAngle = atan2(rcm_shaftBottom[1],rcm_shaftBottom[0]);
+    //double polarAngle = atan2(rcm_shaftBottom[1],rcm_shaftBottom[0]);
 
     Eigen::Affine3d newFrame;
     newFrame.setIdentity();
     newFrame.translate(oldFrame.translation());
 
-    if(aperture<=apertureLimit*DEG_TO_RAD || (velocity_.twist.linear.x/cos(polarAngle)<0 || velocity_.twist.linear.y/sin(polarAngle)<0))
-    {
-        newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
-    }
+    newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
 
-    if((shaftBottom[2]+heightSafety<rcm[2] || velocity_.twist.linear.z <0) && (oldFrame.translation().z() > heightSafety || velocity_.twist.linear.z > 0))
-    {
-        newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
-    }
+    newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
+
 
     newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x*cycleTime,velocity_.twist.angular.y*cycleTime,velocity_.twist.angular.z*cycleTime),true));
     newFrame.rotate(oldFrame.rotation());
@@ -80,21 +76,31 @@ Eigen::Affine3d LaparoscopeTask::moveEEFrame(Eigen::Affine3d oldFrame)
 void LaparoscopeTask::loop()
 {
     double lastTime = ros::Time::now().toSec();
-    kinematic->setAngles(jointAnglesAct);
-    TCP = startPositionLBR*kinematic->getT_FL_EE();
-    geometry_msgs::PoseStamped poseFLmsg;
+    masterslave::LaparoscopeRCM rcmService;
+    tf::poseEigenToMsg(startPositionLBR,rcmService.request.T_0_FL);
+    rcmClient.call(rcmService);
+
+    masterslave::LaparoscopeDirectKinematics directKinematicsService;
+    std::vector<double> jointAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
+    directKinematicsService.request.jointAngles = jointAngles;
+    tf::poseEigenToMsg(startPositionLBR,rcmService.request.T_0_FL);
+    directKinematicsClient.call(directKinematicsService);
+
+    ros::Rate rate(rosRate_);
     while(ros::ok())
     {
         ros::spinOnce();
         cycleTime = ros::Time::now().toSec() - lastTime;
         lastTime = ros::Time::now().toSec();
-        kinematic->setT_0_EE(TCP);
-        TCP = moveEEFrame(TCP);
-        kinematic->getAngles();
-        commandVelocities();
-        tf::poseEigenToMsg(kinematic->getT_0_FL(),poseFLmsg.pose);
-        lbrTargetPositionPub.publish(poseFLmsg);
 
+        TCP = moveEEFrame(TCP);
+        masterslave::LaparoscopeInverseKinematics inverseKinematicsService;
+        tf::poseEigenToMsg(TCP, inverseKinematicsService.request.T_0_EE);
+        inverseKinematicsClient.call(inverseKinematicsService);
+        tf::poseMsgToEigen(inverseKinematicsService.response.T_0_FL,T_0_FL);
+        lbrTargetPositionPub.publish(inverseKinematicsService.response.T_0_FL);
+        jointAnglesTar = Eigen::VectorXd::Map(inverseKinematicsService.response.jointAnglesTarget.data(),inverseKinematicsService.response.jointAnglesTarget.size());
+        rate.sleep();
     }
     ros::shutdown();
 

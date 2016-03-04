@@ -13,27 +13,12 @@
 class Kinematics
 {
     public:
-        //Transform of the joint Q4
-        Eigen::Affine3d geT_0_Q4(){return T_0_Q4;}
-
-        //Remote Center of Motion
-        Eigen::Affine3d getRCM(){return RCM;}
-
-        //setter and calculation of the RCM
-        void setRCM(Eigen::Affine3d);
-
-        //setter for the endeffector position of the tool
-        void setT_0_EE(Eigen::Affine3d);
-
-        //inline definition of the getter
-        Eigen::Affine3d getT_FL_EE(){return T_FL_EE;}
-        Eigen::VectorXd getAngles(){ return jointAnglesTar;}
-
 
 
     protected:
 
         // pure virtual methods for kinematic calculation
+        virtual void calcInvKin(Eigen::Affine3d)=0;
 
         // help method to build up Eigen::Affine3d-Transformations
         Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
@@ -56,8 +41,6 @@ class Kinematics
 
         Eigen::VectorXd jointAnglesTar;
         Eigen::VectorXd jointAnglesAct;
-
-        static const toolDescriptionParameters TOOL_PARAMETERS;
 
         static constexpr double DEG_TO_RAD = M_PI/180;
         static constexpr double MM_TO_M = 1/1000;

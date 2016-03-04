@@ -106,7 +106,7 @@ add_dependencies(controldevice controldevice_gencfg)
 
 
 
-add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h src/kinematic/kinematics.cpp src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h src/task/ursulatask.cpp include/masterslave/task/ursulatask.h include/masterslave/optimization/eiquadprog.hpp)
+add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h src/task/ursulatask.cpp include/masterslave/task/ursulatask.h)
 add_dependencies(masterslave $(PROJECT_NAME)_gencfg)
 add_dependencies(masterslave kinematic_gencfg)
 
@@ -117,6 +117,9 @@ add_executable(ursulakinematics src/kinematic/ursulakinematics.cpp include/maste
 add_dependencies(ursulakinematics $(PROJECT_NAME)_gencfg)
 add_dependencies(ursulakinematics ursulakinematics_gencfg)
 
+add_executable(laparoscopekinematics src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h)
+add_dependencies(laparoscopekinematics laparoscopekinematic_gencfg)
+
 
 ## Add cmake target dependencies of the executable
 
@@ -125,6 +128,7 @@ add_dependencies(masterslave faulhaber_driver_generate_messages_cpp)
 add_dependencies(controldevice controldevice_generate_messages_cpp)
 add_dependencies(rosopenigtlbridge rosopenigtlbridge_generate_messages_cpp)
 add_dependencies(rosopenigtlbridge masterslave_generate_messages_cpp)
+add_dependencies(laparoscopekinematics laparoscopekinematics_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(controldevice
@@ -144,6 +148,11 @@ target_link_libraries(rosopenigtlbridge
 )
 
 target_link_libraries(ursulakinematics
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(laparoscopekinematics
     ${catkin_LIBRARIES}
     ${Eigen_LIBRARIES}
 )

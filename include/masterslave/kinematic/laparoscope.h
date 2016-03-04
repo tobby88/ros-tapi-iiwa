@@ -9,9 +9,15 @@
 #include "masterslave/LaparoscopeInverseKinematics.h"
 #include "masterslave/LaparoscopeRCM.h"
 
-class Laparoscope: public Kinematics {
+#include <tf/tf.h>
+#include <tf_conversions/tf_eigen.h>
+#include <eigen_conversions/eigen_msg.h>
+#include <tf/transform_listener.h>
+
+class Laparoscope: public Kinematics
+{
     public:
-        Laparoscope(Eigen::Affine3d);
+        Laparoscope(ros::NodeHandle&);
         Eigen::Affine3d getT_0_FL(){return T_0_FL;}
 
         Eigen::Affine3d getT_0_Q4(){return T_0_Q4;}
@@ -19,20 +25,26 @@ class Laparoscope: public Kinematics {
         void setAngles(const Eigen::VectorXd value);
 
     private:
-        //Implementation of the inhereted methods of Kinematics class
-        void calcDirKin();
-        void calcInvKin();
 
-        bool rcmCallback(masterslave::LaparoscopeRCM::request &req, masterslave::LaparoscopeRCM::response &resp);
-        bool directKinematicsCallback(masterslave::LaparoscopeDirectKinematics::request &req, masterslave::LaparoscopeDirectKinematics::response &resp);
-        bool inverseKinematicsCallback(masterslave::LaparoscopeInverseKinematics::request &req, masterslave::LaparoscopeInverseKinematics::response &resp);
+        ros::NodeHandle nh_;
+
+
+        static const toolDescriptionParameters TOOL_PARAMETERS;
+
+        //Implementation of the inhereted methods of Kinematics class
+        Eigen::Affine3d calcDirKin(Eigen::VectorXd);
+        void calcInvKin(Eigen::Affine3d);
+
+        bool rcmCallback(masterslave::LaparoscopeRCM::Request &req, masterslave::LaparoscopeRCM::Response &resp);
+        bool directKinematicsCallback(masterslave::LaparoscopeDirectKinematics::Request &req, masterslave::LaparoscopeDirectKinematics::Response &resp);
+        bool inverseKinematicsCallback(masterslave::LaparoscopeInverseKinematics::Request &req, masterslave::LaparoscopeInverseKinematics::Response &resp);
 
         Eigen::Affine3d T_0_FL;
         ros::ServiceServer rcmServer;
         ros::ServiceServer directKinematicsServer;
         ros::ServiceServer inverseKinematicsServer;
 
-
+        Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
 
 
 };

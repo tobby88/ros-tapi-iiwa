@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/PoseArray.h"
+#include "std_msgs/Float64.h"
+#include "sensor_msgs/JointState.h"
 #include <dynamic_reconfigure/server.h>
 #include <masterslave/rosigtlbridgeConfig.h>
 #include "masterslave/state.h"
@@ -36,6 +38,7 @@ public:
     bool stateService(masterslave::state::Request&, masterslave::state::Response&);
 private:
     void transformCallback(geometry_msgs::PoseStampedConstPtr);
+    void lbrJointAngleCallback(const std_msgs::Float64ConstPtr&, int number);
     void openIGTLinkThread();
     void openIGTLinkTransformThread();
     // command socket methods
@@ -55,7 +58,11 @@ private:
 
 
     ros::Subscriber flangeTargetSub;
+    ros::Subscriber lbrJointAngleSub[7];
+
     ros::Publisher flangePub;
+    ros::Publisher lbrJointAnglePub[7];
+
     ros::ServiceServer stateServiceServer;
     ros::NodeHandle nh_;
     boost::mutex update_mutex_;
@@ -70,6 +77,8 @@ private:
     igtl::Matrix4x4 T_FL_new;
     geometry_msgs::Pose poseFL;
     geometry_msgs::Pose poseFL_new;
+    Eigen::VectorXd jointAngles;
+    Eigen::VectorXd jointAngles_new;
 
     igtl::ClientSocket::Pointer commandSocket_;
     static const int COMMAND_PORT = 49001;
@@ -81,7 +90,7 @@ private:
     static const char* TRANSFORM_IP;
     int rTransform;
 
-    unsigned long long CMD_UID;
+    unsigned long long CMD_UID=0;
 
     std::string openIGTLCommandString;
     std::string stateString;

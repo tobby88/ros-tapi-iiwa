@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+	<include file="$(find masterslave)/launch/BasicUrsula.launch"/>
+	<node pkg="masterslave" type="rosopenigtlbridge" name="RosOpenIGTLBridge" output="screen"/>
+	<node pkg="masterslave" type="laparoscopekinematics" name="LaparoscopeKinematics" output="screen"/>
+
+</launch>
+

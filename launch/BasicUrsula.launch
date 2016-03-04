@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <launch>
 	<arg name="TestDevice" value="Spacenav"/>
 	<node pkg="masterslave" type="controldevice" name="$(arg TestDevice)" args="$(arg TestDevice)" output="screen">
@@ -16,9 +15,4 @@
 		<param name="gripper_vel" value="0.1"/>
 		<param name="Mode" type="string" value="Robot"/>
 	</node>
-	<node pkg="masterslave" type="ursulakinematics" name="UrsulaKinematics" output="screen"/>
-	<remap from="vrep/flangeLBR" to="/flangeLBR"/>
-	<remap from="/flangeTarget" to="/vrep/flangeTarget"/> 
-
 </launch>
-

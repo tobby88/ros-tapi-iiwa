@@ -1,41 +1,65 @@
 #include "masterslave/kinematic/laparoscope.h"
 
-void Laparoscope::setAngles(const Eigen::VectorXd value)
+
+Laparoscope::Laparoscope(ros::NodeHandle& nh): nh_(nh)
 {
-    jointAnglesAct = value;
-    calcDirKin();
-}
-
-
-Laparoscope::Laparoscope(Eigen::Affine3d startPositionLBR)
-{
-
-    setRCM(startPositionLBR);
     ROS_WARN_STREAM_NAMED("Remote Center of Motion","Position: " << RCM.translation());
     jointAnglesAct = Eigen::VectorXd(3);
     jointAnglesTar = Eigen::VectorXd(3);
+
+    rcmServer = nh_.advertiseService("/RCM",&Laparoscope::rcmCallback,this);
+    directKinematicsServer = nh_.advertiseService("/directKinematics",&Laparoscope::directKinematicsCallback,this);
+    inverseKinematicsServer = nh_.advertiseService("/inverseKinematics",&Laparoscope::inverseKinematicsCallback,this);
 }
 
-void Laparoscope::calcDirKin()
+bool Laparoscope::rcmCallback(masterslave::LaparoscopeRCM::Request &req, masterslave::LaparoscopeRCM::Response &resp)
+{
+    Eigen::Affine3d T_0_FL;
+    tf::poseMsgToEigen(req.T_0_FL,T_0_FL);
+    RCM = T_0_FL * buildAffine3d(Eigen::Vector3d(TOOL_PARAMETERS.X_0_Q4,TOOL_PARAMETERS.Y_0_Q4,TOOL_PARAMETERS.Z_0_Q4),Eigen::Vector3d(TOOL_PARAMETERS.A_0_Q4*DEG_TO_RAD,TOOL_PARAMETERS.B_0_Q4*DEG_TO_RAD,TOOL_PARAMETERS.C_0_Q4*DEG_TO_RAD),true);
+    tf::poseEigenToMsg(RCM,resp.trocar);
+}
+
+bool Laparoscope::directKinematicsCallback(masterslave::LaparoscopeDirectKinematics::Request &req, masterslave::LaparoscopeDirectKinematics::Response &resp)
+{
+    Eigen::Affine3d T_0_FL;
+    tf::poseMsgToEigen(req.T_0_FL,T_0_FL);
+    Eigen::VectorXd jointAngles = Eigen::VectorXd::Map(req.jointAngles.data(),req.jointAngles.size());
+    T_0_EE = T_0_FL * calcDirKin(jointAngles);
+    tf::poseEigenToMsg(T_0_EE,resp.T_0_EE);
+
+}
+
+bool Laparoscope::inverseKinematicsCallback(masterslave::LaparoscopeInverseKinematics::Request &req, masterslave::LaparoscopeInverseKinematics::Response &resp)
+{
+    Eigen::Affine3d desEEPosition;
+    tf::poseMsgToEigen(req.T_0_EE,desEEPosition);
+    calcInvKin(desEEPosition);
+    tf::poseEigenToMsg(T_0_FL,resp.T_0_FL);
+    std::vector<double> jointAnglesTarget(jointAnglesTar.data(),jointAnglesTar.data()+jointAnglesTar.rows()*jointAnglesTar.cols());
+    resp.jointAnglesTarget = jointAnglesTarget;
+}
+
+Eigen::Affine3d Laparoscope::calcDirKin(Eigen::VectorXd jointAngles)
 {
     T_FL_Q4 = buildAffine3d(Eigen::Vector3d(TOOL_PARAMETERS.X_0_Q4,TOOL_PARAMETERS.Y_0_Q4,TOOL_PARAMETERS.Z_0_Q4),Eigen::Vector3d(TOOL_PARAMETERS.A_0_Q4*DEG_TO_RAD,TOOL_PARAMETERS.B_0_Q4*DEG_TO_RAD,TOOL_PARAMETERS.C_0_Q4*DEG_TO_RAD),true);
-    T_FL_Q4.rotate(Eigen::AngleAxis<double>(jointAnglesAct(0),Eigen::Vector3d::UnitZ()));
-    Eigen::Affine3d T_Q4_Q5 = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(90*DEG_TO_RAD,0,90*DEG_TO_RAD+jointAnglesAct(1)),false);
+    T_FL_Q4.rotate(Eigen::AngleAxis<double>(jointAngles(0),Eigen::Vector3d::UnitZ()));
+    Eigen::Affine3d T_Q4_Q5 = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(90*DEG_TO_RAD,0,90*DEG_TO_RAD+jointAngles(1)),false);
     /* Fehler: Zuerst um Q5 drehen, dann verschieben */
     Eigen::Affine3d T_Q5_Q6 = buildAffine3d(Eigen::Vector3d(TOOL_PARAMETERS.L_Q5_Q6,0,0),Eigen::Vector3d(-90*DEG_TO_RAD,0,0),true);
-    Eigen::Affine3d T_Q6_EE = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(0,0,jointAnglesAct(2)),true);
+    Eigen::Affine3d T_Q6_EE = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(0,0,jointAngles(2)),true);
     T_Q6_EE.translate(Eigen::Vector3d(TOOL_PARAMETERS.L_Q6_EE,0,0));
 
     T_FL_Q5 = T_FL_Q4*T_Q4_Q5;
     T_FL_Q6 = T_FL_Q5*T_Q5_Q6;
 
-    T_FL_EE = T_FL_Q4*T_Q4_Q5*T_Q5_Q6*T_Q6_EE;
+    return T_FL_EE = T_FL_Q4*T_Q4_Q5*T_Q5_Q6*T_Q6_EE;
 }
 
 
-void Laparoscope::calcInvKin()
+void Laparoscope::calcInvKin(Eigen::Affine3d desEEPosition)
 {
-    Eigen::Affine3d T_0_Q6 = T_0_EE.translate(Eigen::Vector3d(-TOOL_PARAMETERS.L_Q6_EE,0,0));
+    Eigen::Affine3d T_0_Q6 = desEEPosition.translate(Eigen::Vector3d(-TOOL_PARAMETERS.L_Q6_EE,0,0));
     Eigen::Vector3d p_RCM_Q6 = T_0_Q6.translation()-RCM.translation();
     Eigen::Vector3d z_Q6 = T_0_Q6.matrix().col(3).head(3);
     Eigen::Vector3d nPlane = p_RCM_Q6.cross(z_Q6);
@@ -59,9 +83,9 @@ void Laparoscope::calcInvKin()
         jointAnglesTar(2) = -jointAnglesTar(2);
     }
 
-    Eigen::Affine3d T_EE_Q5 = Kinematics::buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(90*DEG_TO_RAD,0,-jointAnglesTar(2)),true);
+    Eigen::Affine3d T_EE_Q5 = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(90*DEG_TO_RAD,0,-jointAnglesTar(2)),true);
     T_EE_Q5.translate(Eigen::Vector3d(-TOOL_PARAMETERS.L_Q5_Q6,0,0));
-    Eigen::Affine3d T_0_Q5 = T_0_EE*T_EE_Q5;
+    Eigen::Affine3d T_0_Q5 = desEEPosition*T_EE_Q5;
 
     Eigen::Vector3d RCM_x = RCM.matrix().col(3).head(3);
 
@@ -73,7 +97,7 @@ void Laparoscope::calcInvKin()
 
     Eigen::Vector3d x_Q4 = p_Q5_RCM.cross(z_Q5);
 
-    jointAnglesAct(1) = acos(x_Q4.dot(y_Q5)/(x_Q4.norm()*y_Q5.norm()));
+    jointAnglesTar(1) = acos(x_Q4.dot(y_Q5)/(x_Q4.norm()*y_Q5.norm()));
 
     if(isnan(jointAnglesTar(1)))
     {
@@ -90,7 +114,7 @@ void Laparoscope::calcInvKin()
         jointAnglesTar(1) = -jointAnglesTar(1);
     }
 
-    Eigen::Affine3d T_Q5_Q4 = Kinematics::buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(-90*DEG_TO_RAD,0,-90*DEG_TO_RAD-jointAnglesTar(1)),true);
+    Eigen::Affine3d T_Q5_Q4 = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(-90*DEG_TO_RAD,0,-90*DEG_TO_RAD-jointAnglesTar(1)),true);
     T_0_Q4 = T_0_Q5*T_Q5_Q4;
 
     Eigen::Vector3d p_Q4_RCM = T_0_Q4.translation() - RCM.translation();
@@ -113,7 +137,36 @@ void Laparoscope::calcInvKin()
         jointAnglesTar(0) = -jointAnglesTar(0);
     }
 
-    Eigen::Affine3d T_Q4_FL = Kinematics::buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(-TOOL_PARAMETERS.A_0_Q4*DEG_TO_RAD,-TOOL_PARAMETERS.B_0_Q4*DEG_TO_RAD,-TOOL_PARAMETERS.C_0_Q4*DEG_TO_RAD-jointAnglesTar(0)),true);
+    Eigen::Affine3d T_Q4_FL = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(-TOOL_PARAMETERS.A_0_Q4*DEG_TO_RAD,-TOOL_PARAMETERS.B_0_Q4*DEG_TO_RAD,-TOOL_PARAMETERS.C_0_Q4*DEG_TO_RAD-jointAnglesTar(0)),true);
     T_Q4_FL.translate(Eigen::Vector3d(-TOOL_PARAMETERS.X_0_Q4,-TOOL_PARAMETERS.Y_0_Q4,-TOOL_PARAMETERS.Z_0_Q4));
     T_0_FL = T_0_Q4*T_Q4_FL;
+}
+
+Eigen::Affine3d Laparoscope::buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx=true)
+{
+    Eigen::Affine3d transl;
+    transl.setIdentity();
+    transl.translate(translXYZ);
+    if(zyx)
+    {
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(2), Eigen::Vector3d::UnitZ()));
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(1), Eigen::Vector3d::UnitY()));
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(0), Eigen::Vector3d::UnitX()));
+    }
+    else
+    {
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(0), Eigen::Vector3d::UnitX()));
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(1), Eigen::Vector3d::UnitY()));
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(2), Eigen::Vector3d::UnitZ()));
+    }
+    return transl;
+}
+
+const toolDescriptionParameters Laparoscope::TOOL_PARAMETERS = {0.438, 0.0, 0.062, 0.0, 90.0, 0.0, 0.0088, 0.017, 0.305};
+
+int main(int argc, char** argv)
+{
+    ros::init(argc,argv,"LaparoscopeKinematics");
+    ros::NodeHandle LaparoscopeKinematicsNH;
+    Laparoscope* LaparoscopeKinematics = new Laparoscope(LaparoscopeKinematicsNH);
 }

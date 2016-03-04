@@ -57,7 +57,6 @@ class Task
         Eigen::VectorXd jointAnglesTar;
         Eigen::VectorXd jointAnglesAct;
 
-        Kinematics*     kinematic;
 
         bool gripper_stop;
         bool gripper_open;

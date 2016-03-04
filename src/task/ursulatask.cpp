@@ -60,10 +60,10 @@ void UrsulaTask::loop()
     double lastTime = ros::Time::now().toSec();
 
     masterslave::UrsulaRCM rcmService;
-    for(int i=0; i<jointAnglesAct.rows();i++)
-    {
-        rcmService.request.trocarAngles.push_back(jointAnglesAct[i]);
-    }
+
+    std::vector<double> trocarAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
+    rcmService.request.trocarAngles = trocarAngles;
+
     rcmClient.call(rcmService);
 
     rcmService.request.trocarAngles.clear();
@@ -71,16 +71,14 @@ void UrsulaTask::loop()
 
     masterslave::UrsulaDirectKinematics directKinematicsService;
 
-    for(int i=0; i<jointAnglesAct.rows();i++)
-    {
-        directKinematicsService.request.jointAngles.push_back(jointAnglesAct[i]);
-    }
+    std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
+    directKinematicsService.request.jointAngles = jointAnglesActual;
 
     directKinematicsClient.call(directKinematicsService);
     directKinematicsService.request.jointAngles.clear();
     tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);
     jointAnglesTar = jointAnglesAct;
-    ros::Rate rate(1000);
+    ros::Rate rate(rosRate_);
     while(ros::ok())
     {
         ros::spinOnce();
@@ -98,12 +96,8 @@ void UrsulaTask::loop()
             masterslave::UrsulaInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
             ROS_DEBUG_STREAM(inverseKinematicsService.request.T_0_EE.position);
-
             inverseKinematicsClient.call(inverseKinematicsService);
-            for(int i=0;i<10;i++)
-            {
-                jointAnglesTar[i] = inverseKinematicsService.response.jointAnglesTarget.at(i);
-            }
+            jointAnglesTar = Eigen::VectorXd::Map(inverseKinematicsService.response.jointAnglesTarget.data(),inverseKinematicsService.response.jointAnglesTarget.size());
 
         }
         commandVelocities();
