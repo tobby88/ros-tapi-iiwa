@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(masterslave)
 
+add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -35,9 +36,12 @@ find_package(Boost REQUIRED COMPONENTS system)
 ################################################
 add_service_files(FILES
     state.srv
-    rcmTest.srv
-    inverseKinematics.srv
-    directKinematics.srv
+    UrsulaRCM.srv
+    UrsulaInverseKinematics.srv
+    UrsulaDirectKinematics.srv
+    LaparoscopeRCM.srv
+    LaparoscopeInverseKinematics.srv
+    LaparoscopeDirectKinematics.srv
   )
 
 
@@ -64,6 +68,7 @@ generate_dynamic_reconfigure_options(
   cfg/masterslave.cfg
   cfg/controldevice.cfg
   cfg/rosopenigtlbridge.cfg
+  cfg/ursulakinematics.cfg
 )
 
 ###################################
@@ -109,6 +114,7 @@ add_executable(rosopenigtlbridge src/rosopenigtlbridge.cpp include/masterslave/r
 add_dependencies(rosopenigtlbridge rosopenigtlbridge_gencfg)
 
 add_executable(ursulakinematics src/kinematic/ursulakinematics.cpp include/masterslave/kinematic/ursulakinematics.h include/masterslave/kinematic/kinematics.h)
+add_dependencies(ursulakinematics $(PROJECT_NAME)_gencfg)
 add_dependencies(ursulakinematics ursulakinematics_gencfg)
 
 

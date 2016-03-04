@@ -59,8 +59,8 @@ class Kinematics
 
         static const toolDescriptionParameters TOOL_PARAMETERS;
 
-        static const double DEG_TO_RAD = M_PI/180;
-        static const double MM_TO_M = 1/1000;
+        static constexpr double DEG_TO_RAD = M_PI/180;
+        static constexpr double MM_TO_M = 1/1000;
 };
 
 #endif // KINEMATICS_H

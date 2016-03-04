@@ -6,9 +6,9 @@
 #include "sensor_msgs/JointState.h"
 #include "geometry_msgs/PoseStamped.h"
 
-#include "masterslave/directKinematics.h"
-#include "masterslave/inverseKinematics.h"
-#include "masterslave/rcmTest.h"
+#include "masterslave/UrsulaRCM.h"
+#include "masterslave/UrsulaDirectKinematics.h"
+#include "masterslave/UrsulaInverseKinematics.h"
 
 
 #include <tf/tf.h>

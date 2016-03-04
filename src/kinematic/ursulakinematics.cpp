@@ -2,10 +2,18 @@
 
 UrsulaKinematics::UrsulaKinematics(ros::NodeHandle& nh): nh_(nh)
 {
+    dynamic_reconfigure::Server<masterslave::ursulakinematicsConfig> server;
+    dynamic_reconfigure::Server<masterslave::ursulakinematicsConfig>::CallbackType f;
+    f = boost::bind(&UrsulaKinematics::configurationCallback,this ,_1,_2);
+    server.setCallback(f);
+
+
     desEEPosition = Eigen::VectorXd::Zero(6);
     curEEPosition = Eigen::VectorXd::Zero(6);
     jointAnglesAct = Eigen::VectorXd::Zero(10);
     jointAnglesTar = Eigen::VectorXd::Zero(10);
+
+
 
     //in according to LBR Specifications (in Degree)
     const double MAX_ANGLES[] = {170*DEG_TO_RAD, 120*DEG_TO_RAD, 170*DEG_TO_RAD, 120*DEG_TO_RAD, 170*DEG_TO_RAD, 120*DEG_TO_RAD, 175*DEG_TO_RAD, 85*DEG_TO_RAD, 90*DEG_TO_RAD, 90*DEG_TO_RAD};
@@ -16,7 +24,9 @@ UrsulaKinematics::UrsulaKinematics(ros::NodeHandle& nh): nh_(nh)
     rcmServiceServer = nh_.advertiseService("/RCM",&UrsulaKinematics::rcmCallback,this);
     directKinematicsServer = nh_.advertiseService("/directKinematics",&UrsulaKinematics::directKinematicsCallback,this);
     inverseKinematicsServer = nh_.advertiseService("/inverseKinematics",&UrsulaKinematics::inverseKinematicsCallback,this);
-    cycleTimeSub = nh_.subscribe("/cycleTime",1,&UrsulaKinematics::cycleTimeCallback,this);
+    cycleTimeSub = nh_.subscribe("/cycleTime",1,&UrsulaKinematics::cycleTimeCallback,this);  
+
+    ros::spin();
 
 }
 
@@ -25,14 +35,14 @@ void UrsulaKinematics::cycleTimeCallback(const std_msgs::Float64ConstPtr &value)
     cycleTime = value->data;
 }
 
-bool UrsulaKinematics::rcmCallback(masterslave::rcmTest::Request &req, masterslave::rcmTest::Response &resp)
+bool UrsulaKinematics::rcmCallback(masterslave::UrsulaRCM::Request &req, masterslave::UrsulaRCM::Response &resp)
 {
     Eigen::VectorXd jointAngles = Eigen::VectorXd::Map(req.trocarAngles.data(),req.trocarAngles.size());
     calcDirKin(jointAngles);
     RCM = T_0_SCH;
 }
 
-bool UrsulaKinematics::directKinematicsCallback(masterslave::directKinematics::Request &req, masterslave::directKinematics::Response &resp)
+bool UrsulaKinematics::directKinematicsCallback(masterslave::UrsulaDirectKinematics::Request &req, masterslave::UrsulaDirectKinematics::Response &resp)
 {
     Eigen::VectorXd jointAngles = Eigen::VectorXd::Map(req.jointAngles.data(),req.jointAngles.size());
     calcDirKin(jointAngles);
@@ -42,7 +52,7 @@ bool UrsulaKinematics::directKinematicsCallback(masterslave::directKinematics::R
     resp.T_0_EE  = pose;
 }
 
-bool UrsulaKinematics::inverseKinematicsCallback(masterslave::inverseKinematics::Request &req, masterslave::inverseKinematics::Response &resp)
+bool UrsulaKinematics::inverseKinematicsCallback(masterslave::UrsulaInverseKinematics::Request &req, masterslave::UrsulaInverseKinematics::Response &resp)
 {
     Eigen::Affine3d desEEPose;
     tf::poseMsgToEigen(req.T_0_EE,desEEPose);
@@ -150,12 +160,10 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
         Eigen::VectorXd d_trokar = trocarMonitoring(jointAnglesIterationPrevious,deltaQ,C_trokar);
 
         Eigen::MatrixXd Aeq(C_trokar.cols(),Akin.rows()+C_trokar.rows());
-        Aeq <<C_trokar.transpose(), Akin.transpose();
+        Aeq <<trocarGain*C_trokar.transpose(), tcpGain*Akin.transpose();
         Eigen::VectorXd beq(bkin.rows()+d_trokar.rows());
-        beq << d_trokar, bkin;
+        beq << trocarGain*d_trokar, tcpGain*bkin;
 
-        //Aeq = 1/cycleTime*Aeq;
-        //beq = 1/cycleTime*beq;
         ROS_INFO_STREAM("Aeq: \n" << Aeq);
         ROS_INFO_STREAM(" beq: " << beq);
 
@@ -169,7 +177,6 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
         Eigen::MatrixXd d_acc = Eigen::VectorXd::Zero(10,1);
 
         Eigen::MatrixXd C_acc = minimizeAcceleration(cycleTime, weightMatrix,deltaQ,d_acc);
-        d_acc = epsi*d_acc;
         ROS_DEBUG_STREAM("d_acc" << d_acc);
 
         Eigen::MatrixXd C(C_acc.rows()+C_vel.rows(),Akin.cols());
@@ -177,8 +184,8 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
 
 
 
-        C << 0.000000001*C_acc, 0.00000000001*C_vel;
-        d <<-0.000000001*d_acc,-0.00000000001*d_vel;
+        C << accelerationGain*C_acc, velocityGain*C_vel;
+        d <<-accelerationGain*d_acc,-velocityGain*d_vel;
         ROS_DEBUG_STREAM("C: " << C << "\n d: " << d);
 
         // https://forum.kde.org/viewtopic.php?f=74&t=102468
@@ -223,6 +230,7 @@ Eigen::MatrixXd UrsulaKinematics::calcAnalyticalJacobian(Eigen::VectorXd jointAn
     Eigen::Vector3d z_Q9 = T_0_Q9.matrix().col(2).head(3);
     Eigen::Vector3d z_Q10 = T_0_Q10.matrix().col(2).head(3);
 
+    //vector between the TCP/EE and the current joint
     Eigen::Vector3d x_1_EE = T_0_EE.translation() - T_0_Q1.translation();
     Eigen::Vector3d x_2_EE = T_0_EE.translation() - T_0_Q2.translation();
     Eigen::Vector3d x_3_EE = T_0_EE.translation() - T_0_Q3.translation();
@@ -234,6 +242,7 @@ Eigen::MatrixXd UrsulaKinematics::calcAnalyticalJacobian(Eigen::VectorXd jointAn
     Eigen::Vector3d x_9_EE = T_0_EE.translation() - T_0_Q9.translation();
     Eigen::Vector3d x_10_EE = T_0_EE.translation() - T_0_Q10.translation();
 
+    //cross product of both of them
     Eigen::Vector3d zr1 = z_Q1.cross(x_1_EE);
     Eigen::Vector3d zr2 = z_Q2.cross(x_2_EE);
     Eigen::Vector3d zr3 = z_Q3.cross(x_3_EE);
@@ -319,11 +328,13 @@ Eigen::VectorXd UrsulaKinematics::angleMonitoring(Eigen::VectorXd deltaQ, Eigen:
 
         else if(critical*URSULA_MAX_ANGLES(i) <= q(i) && URSULA_MAX_ANGLES(i) >= q(i))
         {
+            //Critical Zone
             H += Hmax/2*(1-cos(M_PI*(q(i)-critical*URSULA_MAX_ANGLES(i))/(1-critical)*URSULA_MAX_ANGLES(i)));
-            dH(i) = M_PI*Hmax/(2*((1-critical)*URSULA_MAX_ANGLES(i)))*sin(M_PI*(q(i)-critical*URSULA_MAX_ANGLES(i))/(1-critical)*URSULA_MAX_ANGLES(i));
+            dH(i) = M_PI*Hmax/(2*((1-critical)*URSULA_MAX_ANGLES(i)))*sin(M_PI*(q(i)-critical*URSULA_MAX_ANGLES(i))/(1-critical)*URSULA_MAX_ANGLES(i)); // Differentiation: dH
         }
         else if(URSULA_MAX_ANGLES(i)< q(i))
         {
+            //Outside the permissible zone
             H += Hmax;
             dH(i) = 0.0000;
         }
@@ -365,15 +376,22 @@ Eigen::VectorXd UrsulaKinematics::trocarMonitoring(Eigen::VectorXd qAct, Eigen::
     trocar.translation() = RCM.translation();
 
     Eigen::Affine3d shaft(T_0_SCH);
-    // Vermeidung Translationsfehler in z-Koordinate, da der Schaft virtuell auf der z-Koordinate des Trokars fixiert wird
+    // Vermeidung Translationsfehler in z-Koordinate, da der Schaft virtuell auf der z-Koordinate des Trokars fixiert wird --> Stichwort: Schnittpunkt Gerade - Ebene
 
-    Eigen::Vector3d shaftVector = Eigen::Vector3d::Zero(3);
+    /*Berechnung des Geradenparameters Beta
+     * Geradengleichung: x_Schaft + beta * (0)e_z,Schaft = x
+     * Ebenengleichung (x-RCM)*n = 0 mit n = (0,0,1) und dem RCM
+     * 1. Umformen der Ebenengleichung in x*n = RCM*n
+     * 2. Einsetzen der Geraden ( (x_Schaft + beta * (0)e_z,Schaft)*n = RCM*n
+     * 3. Auflösen nach beta und in Gerade einsetzen
+     * 4. Auf x_Schaft addieren
+     */
     double beta = (RCM.translation().z()-shaft.translation().z())/T_0_SCH.matrix()(2,2);
     ROS_INFO_STREAM("Distance: " << Eigen::Vector3d(beta*T_0_SCH.matrix().col(2).head(3)));
     shaft.translation() = shaft.translation() + Eigen::Vector3d(beta*T_0_SCH.matrix().col(2).head(3));
-    ROS_WARN_STREAM("trocar: \n" << trocar.matrix() << "\n shaft: \n" << shaft.matrix() << "\n shaftVector: \n" << shaftVector );
 
-    // dH/dQ
+
+    // dH/dQ Jacobian of the trocarPoint
     Eigen::Vector3d z_Q1 = T_0_Q1.matrix().col(2).head(3);
     Eigen::Vector3d z_Q2 = T_0_Q2.matrix().col(2).head(3);
     Eigen::Vector3d z_Q3 = T_0_Q3.matrix().col(2).head(3);
@@ -409,6 +427,7 @@ Eigen::VectorXd UrsulaKinematics::trocarMonitoring(Eigen::VectorXd qAct, Eigen::
     Eigen::VectorXd ages = -(shaftPositionRPY + Ages*deltaQ-trocarPositionRPY); // - 0-Vektor im Trokarsystem da der gewünschte Punkt [0 0 0] im Trokar-KS ist.
     ROS_INFO_STREAM_NAMED("TrocarMonitoring","a:\n" << ages << "\n A: \n" << Ages << "\n shaftPos: \n" << shaftPositionRPY);
 
+    // Just the first two rows (x- and y-coordinates)
     A = Ages.topRows(2);
     Eigen::VectorXd a = ages.topRows(2);
     return a;
@@ -418,7 +437,7 @@ Eigen::VectorXd UrsulaKinematics::trocarMonitoring(Eigen::VectorXd qAct, Eigen::
 Eigen::VectorXd UrsulaKinematics::rotation2RPY(Eigen::Affine3d transformation)
 {
     Eigen::VectorXd retVal = Eigen::VectorXd::Zero(6);
-
+    // Conversion from Transformation Matrix into Transformation Vector and Euler Angles YPR
     retVal.head(3) = transformation.translation();
     retVal(3) = atan2(transformation.matrix()(2,1),transformation.matrix()(2,2));
     retVal(5) = atan2(transformation.matrix()(1,0),transformation.matrix()(0,0));
@@ -447,6 +466,14 @@ Eigen::Affine3d UrsulaKinematics::buildAffine3d(const Eigen::Vector3d &translXYZ
     return transl;
 }
 
+void UrsulaKinematics::configurationCallback(masterslave::ursulakinematicsConfig &config, uint32_t level)
+{
+    trocarGain = config.TrocarGain;
+    angleMonitoringGain = config.AngleMaximumGain;
+    accelerationGain = config.AccelerationGain;
+    velocityGain = config.VelocityGain;
+}
+
 
 
 const lbrDescriptionParameters UrsulaKinematics::LBR_PARAMETERS = { 0.160, 0.200, 0.200, 0.220, 0.180, 0.220, 0.076, 0.050};
@@ -458,5 +485,4 @@ int main (int argc, char** argv)
     ros::init(argc,argv, "UrsulaKinematics");
     ros::NodeHandle UrsulaKinematicsHandle;
     UrsulaKinematics* UrsulaKinematicsNode = new UrsulaKinematics(UrsulaKinematicsHandle);
-    ros::spin();
 }

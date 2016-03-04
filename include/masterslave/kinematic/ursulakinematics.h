@@ -2,18 +2,27 @@
 #define URSULAKINEMATICS_H
 
 #include "kinematics.h"
-#include "eiquadprog.hpp"
+
 #include <eigen3/Eigen/Core>
 #include "ros/ros.h"
-#include "masterslave/rcmTest.h"
-#include "masterslave/directKinematics.h"
-#include "masterslave/inverseKinematics.h"
+#include <dynamic_reconfigure/server.h>
+
+//service definitions
+#include "masterslave/UrsulaRCM.h"
+#include "masterslave/UrsulaDirectKinematics.h"
+#include "masterslave/UrsulaInverseKinematics.h"
+
+//dynamic reconfigure configuration file
+#include "masterslave/ursulakinematicsConfig.h"
 
 #include <tf/tf.h>
 #include <tf_conversions/tf_eigen.h>
 #include <eigen_conversions/eigen_msg.h>
 #include <tf/transform_listener.h>
 #include <std_msgs/Float64.h>
+
+//solver algorithm for quadratic programming problems (very nice perfomance)
+#include "eiquadprog.hpp"
 
 class UrsulaKinematics: public Kinematics
 {
@@ -42,10 +51,11 @@ private:
     ros::ServiceServer inverseKinematicsServer;
     ros::Subscriber cycleTimeSub;
 
-    bool rcmCallback(masterslave::rcmTest::Request&, masterslave::rcmTest::Response&);
-    bool directKinematicsCallback(masterslave::directKinematics::Request&, masterslave::directKinematics::Response&);
-    bool inverseKinematicsCallback(masterslave::inverseKinematics::Request&, masterslave::inverseKinematics::Response&);
+    bool rcmCallback(masterslave::UrsulaRCM::Request&, masterslave::UrsulaRCM::Response&);
+    bool directKinematicsCallback(masterslave::UrsulaDirectKinematics::Request&, masterslave::UrsulaDirectKinematics::Response&);
+    bool inverseKinematicsCallback(masterslave::UrsulaInverseKinematics::Request&, masterslave::UrsulaInverseKinematics::Response&);
     void cycleTimeCallback(const std_msgs::Float64ConstPtr&);
+    void configurationCallback(masterslave::ursulakinematicsConfig&config, uint32_t level);
 
     //geometric description parameters of the LBR iiwa 14 R820
     static const lbrDescriptionParameters LBR_PARAMETERS;
@@ -60,15 +70,15 @@ private:
     Eigen::Matrix<double, 10, 10> jointWeightMatrix;
 
     // Parameters for constraints
-    static const double minDistance = 0.05; // minimal distance between some objects before collision control starts working
+    static constexpr double minDistance = 0.05; // minimal distance between some objects before collision control starts working
 
     //max iterations for inverse kinematics
-    static const int maxIterations = 10;
+    static constexpr int maxIterations = 10;
 
     //last cycle time
     double cycleTime;
 
-    static const double residualMax= 10000;
+    static constexpr double residualMax= 10000;
 
     //Endeffector Position in translation and rotation in euler angles (DLR-Convention)
     Eigen::Matrix<double, 6, 1> curEEPosition;
@@ -86,6 +96,14 @@ private:
     Eigen::Affine3d T_0_Q8;
     Eigen::Affine3d T_0_Q9;
     Eigen::Affine3d T_0_Q10;
+
+    //weight parameters for online configuration
+    double collisionAvoidanceGain=0.0000001;
+    double angleMonitoringGain=0.0000001;
+    double accelerationGain=0.0000001;
+    double velocityGain=0.0000001;
+    double trocarGain=1;
+    double tcpGain=1;
 
     Eigen::Affine3d RCM;
 

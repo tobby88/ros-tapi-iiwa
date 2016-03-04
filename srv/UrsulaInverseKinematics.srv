@@ -1,5 +1,4 @@
 #request
 geometry_msgs/Pose T_0_EE
-float64[] jointAngles
 ---
 float64[] jointAnglesTarget

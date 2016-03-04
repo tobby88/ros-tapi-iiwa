@@ -1,0 +1,7 @@
+#request
+geometry_msgs/Pose T_0_FL
+float64[] trocarAngles
+---
+#response
+geometry_msgs/Pose trocar
+

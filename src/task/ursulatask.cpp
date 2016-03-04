@@ -22,9 +22,9 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, double rosRate): nh_(nh), rosRate_(r
     Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&UrsulaTask::Q6pStateCallback, this);
     lbrPositionSub = nh_.subscribe("/flangeLBR",1,&UrsulaTask::flangeCallback, this);
 
-    rcmClient = nh_.serviceClient<masterslave::rcmTest>("/RCM");
-    directKinematicsClient = nh_.serviceClient<masterslave::directKinematics>("/directKinematics");
-    inverseKinematicsClient = nh_.serviceClient<masterslave::inverseKinematics>("/inverseKinematics");
+    rcmClient = nh_.serviceClient<masterslave::UrsulaRCM>("/RCM");
+    directKinematicsClient = nh_.serviceClient<masterslave::UrsulaDirectKinematics>("/directKinematics");
+    inverseKinematicsClient = nh_.serviceClient<masterslave::UrsulaInverseKinematics>("/inverseKinematics");
 
     for(int i=0; i < 7; i++)
     {
@@ -59,7 +59,7 @@ void UrsulaTask::loop()
     ros::spinOnce();
     double lastTime = ros::Time::now().toSec();
 
-    masterslave::rcmTest rcmService;
+    masterslave::UrsulaRCM rcmService;
     for(int i=0; i<jointAnglesAct.rows();i++)
     {
         rcmService.request.trocarAngles.push_back(jointAnglesAct[i]);
@@ -69,7 +69,7 @@ void UrsulaTask::loop()
     rcmService.request.trocarAngles.clear();
     tf::poseMsgToEigen(rcmService.response.trocar,RCM);
 
-    masterslave::directKinematics directKinematicsService;
+    masterslave::UrsulaDirectKinematics directKinematicsService;
 
     for(int i=0; i<jointAnglesAct.rows();i++)
     {
@@ -95,7 +95,7 @@ void UrsulaTask::loop()
 
         if(!TCP.isApprox(TCP_old))
         {
-            masterslave::inverseKinematics inverseKinematicsService;
+            masterslave::UrsulaInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
             ROS_DEBUG_STREAM(inverseKinematicsService.request.T_0_EE.position);
 
@@ -107,21 +107,6 @@ void UrsulaTask::loop()
 
         }
         commandVelocities();
-        /*if(newJointAnglesArrived == (1 << 10)-1)
-        {
-             ROS_INFO("new JointAngles");
-             std::vector<double> jointAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
-             masterslave::directKinematics directKinematicsService;
-
-             for(int i=0; i<jointAnglesAct.rows();i++)
-             {
-                 directKinematicsService.request.jointAngles.push_back(jointAnglesAct[i]);
-             }
-
-             directKinematicsClient.call(directKinematicsService);
-             directKinematicsService.request.jointAngles.clear();
-        }*/
-        newJointAnglesArrived = 0;
         rate.sleep();
     }
     ros::shutdown();
@@ -137,7 +122,6 @@ void UrsulaTask::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flange
 void UrsulaTask::lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr &state, int number)
 {
     jointAnglesAct(number) = state->position[0];
-    newJointAnglesArrived += 1 << number;
 }
 
 void UrsulaTask::calcQ6()
@@ -152,20 +136,17 @@ void UrsulaTask::calcQ6()
 void UrsulaTask::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(0) = state->position.at(0);
-    newJointAnglesArrived += 1 << 7;
 }
 
 
 void UrsulaTask::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(1) = state->position.at(0);
-    newJointAnglesArrived += 1 << 8;
 }
 
 void UrsulaTask::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(0)= state->position.at(0);
-    newJointAnglesArrived += 1 << 9;
 }
 
 void UrsulaTask::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
