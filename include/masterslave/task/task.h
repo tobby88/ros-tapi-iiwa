@@ -11,9 +11,9 @@
 #include "masterslave/kinematic/kinematics.h"
 
 #include "sensor_msgs/JointState.h"
-#include <geometry_msgs/TwistStamped.h>
 #include "masterslave/Button.h"
 
+#include "masterslave/Manipulation.h"
 
 #include <dynamic_reconfigure/server.h>
 
@@ -23,8 +23,6 @@
 class Task
 {
     public:
-        virtual Eigen::Affine3d moveEEFrame(Eigen::Affine3d)=0;
-
         void setGripperStatus(bool open, bool close){ gripper_open = open; gripper_close = close;}
 
     protected:
@@ -41,11 +39,13 @@ class Task
         ros::Subscriber Q5StateSub;
         ros::Subscriber Q6pStateSub;
         ros::Subscriber Q6nStateSub;
-
-        //spacenav subscribers for the communication with "ControlDevice-Node"
-        ros::Subscriber velocitySub;
-        ros::Subscriber buttonSub;
         ros::Subscriber lbrPositionSub;
+        ros::Subscriber buttonSub;
+
+        ros::ServiceClient tcpClient;
+        ros::ServiceClient rcmClient;
+        ros::ServiceClient directKinematicsClient;
+        ros::ServiceClient inverseKinematicsClient;
 
         // Publisher for the tool joints
         ros::Publisher  Q4Pub;

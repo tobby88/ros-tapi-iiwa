@@ -15,4 +15,5 @@
 		<param name="gripper_vel" value="0.1"/>
 		<param name="Mode" type="string" value="Robot"/>
 	</node>
+	<node pkg="masterslave" type="masterslavemanipulation" name="MasterSlaveManipulation" args="$(arg TestDevice)" output="screen"/>
 </launch>

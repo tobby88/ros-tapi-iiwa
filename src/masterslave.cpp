@@ -57,13 +57,14 @@ void MasterSlave::statemachineThread(const ros::TimerEvent& event)
                 curState = newState;
                 break;
             case MASTERSLAVE_LAPAROSCOPE:
+                if(curState==MASTERSLAVE_URSULA) break;
                 if(stateService.exists()) stateStringMsg.request.state = "MoveToPose;rob;";
                 task = new LaparoscopeTask(nh_,rosRate);
                 curState = newState;
                 taskCounter++;
                 break;
             case MASTERSLAVE_URSULA:
-                if(stateService.exists()) if(curState==MASTERSLAVE_LAPAROSCOPE) break;
+                if(curState==MASTERSLAVE_LAPAROSCOPE) break;
                 stateStringMsg.request.state = "MoveToJointAngles;";
                 task = new UrsulaTask(nh_,rosRate);
                 curState = newState;

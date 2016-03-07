@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="TestDevice" value="Spacenav"/>	
+	<node pkg="masterslave" type="masterslave" name="MasterSlave" args="$(arg TestDevice)" output="screen">
+		<param name="gripper_vel" value="0.1"/>
+		<param name="Mode" type="string" value="Robot"/>
+	</node>
+	<node pkg="masterslave" type="masterslavemanipulation" name="MasterSlaveManipulation" args="$(arg TestDevice)" output="screen"/>
+	<node pkg="masterslave" type="ursulakinematics" name="UrsulaKinematics" output="screen"/>
+	<remap from="vrep/flangeLBR" to="/flangeLBR"/>
+	<remap from="/flangeTarget" to="/vrep/flangeTarget"/>
+	<node pkg="masterslave" type="trajectorygenerator" name="TrajectoryGenerator" output="screen"/>
+</launch>

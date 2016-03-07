@@ -261,7 +261,9 @@ bool RosOpenIgtlBridge::stateService(masterslave::state::Request &req, mastersla
     else if(stateString == "MoveToJointAngles;")
     {
         for(int i=0;i<jointAngles_new.rows();i++)
+        {
             sstream << jointAngles_new(i) << ";";
+        }
     }
     openIGTLCommandString = sstream.str();
     ROS_INFO_STREAM("Commandstring: " << openIGTLCommandString);

@@ -33,9 +33,7 @@ class UrsulaTask: public Task
         ros::Publisher lbrJointAnglePub[7];
         ros::Publisher cycleTimePub;
         ros::Subscriber lbrJointAngleSub[7];
-        ros::ServiceClient rcmClient;
-        ros::ServiceClient directKinematicsClient;
-        ros::ServiceClient inverseKinematicsClient;
+
         void lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr& state, int number);
 
         geometry_msgs::TwistStamped velocity_;
@@ -44,10 +42,8 @@ class UrsulaTask: public Task
         void Q5StateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state);
-        void velocityCallback(const geometry_msgs::TwistStampedConstPtr&);
         void buttonCallback(const masterslave::ButtonConstPtr&);
         void flangeCallback(const geometry_msgs::PoseStampedConstPtr&);
-        Eigen::Affine3d moveEEFrame(Eigen::Affine3d);
         Eigen::Affine3d startPositionLBR;
         void loop();
 

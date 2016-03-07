@@ -25,6 +25,7 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, double rosRate): nh_(nh), rosRate_(r
     rcmClient = nh_.serviceClient<masterslave::UrsulaRCM>("/RCM");
     directKinematicsClient = nh_.serviceClient<masterslave::UrsulaDirectKinematics>("/directKinematics");
     inverseKinematicsClient = nh_.serviceClient<masterslave::UrsulaInverseKinematics>("/inverseKinematics");
+    tcpClient = nh_.serviceClient<masterslave::Manipulation>("/Manipulation");
 
     for(int i=0; i < 7; i++)
     {
@@ -89,7 +90,11 @@ void UrsulaTask::loop()
         cycleTimePub.publish(timeMsg);
         //ROS_INFO_STREAM("cycleTime: " << cycleTime);
         Eigen::Affine3d TCP_old = TCP;
-        TCP = moveEEFrame(TCP);
+        // Hier muss der TCP-Service gecallt werden
+        masterslave::Manipulation manipulationService;
+        tf::poseEigenToMsg(TCP,manipulationService.request.T_0_EE_old);
+        tcpClient.call(manipulationService);
+        tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
 
         if(!TCP.isApprox(TCP_old))
         {
@@ -149,11 +154,6 @@ void UrsulaTask::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
     calcQ6();
 }
 
-void UrsulaTask::velocityCallback(const geometry_msgs::TwistStampedConstPtr &velocity)
-{
-    velocity_ = *velocity;
-}
-
 void UrsulaTask::buttonCallback(const masterslave::ButtonConstPtr &button)
 {
     //TODO: Buttonnamen vom Parameterserver holen
@@ -198,48 +198,10 @@ void UrsulaTask::getControlDevice()
     //TODO: Auswahl des gewünschten Steuerungsgeräts
     for(XmlRpc::XmlRpcValue::iterator it = deviceList.begin(); it!=deviceList.end();it++)
     {
-        device_sstream << it->first << "/Velocity";
-        velocitySub = nh_.subscribe(device_sstream.str().c_str(),10,&UrsulaTask::velocityCallback,this);
-        device_sstream.str(std::string());
         device_sstream << it->first << "/Buttons";
         buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&UrsulaTask::buttonCallback, this);
         device_sstream.str(std::string());
     }
-}
-
-Eigen::Affine3d UrsulaTask::moveEEFrame(Eigen::Affine3d oldFrame)
-{
-    Eigen::Affine3d newFrame;
-    newFrame.setIdentity();
-    newFrame.translate(oldFrame.translation());
-
-
-
-    /*if(aperture<=apertureLimit*DEG_TO_RAD || (velocity_.twist.linear.x/cos(polarAngle)<0 || velocity_.twist.linear.y/sin(polarAngle)<0))
-    {
-        newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
-    }*/
-
-    newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
-
-    //ROS_INFO_STREAM(oldFrame.matrix());
-
-    newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
-
-
-    if((oldFrame.translation().z()+heightSafety<RCM.translation().z() || velocity_.twist.linear.z > 0) && (oldFrame.translation().z() > heightSafety || velocity_.twist.linear.z < 0))
-    {
-
-    }
-
-
-    newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x*cycleTime,velocity_.twist.angular.y*cycleTime,velocity_.twist.angular.z*cycleTime),true));
-
-
-    newFrame.rotate(oldFrame.rotation());
-
-    //Plausibilitätskontrolle*/
-    return newFrame;
 }
 
 void UrsulaTask::commandVelocities()

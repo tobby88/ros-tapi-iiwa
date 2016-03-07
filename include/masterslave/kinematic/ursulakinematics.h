@@ -35,28 +35,33 @@ private:
     Eigen::VectorXd calcDirKin(Eigen::VectorXd);
 
     Eigen::MatrixXd calcAnalyticalJacobian(Eigen::VectorXd jointAngles);
+
     void calcInvKin(Eigen::Affine3d);
+
     //Optimization constraint methods
     Eigen::VectorXd angleMonitoring(Eigen::VectorXd deltaQ, Eigen::VectorXd q, double Hmax, double& a);
     Eigen::MatrixXd collisionControl(Eigen::VectorXd q);
     Eigen::VectorXd trocarMonitoring(Eigen::VectorXd qAct, Eigen::VectorXd deltaQ, Eigen::MatrixXd& A); // and RCM is needed
     Eigen::MatrixXd minimizeVelocities(double, Eigen::MatrixXd);
     Eigen::MatrixXd minimizeAcceleration(double cycleTime, Eigen::MatrixXd weightMatrix, Eigen::VectorXd deltaQ, Eigen::MatrixXd& a);
+    Eigen::VectorXd avoidSingularities(Eigen::VectorXd qAct, Eigen::VectorXd qOffset, double weight, double& a);
 
+    //Subscriber and Sevice Servers
     ros::ServiceServer rcmServiceServer;
     ros::ServiceServer directKinematicsServer;
     ros::ServiceServer inverseKinematicsServer;
     ros::Subscriber cycleTimeSub;
 
+    //Callbacks
     bool rcmCallback(masterslave::UrsulaRCM::Request&, masterslave::UrsulaRCM::Response&);
     bool directKinematicsCallback(masterslave::UrsulaDirectKinematics::Request&, masterslave::UrsulaDirectKinematics::Response&);
     bool inverseKinematicsCallback(masterslave::UrsulaInverseKinematics::Request&, masterslave::UrsulaInverseKinematics::Response&);
     void cycleTimeCallback(const std_msgs::Float64ConstPtr&);
-    void configurationCallback(masterslave::ursulakinematicsConfig&config, uint32_t level);
+    void configurationCallback(masterslave::ursulakinematicsConfig& config, uint32_t level);
 
     //geometric description parameters of the LBR iiwa 14 R820
     static const lbrDescriptionParameters LBR_PARAMETERS;
-
+    //geometric description parameters of the TOOL
     static const toolDescriptionParameters TOOL_PARAMETERS;
 
     //geometric description parameters of the LBR iiwa 14 R820 (angle limits and speed limits)
@@ -74,8 +79,6 @@ private:
 
     //last cycle time
     double cycleTime;
-
-    static constexpr double residualMax= 10000;
 
     //Endeffector Position in translation and rotation in euler angles (DLR-Convention)
     Eigen::Matrix<double, 6, 1> curEEPosition;
@@ -100,6 +103,7 @@ private:
     double angleMonitoringGain=0.0000001;
     double accelerationGain=0.0000001;
     double velocityGain=0.0000001;
+    double maxSpeed = 0.7;
     double trocarGain=1;
     double tcpGain=1;
 

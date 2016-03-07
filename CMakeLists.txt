@@ -42,6 +42,7 @@ add_service_files(FILES
     LaparoscopeRCM.srv
     LaparoscopeInverseKinematics.srv
     LaparoscopeDirectKinematics.srv
+    Manipulation.srv
   )
 
 
@@ -67,8 +68,9 @@ generate_dynamic_reconfigure_options(
   cfg/kinematic.cfg
   cfg/masterslave.cfg
   cfg/controldevice.cfg
-  cfg/rosopenigtlbridge.cfg
   cfg/ursulakinematics.cfg
+  cfg/rosopenigtlbridge.cfg
+  cfg/trajectorygenerator.cfg
 )
 
 ###################################
@@ -104,8 +106,6 @@ include_directories(
 add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
 add_dependencies(controldevice controldevice_gencfg)
 
-
-
 add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h src/task/ursulatask.cpp include/masterslave/task/ursulatask.h)
 add_dependencies(masterslave $(PROJECT_NAME)_gencfg)
 add_dependencies(masterslave kinematic_gencfg)
@@ -120,15 +120,27 @@ add_dependencies(ursulakinematics ursulakinematics_gencfg)
 add_executable(laparoscopekinematics src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h)
 add_dependencies(laparoscopekinematics laparoscopekinematic_gencfg)
 
+add_executable(masterslavemanipulation src/manipulation/masterslavemanipulation.cpp include/masterslave/manipulation/masterslavemanipulation.h)
+add_dependencies(masterslavemanipulation masterslavemanipulation_gencfg)
+
+add_executable(trajectorygenerator src/manipulation/trajectorygenerator.cpp include/masterslave/manipulation/trajectorygenerator.h include/masterslave/manipulation/trajectory/ptptraj.h src/manipulation/trajectory/ptptraj.cpp)
+add_dependencies(trajectorygenerator trajectorygenerator_gencfg)
 
 ## Add cmake target dependencies of the executable
-
 add_dependencies(masterslave masterslave_generate_messages_cpp)
 add_dependencies(masterslave faulhaber_driver_generate_messages_cpp)
 add_dependencies(controldevice controldevice_generate_messages_cpp)
+add_dependencies(controldevice masterslave_generate_messages_cpp)
 add_dependencies(rosopenigtlbridge rosopenigtlbridge_generate_messages_cpp)
 add_dependencies(rosopenigtlbridge masterslave_generate_messages_cpp)
 add_dependencies(laparoscopekinematics laparoscopekinematics_generate_messages_cpp)
+add_dependencies(laparoscopekinematics masterslave_generate_messages_cpp)
+add_dependencies(masterslavemanipulation masterslavemanipulation_generate_messages_cpp)
+add_dependencies(masterslavemanipulation masterslave_generate_messages_cpp)
+add_dependencies(ursulakinematics ursulakinematics_generate_messages_cpp)
+add_dependencies(ursulakinematics masterslave_generate_messages_cpp)
+add_dependencies(trajectorygenerator trajectorygenerator_generate_messages_cpp)
+add_dependencies(trajectorygenerator masterslave_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(controldevice
@@ -153,6 +165,16 @@ target_link_libraries(ursulakinematics
 )
 
 target_link_libraries(laparoscopekinematics
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(masterslavemanipulation
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(trajectorygenerator
     ${catkin_LIBRARIES}
     ${Eigen_LIBRARIES}
 )

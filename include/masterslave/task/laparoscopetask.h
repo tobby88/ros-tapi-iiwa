@@ -46,11 +46,6 @@ class LaparoscopeTask : public Task
         void velocityCallback(const geometry_msgs::TwistStampedConstPtr&);
         void buttonCallback(const masterslave::ButtonConstPtr&);
 
-        Eigen::Affine3d moveEEFrame(Eigen::Affine3d);
-
-        ros::ServiceClient rcmClient;
-        ros::ServiceClient directKinematicsClient;
-        ros::ServiceClient inverseKinematicsClient;
 
         Eigen::Affine3d T_0_FL;
 

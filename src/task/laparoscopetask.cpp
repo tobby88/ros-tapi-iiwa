@@ -8,7 +8,6 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(ro
     f = boost::bind(&LaparoscopeTask::configurationCallback,this,_1,_2);
 
     server.setCallback(f);
-
     getControlDevice();
     Q4StateSub = nh_.subscribe("/Q4/joint_states",1,&LaparoscopeTask::Q4StateCallback, this);
     Q5StateSub = nh_.subscribe("/Q5/joint_states",1,&LaparoscopeTask::Q5StateCallback, this);
@@ -19,6 +18,7 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(ro
     rcmClient = nh_.serviceClient<masterslave::LaparoscopeRCM>("/RCM");
     directKinematicsClient = nh_.serviceClient<masterslave::LaparoscopeDirectKinematics>("/directKinematics");
     inverseKinematicsClient = nh_.serviceClient<masterslave::LaparoscopeInverseKinematics>("/inverseKinematics");
+    tcpClient = nh_.serviceClient<masterslave::Manipulation>("/Manipulation");
 
     Q4Pub = nh_.advertise<std_msgs::Float64>("/Q4/setPointVelocity",1);
     Q5Pub = nh_.advertise<std_msgs::Float64>("/Q5/setPointVelocity",1);
@@ -42,36 +42,39 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(ro
 
 }
 
+void LaparoscopeTask::getControlDevice()
+{
+    std::stringstream device_sstream;
+    XmlRpc::XmlRpcValue deviceList;
+
+    // TODO: Laparoskop-Kinematik einbinden
+    if(strcmp(nh_.getNamespace().c_str(),"/Joy")==0)
+    {
+       nh_.getParam("/API/Joy",deviceList);
+    }
+    else if(strcmp(nh_.getNamespace().c_str(),"/Spacenav")==0)
+    {
+        nh_.getParam("/API/Spacenav",deviceList);
+    }
+    else
+    {
+        ROS_ERROR("No ControlDevice found!");
+        return;
+    }
+    //TODO: Auswahl des gewünschten Steuerungsgeräts
+    for(XmlRpc::XmlRpcValue::iterator it = deviceList.begin(); it!=deviceList.end();it++)
+    {
+        device_sstream << it->first << "/Buttons";
+        buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&LaparoscopeTask::buttonCallback, this);
+        device_sstream.str(std::string());
+    }
+}
+
 void LaparoscopeTask::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
 {
     tf::poseMsgToEigen(flangePose->pose,startPositionLBR);
     lbrPositionSub.shutdown();
 }
-
-Eigen::Affine3d LaparoscopeTask::moveEEFrame(Eigen::Affine3d oldFrame)
-{
-    //Eigen::Vector3d rcm_shaftBottom = shaftBottom -rcm;
-    // calculation of the aperture of the frustum
-    //double aperture = asin(sqrt(pow(rcm_shaftBottom[0],2)+pow(rcm_shaftBottom[1],2))/rcm_shaftBottom[2]);
-
-    // polar angle in the frustum plane
-    //double polarAngle = atan2(rcm_shaftBottom[1],rcm_shaftBottom[0]);
-
-    Eigen::Affine3d newFrame;
-    newFrame.setIdentity();
-    newFrame.translate(oldFrame.translation());
-
-    newFrame.translate(Eigen::Vector3d(velocity_.twist.linear.x*cycleTime,velocity_.twist.linear.y*cycleTime,0));
-
-    newFrame.translate(Eigen::Vector3d(0,0,velocity_.twist.linear.z*cycleTime));
-
-
-    newFrame.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity_.twist.angular.x*cycleTime,velocity_.twist.angular.y*cycleTime,velocity_.twist.angular.z*cycleTime),true));
-    newFrame.rotate(oldFrame.rotation());
-    //Plausibilitätskontrolle
-    return newFrame;
-}
-
 
 void LaparoscopeTask::loop()
 {
@@ -93,7 +96,14 @@ void LaparoscopeTask::loop()
         cycleTime = ros::Time::now().toSec() - lastTime;
         lastTime = ros::Time::now().toSec();
 
-        TCP = moveEEFrame(TCP);
+        // Hier muss der TCP-Service gecallt werden
+        masterslave::Manipulation manipulationService;
+        tf::poseEigenToMsg(TCP,manipulationService.request.T_0_EE_old);
+        tcpClient.call(manipulationService);
+        tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
+
+
+
         masterslave::LaparoscopeInverseKinematics inverseKinematicsService;
         tf::poseEigenToMsg(TCP, inverseKinematicsService.request.T_0_EE);
         inverseKinematicsClient.call(inverseKinematicsService);
@@ -103,7 +113,6 @@ void LaparoscopeTask::loop()
         rate.sleep();
     }
     ros::shutdown();
-
 }
 
 
@@ -153,37 +162,6 @@ void LaparoscopeTask::buttonCallback(const masterslave::ButtonConstPtr &button)
 void LaparoscopeTask::velocityCallback(const geometry_msgs::TwistStampedConstPtr &velocity)
 {
     velocity_ = *velocity;
-}
-
-void LaparoscopeTask::getControlDevice()
-{
-    std::stringstream device_sstream;
-    XmlRpc::XmlRpcValue deviceList;
-
-    // TODO: Laparoskop-Kinematik einbinden
-    if(strcmp(nh_.getNamespace().c_str(),"/Joy")==0)
-    {
-       nh_.getParam("/API/Joy",deviceList);
-    }
-    else if(strcmp(nh_.getNamespace().c_str(),"/Spacenav")==0)
-    {
-        nh_.getParam("/API/Spacenav",deviceList);
-    }
-    else
-    {
-        ROS_ERROR("No ControlDevice found!");
-        return;
-    }
-    //TODO: Auswahl des gewünschten Steuerungsgeräts
-    for(XmlRpc::XmlRpcValue::iterator it = deviceList.begin(); it!=deviceList.end();it++)
-    {
-        device_sstream << it->first << "/Velocity";
-        velocitySub = nh_.subscribe(device_sstream.str().c_str(),10,&LaparoscopeTask::velocityCallback,this);
-        device_sstream.str(std::string());
-        device_sstream << it->first << "/Buttons";
-        buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&LaparoscopeTask::buttonCallback, this);
-        device_sstream.str(std::string());
-    }
 }
 
 void LaparoscopeTask::calcQ6()
