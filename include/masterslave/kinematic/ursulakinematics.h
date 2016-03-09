@@ -60,22 +60,26 @@ private:
     void configurationCallback(masterslave::ursulakinematicsConfig& config, uint32_t level);
 
     //geometric description parameters of the LBR iiwa 14 R820
-    static const lbrDescriptionParameters LBR_PARAMETERS;
+    const lbrDescriptionParameters LBR_PARAMETERS = { 0.160, 0.200, 0.200, 0.220, 0.180, 0.220, 0.076, 0.050};
     //geometric description parameters of the TOOL
-    static const toolDescriptionParameters TOOL_PARAMETERS;
+    const toolDescriptionParameters TOOL_PARAMETERS = {0.438, 0.0, 0.062, 0.0, 90.0, 0.0, 0.0088, 0.017, 0.305};
 
     //geometric description parameters of the LBR iiwa 14 R820 (angle limits and speed limits)
     Eigen::Matrix<double, 10, 1> URSULA_MAX_ANGLES;
     Eigen::Matrix<double, 10, 1> URSULA_MAX_ANGLES_SPEED;
 
+    //in according to LBR Specifications (in Degree)
+    const double MAX_ANGLES[10] = {170*DEG_TO_RAD, 120*DEG_TO_RAD, 170*DEG_TO_RAD, 120*DEG_TO_RAD, 170*DEG_TO_RAD, 120*DEG_TO_RAD, 175*DEG_TO_RAD, 85*DEG_TO_RAD, 90*DEG_TO_RAD, 90*DEG_TO_RAD};
+    const double MAX_ANGLES_SPEED[10] = { 85*DEG_TO_RAD, 85*DEG_TO_RAD, 100*DEG_TO_RAD, 75*DEG_TO_RAD, 130*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 45*DEG_TO_RAD, 45*DEG_TO_RAD, 45*DEG_TO_RAD};
+
     //weightMatrix for the usage of different joints
     Eigen::Matrix<double, 10, 10> jointWeightMatrix;
 
     // Parameters for constraints
-    static constexpr double minDistance = 0.05; // minimal distance between some objects before collision control starts working
+    const double minDistance{0.05}; // minimal distance between some objects before collision control starts working
 
     //max iterations for inverse kinematics
-    static constexpr int maxIterations = 10;
+    const int maxIterations{10};
 
     //last cycle time
     double cycleTime;
@@ -99,13 +103,13 @@ private:
     Eigen::Affine3d T_0_Q10;
 
     //weight parameters for online configuration
-    double collisionAvoidanceGain=0.0000001;
-    double angleMonitoringGain=0.0000001;
-    double accelerationGain=0.0000001;
-    double velocityGain=0.0000001;
-    double maxSpeed = 0.7;
-    double trocarGain=1;
-    double tcpGain=1;
+    double collisionAvoidanceGain{0.0000001};
+    double angleMonitoringGain{0.0000001};
+    double accelerationGain{0.0000001};
+    double velocityGain{0.0000001};
+    double maxSpeed{0.7};
+    double trocarGain{1};
+    double tcpGain{1};
 
     // Transformation RCM in 0
     Eigen::Affine3d RCM;

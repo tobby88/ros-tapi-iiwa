@@ -74,7 +74,7 @@ class MasterSlave
         OPENIGTL_STATE curState;
 
         //pointer on the current task-instance
-        Task* task;
+        std::unique_ptr<Task> task;
         int taskCounter;
 
 

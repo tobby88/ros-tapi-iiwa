@@ -30,10 +30,7 @@ MasterSlave::MasterSlave(ros::NodeHandle& controlDeviceNH, ros::NodeHandle& task
 
 MasterSlave::~MasterSlave()
 {
-    if(taskCounter>0)
-    {
-        delete task;
-    }
+
 }
 
 void MasterSlave::statemachineThread(const ros::TimerEvent& event)
@@ -41,11 +38,6 @@ void MasterSlave::statemachineThread(const ros::TimerEvent& event)
     masterslave::state stateStringMsg;
     if(newState!=curState)
     {
-        if(taskCounter>0)
-        {
-            delete task;
-            taskCounter = 0;
-        }
         switch(newState)
         {
             case IDLE:
@@ -59,14 +51,14 @@ void MasterSlave::statemachineThread(const ros::TimerEvent& event)
             case MASTERSLAVE_LAPAROSCOPE:
                 if(curState==MASTERSLAVE_URSULA) break;
                 if(stateService.exists()) stateStringMsg.request.state = "MoveToPose;rob;";
-                task = new LaparoscopeTask(nh_,rosRate);
+                task = std::move(std::unique_ptr<LaparoscopeTask>(new LaparoscopeTask(nh_,rosRate)));
                 curState = newState;
                 taskCounter++;
                 break;
             case MASTERSLAVE_URSULA:
                 if(curState==MASTERSLAVE_LAPAROSCOPE) break;
                 stateStringMsg.request.state = "MoveToJointAngles;";
-                task = new UrsulaTask(nh_,rosRate);
+                task = std::move(std::unique_ptr<UrsulaTask>(new UrsulaTask(nh_,rosRate)));
                 curState = newState;
                 taskCounter++;
                 // URSULA-Task

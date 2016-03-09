@@ -81,13 +81,13 @@ private:
     Eigen::VectorXd jointAngles_new;
 
     igtl::ClientSocket::Pointer commandSocket_;
-    static const int COMMAND_PORT = 49001;
-    static const char* COMMAND_IP;
+    const int COMMAND_PORT{49001};
+    const char* COMMAND_IP{"172.31.1.147"};
     int rCommand;
 
     igtl::ClientSocket::Pointer transformSocket_;
-    static const int TRANSFORM_PORT = 49002;
-    static const char* TRANSFORM_IP;
+    const int TRANSFORM_PORT{49002};
+    const char* TRANSFORM_IP{"172.31.1.147"};
     int rTransform;
 
     unsigned long long CMD_UID=0;
@@ -102,7 +102,7 @@ private:
     bool transformReceived_;
     bool rosTransformReceived_;
 
-    static const unsigned int CONNECTION_TIMEOUT=30;
+    const unsigned int CONNECTION_TIMEOUT{30};
 
 };
 

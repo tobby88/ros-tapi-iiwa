@@ -88,14 +88,13 @@ void UrsulaTask::loop()
         std_msgs::Float64 timeMsg;
         timeMsg.data = cycleTime;
         cycleTimePub.publish(timeMsg);
-        //ROS_INFO_STREAM("cycleTime: " << cycleTime);
         Eigen::Affine3d TCP_old = TCP;
         // Hier muss der TCP-Service gecallt werden
         masterslave::Manipulation manipulationService;
         tf::poseEigenToMsg(TCP,manipulationService.request.T_0_EE_old);
+        //ROS_INFO_STREAM(TCP.matrix() << " " << manipulationService.request.T_0_EE_old);
         tcpClient.call(manipulationService);
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
-
         if(!TCP.isApprox(TCP_old))
         {
             masterslave::UrsulaInverseKinematics inverseKinematicsService;

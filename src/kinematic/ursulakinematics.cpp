@@ -13,9 +13,6 @@ UrsulaKinematics::UrsulaKinematics(ros::NodeHandle& nh): nh_(nh)
     jointAnglesAct = Eigen::VectorXd::Zero(10);
     jointAnglesTar = Eigen::VectorXd::Zero(10);
 
-    //in according to LBR Specifications (in Degree)
-    const double MAX_ANGLES[] = {170*DEG_TO_RAD, 120*DEG_TO_RAD, 170*DEG_TO_RAD, 120*DEG_TO_RAD, 170*DEG_TO_RAD, 120*DEG_TO_RAD, 175*DEG_TO_RAD, 85*DEG_TO_RAD, 90*DEG_TO_RAD, 90*DEG_TO_RAD};
-    const double MAX_ANGLES_SPEED[] = { 85*DEG_TO_RAD, 85*DEG_TO_RAD, 100*DEG_TO_RAD, 75*DEG_TO_RAD, 130*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 45*DEG_TO_RAD, 45*DEG_TO_RAD, 45*DEG_TO_RAD};
     URSULA_MAX_ANGLES = Eigen::Matrix<double,10,1>(MAX_ANGLES);
     URSULA_MAX_ANGLES_SPEED = Eigen::Matrix<double,10,1>(MAX_ANGLES_SPEED);
 
@@ -136,6 +133,7 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
     Eigen::VectorXd bieq = Eigen::VectorXd(20);
     bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*maxSpeed;
     bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*maxSpeed;
+
     jointAnglesIterationPrevious = jointAnglesAct;
 
     // optimization loop
@@ -163,9 +161,9 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
         ROS_INFO_STREAM(" beq: " << beq);
 
 
+        // Monitoring if angles are in there boundaries
         double d_ang = 0;
         Eigen::MatrixXd C_ang = angleMonitoring(deltaQ, jointAnglesIterationPrevious,5,d_ang);
-
 
         Eigen::MatrixXd C_vel = minimizeVelocities(cycleTime, weightMatrix);
         Eigen::VectorXd d_vel = Eigen::VectorXd::Zero(10);
@@ -189,8 +187,8 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
 
 
 
-        C << accelerationGain*C_acc, velocityGain*C_vel,0.000001*C_sing.transpose(),0.00001*C_ang.transpose();
-        d <<-accelerationGain*d_acc,-velocityGain*d_vel, 0.000001*d_sing, 0.000001*d_ang;
+        C << accelerationGain*C_acc, velocityGain*C_vel,0.0000001*C_sing.transpose(),0.0000001*C_ang.transpose();
+        d <<-accelerationGain*d_acc,-velocityGain*d_vel, 0.0000001*d_sing, 0.0000001*d_ang;
         ROS_DEBUG_STREAM("C: " << C << "\n d: " << d);
 
         // https://forum.kde.org/viewtopic.php?f=74&t=102468 Normal equation form (transcript robotics 2)
@@ -432,7 +430,7 @@ Eigen::VectorXd UrsulaKinematics::trocarMonitoring(Eigen::VectorXd qAct, Eigen::
     Ages.col(6) << z_Q7.cross(x_7_trocar), z_Q7;
 
     Eigen::VectorXd ages = -(shaftPositionRPY + Ages*deltaQ-trocarPositionRPY); // - 0-Vektor im Trokarsystem da der gewünschte Punkt [0 0 0] im Trokar-KS ist.
-    ROS_INFO_STREAM_NAMED("TrocarMonitoring","a:\n" << ages << "\n A: \n" << Ages << "\n shaftPos: \n" << shaftPositionRPY);
+    ROS_DEBUG_STREAM_NAMED("TrocarMonitoring","a:\n" << ages << "\n A: \n" << Ages << "\n shaftPos: \n" << shaftPositionRPY);
 
     // Just the first two rows (x- and y-coordinates)
     A = Ages.topRows(2);
@@ -493,12 +491,6 @@ void UrsulaKinematics::configurationCallback(masterslave::ursulakinematicsConfig
     velocityGain = config.VelocityGain;
     maxSpeed = config.MaxSpeed;
 }
-
-
-
-const lbrDescriptionParameters UrsulaKinematics::LBR_PARAMETERS = { 0.160, 0.200, 0.200, 0.220, 0.180, 0.220, 0.076, 0.050};
-
-const toolDescriptionParameters UrsulaKinematics::TOOL_PARAMETERS = {0.438, 0.0, 0.062, 0.0, 90.0, 0.0, 0.0088, 0.017, 0.305};
 
 int main (int argc, char** argv)
 {

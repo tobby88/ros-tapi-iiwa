@@ -17,6 +17,7 @@
 #include <tf/transform_listener.h>
 
 #include "masterslave/manipulation/trajectory/ptptraj.h"
+#include "masterslave/manipulation/trajectory/circletraj.h"
 #include "masterslave/manipulation/trajectory/trajectory.h"
 
 #include <dynamic_reconfigure/server.h>
@@ -34,6 +35,7 @@ class TrajectoryGenerator
 {
 public:
     TrajectoryGenerator(ros::NodeHandle& nh);
+    ~TrajectoryGenerator();
 
 private:
     bool trajectoryCallback(masterslave::Manipulation::Request& req, masterslave::Manipulation::Response& resp);
@@ -43,13 +45,16 @@ private:
     ros::ServiceServer trajectoryServer;
     ros::Subscriber cycleTimeSub;
 
+    Eigen::Vector2i ptpTrajectory;
+    int zCoordinate;
+    int circleRadius;
+    int trajectorySpeed;
     double cycleTime;
 
     bool start;
     bool startOld;
-    masterslave::trajectorygeneratorConfig trajectory;
 
-    Trajectory* trajectoryGen;
+    std::unique_ptr<Trajectory> trajectoryGen;
 
     TRAJECTORY_STATE state;
 };

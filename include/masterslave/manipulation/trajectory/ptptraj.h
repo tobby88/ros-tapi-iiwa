@@ -8,12 +8,9 @@
 class PTPTraj: public Trajectory
 {
     public:
-        PTPTraj(Eigen::Affine3d startPoint, masterslave::trajectorygeneratorConfig&, double cycleTime);
+        PTPTraj(Eigen::Affine3d startPoint, Eigen::Vector2i length, int zCoord, int speed, double cycleTime);
         Eigen::Affine3d calculateNextPoint();
     private:
-        Eigen::Vector3d translation;
-        Eigen::Affine3d currentPosition;
-
 
 };
 

@@ -276,10 +276,6 @@ void RosOpenIgtlBridge::lbrJointAngleCallback(const std_msgs::Float64ConstPtr &j
     jointAngles_new(number) = jointAngle->data;
 }
 
-
-const char* RosOpenIgtlBridge::COMMAND_IP="172.31.1.147";
-const char* RosOpenIgtlBridge::TRANSFORM_IP="172.31.1.147";
-
 int main(int argc, char** argv)
 {
     ros::init(argc,argv, "RosOpenIGTLBridge");

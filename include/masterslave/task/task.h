@@ -68,7 +68,7 @@ class Task
         void configurationCallback(masterslave::kinematicConfig &config, uint32_t level);
         Eigen::Quaternion<double> QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX);
 
-        static const double DEG_TO_RAD;
+        const double DEG_TO_RAD{M_PI/180};
 
 };
 

@@ -42,8 +42,8 @@ class Kinematics
         Eigen::VectorXd jointAnglesTar;
         Eigen::VectorXd jointAnglesAct;
 
-        static constexpr double DEG_TO_RAD = M_PI/180;
-        static constexpr double MM_TO_M = 1/1000;
+        const double DEG_TO_RAD{M_PI/180};
+        const double MM_TO_M{1/1000};
 };
 
 #endif // KINEMATICS_H

@@ -123,7 +123,7 @@ add_dependencies(laparoscopekinematics laparoscopekinematic_gencfg)
 add_executable(masterslavemanipulation src/manipulation/masterslavemanipulation.cpp include/masterslave/manipulation/masterslavemanipulation.h)
 add_dependencies(masterslavemanipulation masterslavemanipulation_gencfg)
 
-add_executable(trajectorygenerator src/manipulation/trajectorygenerator.cpp include/masterslave/manipulation/trajectorygenerator.h include/masterslave/manipulation/trajectory/ptptraj.h src/manipulation/trajectory/ptptraj.cpp)
+add_executable(trajectorygenerator src/manipulation/trajectorygenerator.cpp include/masterslave/manipulation/trajectorygenerator.h include/masterslave/manipulation/trajectory/ptptraj.h src/manipulation/trajectory/ptptraj.cpp include/masterslave/manipulation/trajectory/circletraj.h src/manipulation/trajectory/circletraj.cpp include/masterslave/manipulation/trajectory/trajectory.h)
 add_dependencies(trajectorygenerator trajectorygenerator_gencfg)
 
 ## Add cmake target dependencies of the executable
