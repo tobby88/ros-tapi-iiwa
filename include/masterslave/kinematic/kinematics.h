@@ -17,8 +17,10 @@ class Kinematics
 
     protected:
 
+        bool checkTCP(Eigen::Affine3d TCP);
+
         // pure virtual methods for kinematic calculation
-        virtual void calcInvKin(Eigen::Affine3d)=0;
+        virtual bool calcInvKin(Eigen::Affine3d)=0;
 
         // help method to build up Eigen::Affine3d-Transformations
         Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
@@ -44,6 +46,10 @@ class Kinematics
 
         const double DEG_TO_RAD{M_PI/180};
         const double MM_TO_M{1/1000};
+
+        int apertureMax{60};
+        double penetrationMax{0.3};
+        double penetrationMin{0.1};
 };
 
 #endif // KINEMATICS_H

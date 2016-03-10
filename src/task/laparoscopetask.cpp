@@ -2,6 +2,8 @@
 
 LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(rosRate), nh_(nh)
 {
+
+    if(instances>0) return;
     dynamic_reconfigure::Server<masterslave::kinematicConfig> server(nh_);
     dynamic_reconfigure::Server<masterslave::kinematicConfig>::CallbackType f;
 
@@ -25,7 +27,7 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(ro
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
     lbrTargetPositionPub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeTarget",1);
-
+    instances++;
 
     ros::Rate waiteRate(0.5);
     while(ros::ok() && lbrPositionSub.getNumPublishers()==1)
@@ -39,6 +41,7 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh,double rosRate):rosRate_(ro
     {
         loop();
     }
+
 
 }
 
@@ -101,8 +104,6 @@ void LaparoscopeTask::loop()
         tf::poseEigenToMsg(TCP,manipulationService.request.T_0_EE_old);
         tcpClient.call(manipulationService);
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
-
-
 
         masterslave::LaparoscopeInverseKinematics inverseKinematicsService;
         tf::poseEigenToMsg(TCP, inverseKinematicsService.request.T_0_EE);

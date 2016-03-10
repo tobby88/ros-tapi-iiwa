@@ -18,13 +18,12 @@ protected:
     Eigen::Affine3d startPositionTrajectory_;
     Eigen::Affine3d endPositionTrajectory_;
     Eigen::Affine3d startPosition_;
-    Eigen::Vector3d translation;
     Eigen::Affine3d currentPosition;
-    double pathParameterStart_;
+    double pathParameterStart_{0};
     double pathIncrement;
     double cycleTime_;
     double speed_;
-    double pathParameter_;
+    double pathParameter_{0};
 
     const double M_TO_MM{0.001};
 

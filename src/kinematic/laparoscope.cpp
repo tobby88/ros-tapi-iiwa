@@ -57,7 +57,7 @@ Eigen::Affine3d Laparoscope::calcDirKin(Eigen::VectorXd jointAngles)
 }
 
 
-void Laparoscope::calcInvKin(Eigen::Affine3d desEEPosition)
+bool Laparoscope::calcInvKin(Eigen::Affine3d desEEPosition)
 {
     Eigen::Affine3d T_0_Q6 = desEEPosition.translate(Eigen::Vector3d(-TOOL_PARAMETERS.L_Q6_EE,0,0));
     Eigen::Vector3d p_RCM_Q6 = T_0_Q6.translation()-RCM.translation();

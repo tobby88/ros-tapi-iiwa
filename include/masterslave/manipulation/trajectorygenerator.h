@@ -51,12 +51,12 @@ private:
     int trajectorySpeed;
     double cycleTime;
 
-    bool start;
-    bool startOld;
+    bool start{false};
+    bool startOld{false};
 
     std::unique_ptr<Trajectory> trajectoryGen;
 
-    TRAJECTORY_STATE state;
+    TRAJECTORY_STATE state{NO_STATE};
 };
 
 #endif // TRAJECTORYGENERATOR_H

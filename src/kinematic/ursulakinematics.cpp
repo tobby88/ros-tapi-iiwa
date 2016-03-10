@@ -49,13 +49,15 @@ bool UrsulaKinematics::directKinematicsCallback(masterslave::UrsulaDirectKinemat
 
 bool UrsulaKinematics::inverseKinematicsCallback(masterslave::UrsulaInverseKinematics::Request &req, masterslave::UrsulaInverseKinematics::Response &resp)
 {
+    bool retVal;
     Eigen::Affine3d desEEPose;
     tf::poseMsgToEigen(req.T_0_EE,desEEPose);
     ROS_DEBUG_STREAM("desEEPose: \n" << desEEPose.matrix());
-    calcInvKin(desEEPose);
+    retVal = calcInvKin(desEEPose);
     std::vector<double> jointAnglesTarget(jointAnglesTar.data(),jointAnglesTar.data()+jointAnglesTar.rows()*jointAnglesTar.cols());
 
     resp.jointAnglesTarget = jointAnglesTarget;
+    return retVal;
 }
 
 
@@ -110,17 +112,21 @@ Eigen::VectorXd UrsulaKinematics::calcDirKin(Eigen::VectorXd jointAngles)
     return curEEPosition;
 }
 
-void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
+bool UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
 {
-
-    int iterations = 0;
+    if(!checkTCP(T_0_EE))
+    {
+        ROS_ERROR("BOUNDARY REACHED!");
+        return false;
+    }
+    int iterations=0;
     double residual = std::numeric_limits<double>::infinity();
     double residualNorm = std::numeric_limits<double>::infinity();
     double residualOld = std::numeric_limits<double>::infinity();
     Eigen::VectorXd jointAnglesIterationPrevious = Eigen::VectorXd::Zero(10);
 
     Eigen::VectorXd weightVector(10);
-    weightVector << 1,1,1,1,1,10,1,0.1,1,1;
+    weightVector << 1,1,1,1,1,1,1,1,1,1;
     Eigen::MatrixXd weightMatrix(10,10);
     weightMatrix = weightVector.asDiagonal();
     Eigen::VectorXd dQIteration = Eigen::VectorXd::Zero(10);
@@ -131,8 +137,8 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
     Eigen::MatrixXd Aieq = Eigen::MatrixXd::Identity(10,20);
     Aieq.rightCols(10) = -Eigen::MatrixXd::Identity(10,10);
     Eigen::VectorXd bieq = Eigen::VectorXd(20);
-    bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*maxSpeed;
-    bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*maxSpeed;
+    bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed+rescueFactor);
+    bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed+rescueFactor);
 
     jointAnglesIterationPrevious = jointAnglesAct;
 
@@ -157,9 +163,6 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
         Eigen::VectorXd beq(bkin.rows()+d_trokar.rows());
         beq << trocarGain*d_trokar, tcpGain*bkin;
 
-        ROS_INFO_STREAM("Aeq: \n" << Aeq);
-        ROS_INFO_STREAM(" beq: " << beq);
-
 
         // Monitoring if angles are in there boundaries
         double d_ang = 0;
@@ -175,9 +178,7 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
 
 
         Eigen::VectorXd singularityAngles = Eigen::VectorXd::Zero(10);
-        singularityAngles(1) = jointAnglesIterationPrevious(1);
-        singularityAngles(3) = jointAnglesIterationPrevious(3);
-        singularityAngles(5) = jointAnglesIterationPrevious(5);
+        singularityAngles << 0, jointAnglesIterationPrevious(1), 0, jointAnglesIterationPrevious(3), 0, jointAnglesIterationPrevious(5), 0, 0, 0, 0;
 
         double d_sing = 0;
         Eigen::VectorXd C_sing = avoidSingularities(singularityAngles,Eigen::VectorXd::Zero(10),5,d_sing);
@@ -210,13 +211,17 @@ void UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
         }
         if(residualNorm == std::numeric_limits<double>::infinity() || iterations >= maxIterations || std::abs(residualNorm - residualOld) < 1e-10) break;
         jointAnglesIterationPrevious -= dQIteration;
+    }
+    if(residualNorm == std::numeric_limits<double>::infinity())
+    {
 
-
+        return false;
     }
     //ROS_INFO_STREAM("residual: \n" << residual);
     //ROS_INFO_STREAM("iterations: " << iterations);
     jointAnglesTar = jointAnglesIterationPrevious;
     jointAnglesAct = jointAnglesTar;
+    return true;
    // ROS_INFO_STREAM("jointAnglesTar: \n" << jointAnglesTar);
 }
 
@@ -490,6 +495,10 @@ void UrsulaKinematics::configurationCallback(masterslave::ursulakinematicsConfig
     accelerationGain = config.AccelerationGain;
     velocityGain = config.VelocityGain;
     maxSpeed = config.MaxSpeed;
+
+    apertureMax = config.ApertureLimit;
+    penetrationMax = config.MaxPenetrationLimit;
+    penetrationMin = config.MinPenetrationLimit;
 }
 
 int main (int argc, char** argv)

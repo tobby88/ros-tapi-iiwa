@@ -23,3 +23,5 @@ Eigen::Quaternion<double> Task::QuaternionFromEuler(const Eigen::Vector3d &euler
 
     return quat;
 }
+
+int Task::instances = 0;

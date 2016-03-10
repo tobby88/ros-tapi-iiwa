@@ -7,11 +7,6 @@
 
 MasterSlave::MasterSlave(ros::NodeHandle& controlDeviceNH, ros::NodeHandle& taskNodeHandle): nh_(controlDeviceNH), taskNH_(taskNodeHandle)
 {
-    start_ = false;
-    rosRate = 50;
-    taskCounter = 0;
-    curState = NOSTATE;
-
     dynamic_reconfigure::Server<masterslave::masterslaveConfig> server(taskNH_);
     dynamic_reconfigure::Server<masterslave::masterslaveConfig>::CallbackType f;
 
@@ -53,14 +48,12 @@ void MasterSlave::statemachineThread(const ros::TimerEvent& event)
                 if(stateService.exists()) stateStringMsg.request.state = "MoveToPose;rob;";
                 task = std::move(std::unique_ptr<LaparoscopeTask>(new LaparoscopeTask(nh_,rosRate)));
                 curState = newState;
-                taskCounter++;
                 break;
             case MASTERSLAVE_URSULA:
                 if(curState==MASTERSLAVE_LAPAROSCOPE) break;
                 stateStringMsg.request.state = "MoveToJointAngles;";
                 task = std::move(std::unique_ptr<UrsulaTask>(new UrsulaTask(nh_,rosRate)));
                 curState = newState;
-                taskCounter++;
                 // URSULA-Task
                 break;
         }

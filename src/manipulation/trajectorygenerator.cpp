@@ -8,9 +8,6 @@ TrajectoryGenerator::TrajectoryGenerator(ros::NodeHandle &nh): nh_(nh)
     server.setCallback(f);
     cycleTimeSub = nh_.subscribe("/cycleTime",1,&TrajectoryGenerator::cycleTimeCallback,this);
     trajectoryServer = nh_.advertiseService("/Manipulation",&TrajectoryGenerator::trajectoryCallback, this);
-    state = NO_STATE;
-    start = false;
-    startOld = false;
     ros::spin();
 }
 
@@ -44,9 +41,6 @@ bool TrajectoryGenerator::trajectoryCallback(masterslave::Manipulation::Request 
                 trajectoryGen = std::move(std::unique_ptr<CircleTraj>(new CircleTraj(T_0_EE,circleRadius,zCoordinate,trajectorySpeed,cycleTime)));
                 break;
         }
-
-
-        ROS_INFO("OBJEKTERZEUGUNG");
     }
     if(!start && startOld)
     {

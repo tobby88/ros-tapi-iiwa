@@ -8,6 +8,7 @@
 
 UrsulaTask::UrsulaTask(ros::NodeHandle& nh, double rosRate): nh_(nh), rosRate_(rosRate)
 {
+    if(instances>0) return;
     motorAngles = Eigen::VectorXd::Zero(2);
     jointAnglesAct = Eigen::VectorXd::Zero(10);
     jointAnglesTar = Eigen::VectorXd::Zero(10);
@@ -43,7 +44,7 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, double rosRate): nh_(nh), rosRate_(r
     Q5Pub = nh_.advertise<std_msgs::Float64>("/Q5/setPointVelocity",1);
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
-
+    instances++;
 
     ros::Rate waiteRate(0.5);
     while(ros::ok() && lbrPositionSub.getNumPublishers() !=1)
@@ -51,7 +52,6 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, double rosRate): nh_(nh), rosRate_(r
         ros::spinOnce();
         waiteRate.sleep();
     }
-
     loop();
 }
 
@@ -69,7 +69,6 @@ void UrsulaTask::loop()
 
     rcmService.request.trocarAngles.clear();
     tf::poseMsgToEigen(rcmService.response.trocar,RCM);
-
     masterslave::UrsulaDirectKinematics directKinematicsService;
 
     std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
@@ -92,7 +91,7 @@ void UrsulaTask::loop()
         // Hier muss der TCP-Service gecallt werden
         masterslave::Manipulation manipulationService;
         tf::poseEigenToMsg(TCP,manipulationService.request.T_0_EE_old);
-        //ROS_INFO_STREAM(TCP.matrix() << " " << manipulationService.request.T_0_EE_old);
+
         tcpClient.call(manipulationService);
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
         if(!TCP.isApprox(TCP_old))
@@ -100,8 +99,29 @@ void UrsulaTask::loop()
             masterslave::UrsulaInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
             ROS_DEBUG_STREAM(inverseKinematicsService.request.T_0_EE.position);
-            inverseKinematicsClient.call(inverseKinematicsService);
-            jointAnglesTar = Eigen::VectorXd::Map(inverseKinematicsService.response.jointAnglesTarget.data(),inverseKinematicsService.response.jointAnglesTarget.size());
+            if(inverseKinematicsClient.call(inverseKinematicsService))
+            {
+                jointAnglesTar = Eigen::VectorXd::Map(inverseKinematicsService.response.jointAnglesTarget.data(),inverseKinematicsService.response.jointAnglesTarget.size());
+            }
+            else
+            {
+
+                masterslave::UrsulaDirectKinematics directKinematicsService;
+
+                std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
+                directKinematicsService.request.jointAngles = jointAnglesActual;
+
+                if(directKinematicsClient.call(directKinematicsService))
+                {
+                    tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);
+                }
+                else
+                {
+                    TCP = TCP_old;
+                }
+                directKinematicsService.request.jointAngles.clear();
+
+            }
 
         }
         commandVelocities();

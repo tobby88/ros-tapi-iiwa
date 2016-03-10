@@ -2,15 +2,19 @@
 
 #define DEG_TO_RAD M_PI/180
 
-void Kinematics::setT_0_EE(Eigen::Affine3d value)
+bool Kinematics::checkTCP(Eigen::Affine3d TCP)
 {
-    T_0_EE = value;
-}
+    Eigen::Vector3d xEE_RCM = TCP.translation() - RCM.translation();
+    ROS_INFO_STREAM("xEE_RCM: \n" << xEE_RCM << "\n RCM: \n" << RCM.translation());
+    //Öffnungswinkel des Kegels
+    double aperture = asin(xEE_RCM.head(2).norm()/xEE_RCM[2]);
+    double polarAngle = atan2(xEE_RCM[1],xEE_RCM[0]);
+    if(std::abs(xEE_RCM[2]) > penetrationMax || std::abs(xEE_RCM[2]) < penetrationMin || apertureMax*DEG_TO_RAD < aperture)
+    {
+        return false;
+    }
+    return true;
 
-void Kinematics::setRCM(const Eigen::Affine3d startPose)
-{
-    Eigen::Affine3d T_FL_RCM = buildAffine3d(Eigen::Vector3d(TOOL_PARAMETERS.X_RCM,TOOL_PARAMETERS.Y_0_Q4,TOOL_PARAMETERS.Z_0_Q4),Eigen::Vector3d(TOOL_PARAMETERS.A_0_Q4*DEG_TO_RAD,TOOL_PARAMETERS.B_0_Q4*DEG_TO_RAD,TOOL_PARAMETERS.C_0_Q4*DEG_TO_RAD),true);
-    RCM = startPose*T_FL_RCM;
 }
 
 

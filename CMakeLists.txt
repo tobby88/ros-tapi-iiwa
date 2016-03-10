@@ -113,11 +113,11 @@ add_dependencies(masterslave kinematic_gencfg)
 add_executable(rosopenigtlbridge src/rosopenigtlbridge.cpp include/masterslave/rosopenigtlbridge.h)
 add_dependencies(rosopenigtlbridge rosopenigtlbridge_gencfg)
 
-add_executable(ursulakinematics src/kinematic/ursulakinematics.cpp include/masterslave/kinematic/ursulakinematics.h include/masterslave/kinematic/kinematics.h)
+add_executable(ursulakinematics src/kinematic/ursulakinematics.cpp include/masterslave/kinematic/ursulakinematics.h include/masterslave/kinematic/kinematics.h src/kinematic/kinematics.cpp)
 add_dependencies(ursulakinematics $(PROJECT_NAME)_gencfg)
 add_dependencies(ursulakinematics ursulakinematics_gencfg)
 
-add_executable(laparoscopekinematics src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h)
+add_executable(laparoscopekinematics src/kinematic/laparoscope.cpp include/masterslave/kinematic/laparoscope.h include/masterslave/kinematic/kinematics.h src/kinematic/kinematics.cpp)
 add_dependencies(laparoscopekinematics laparoscopekinematic_gencfg)
 
 add_executable(masterslavemanipulation src/manipulation/masterslavemanipulation.cpp include/masterslave/manipulation/masterslavemanipulation.h)

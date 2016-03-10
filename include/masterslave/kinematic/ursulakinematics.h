@@ -1,6 +1,5 @@
 #ifndef URSULAKINEMATICS_H
 #define URSULAKINEMATICS_H
-
 #include "kinematics.h"
 
 #include <eigen3/Eigen/Core>
@@ -36,7 +35,7 @@ private:
 
     Eigen::MatrixXd calcAnalyticalJacobian(Eigen::VectorXd jointAngles);
 
-    void calcInvKin(Eigen::Affine3d);
+    bool calcInvKin(Eigen::Affine3d);
 
     //Optimization constraint methods
     Eigen::VectorXd angleMonitoring(Eigen::VectorXd deltaQ, Eigen::VectorXd q, double Hmax, double& a);
@@ -88,7 +87,7 @@ private:
     Eigen::Matrix<double, 6, 1> curEEPosition;
     Eigen::Matrix<double, 6, 1> desEEPosition;
 
-    // Direct Kinematics
+    // Direct Kinematics (Array stattdesseN?!)
     Eigen::Affine3d T_0_Q1;
     Eigen::Affine3d T_0_Q2;
     Eigen::Affine3d T_0_Q3;
@@ -108,11 +107,9 @@ private:
     double accelerationGain{0.0000001};
     double velocityGain{0.0000001};
     double maxSpeed{0.7};
+    double rescueFactor{0};
     double trocarGain{1};
     double tcpGain{1};
-
-    // Transformation RCM in 0
-    Eigen::Affine3d RCM;
 
     // Jacobians
     Eigen::MatrixXd geomJacobian;

@@ -58,10 +58,10 @@ private:
 
 
     ros::Subscriber flangeTargetSub;
-    ros::Subscriber lbrJointAngleSub[7];
+    std::array<ros::Subscriber,7> lbrJointAngleSub;
 
     ros::Publisher flangePub;
-    ros::Publisher lbrJointAnglePub[7];
+    std::array<ros::Publisher,7> lbrJointAnglePub;
 
     ros::ServiceServer stateServiceServer;
     ros::NodeHandle nh_;
@@ -69,7 +69,7 @@ private:
     boost::thread openIGTLThread;
 
     int positionReached_;
-    bool sendTransformFlag;
+    bool sendTransformFlag{false};
 
     boost::mutex transformUpdateMutex_;
 
@@ -90,7 +90,7 @@ private:
     const char* TRANSFORM_IP{"172.31.1.147"};
     int rTransform;
 
-    unsigned long long CMD_UID=0;
+    unsigned long long CMD_UID{0};
 
     std::string openIGTLCommandString;
     std::string stateString;
@@ -99,8 +99,8 @@ private:
 
     bool stop_;
     bool start_;
-    bool transformReceived_;
-    bool rosTransformReceived_;
+    bool transformReceived_{false};
+    bool rosTransformReceived_{false};
 
     const unsigned int CONNECTION_TIMEOUT{30};
 

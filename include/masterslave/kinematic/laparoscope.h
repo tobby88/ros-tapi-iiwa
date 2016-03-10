@@ -33,7 +33,7 @@ class Laparoscope: public Kinematics
 
         //Implementation of the inhereted methods of Kinematics class
         Eigen::Affine3d calcDirKin(Eigen::VectorXd);
-        void calcInvKin(Eigen::Affine3d);
+        bool calcInvKin(Eigen::Affine3d);
 
         bool rcmCallback(masterslave::LaparoscopeRCM::Request &req, masterslave::LaparoscopeRCM::Response &resp);
         bool directKinematicsCallback(masterslave::LaparoscopeDirectKinematics::Request &req, masterslave::LaparoscopeDirectKinematics::Response &resp);

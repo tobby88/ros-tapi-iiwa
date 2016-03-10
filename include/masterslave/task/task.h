@@ -70,6 +70,8 @@ class Task
 
         const double DEG_TO_RAD{M_PI/180};
 
+        static int instances;
+
 };
 
 #endif // TASK_H

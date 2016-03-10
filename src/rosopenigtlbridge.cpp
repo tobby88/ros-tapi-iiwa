@@ -26,7 +26,6 @@ RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
     flangeTargetSub = nh_.subscribe("/flangeTarget",1,&RosOpenIgtlBridge::transformCallback,this);
 
     flangePub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeLBR",1);
-    sendTransformFlag = false;
 
     for(int i=0; i < 7; i++)
     {
@@ -39,8 +38,6 @@ RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
        lbrJointAnglePub[i] = nh_.advertise<sensor_msgs::JointState>(sstream.str().c_str(),1);
        sstream.str(std::string());
     }
-
-    transformReceived_ = false;
 
     stateServiceServer = nh_.advertiseService("/openIGTLState",&RosOpenIgtlBridge::stateService,this);
     boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkTransformThread,this));

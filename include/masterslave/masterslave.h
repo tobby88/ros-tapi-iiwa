@@ -38,7 +38,7 @@
 // important and used states for the OpenIGTLink-Communication @see rosopenigtlbridge.h
 enum OPENIGTL_STATE
 {
-    NOSTATE = -1,
+    NO_STATE = -1,
     IDLE, //Idle state
     FREE, //Gravitation compensation
     MASTERSLAVE_LAPAROSCOPE, // first kinematic approach
@@ -62,20 +62,20 @@ class MasterSlave
         ros::Publisher  rcmPub;
         ros::ServiceClient  stateService;
 
-        double rosRate;
+        double rosRate{1000};
 
-        bool start_;
+        bool start_{false};
 
         // flag that shows if the OpenIGTL-Statemachine is running
         bool statemachineIsRunning;
 
         // current state of the LBR iiwa
         OPENIGTL_STATE newState;
-        OPENIGTL_STATE curState;
+        OPENIGTL_STATE curState{NO_STATE};
 
         //pointer on the current task-instance
         std::unique_ptr<Task> task;
-        int taskCounter;
+        int taskCounter{0};
 
 
 };

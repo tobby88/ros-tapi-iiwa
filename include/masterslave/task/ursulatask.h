@@ -1,6 +1,8 @@
 #ifndef URSULATASK_H
 #define URSULATASK_H
 
+#include <array>
+
 #include "task.h"
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
@@ -30,9 +32,9 @@ class UrsulaTask: public Task
         void commandVelocities();
         std::vector<std::string> buttons;
 
-        ros::Publisher lbrJointAnglePub[7];
+        std::array<ros::Publisher,7> lbrJointAnglePub;
         ros::Publisher cycleTimePub;
-        ros::Subscriber lbrJointAngleSub[7];
+        std::array<ros::Subscriber,7> lbrJointAngleSub;
 
         void lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr& state, int number);
 
