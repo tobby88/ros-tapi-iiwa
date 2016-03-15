@@ -4,6 +4,7 @@
 #include "Eigen/Dense"
 #include "ros/ros.h"
 #include "masterslave/descriptionparameters.h"
+#include "masterslave/kinematic/boundingbox.h"
 
 /*
  * Kinematics class as parent for different kinematics like URSUlA-Kinematic or Laparoscope-KINEMATIC
@@ -50,6 +51,12 @@ class Kinematics
         int apertureMax{60};
         double penetrationMax{0.3};
         double penetrationMin{0.1};
+
+
+
+
+        bool rcmServiceCalled{false};
+        bool directKinematicsServiceCalled{false};
 };
 
 #endif // KINEMATICS_H

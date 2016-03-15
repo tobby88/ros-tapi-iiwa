@@ -21,7 +21,6 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, double rosRate): nh_(nh), rosRate_(r
     Q5StateSub = nh_.subscribe("/Q5/joint_states",1,&UrsulaTask::Q5StateCallback, this);
     Q6nStateSub = nh_.subscribe("/Q6N/joint_states",1,&UrsulaTask::Q6nStateCallback, this);
     Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&UrsulaTask::Q6pStateCallback, this);
-    lbrPositionSub = nh_.subscribe("/flangeLBR",1,&UrsulaTask::flangeCallback, this);
 
     rcmClient = nh_.serviceClient<masterslave::UrsulaRCM>("/RCM");
     directKinematicsClient = nh_.serviceClient<masterslave::UrsulaDirectKinematics>("/directKinematics");
@@ -47,8 +46,9 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, double rosRate): nh_(nh), rosRate_(r
     instances++;
 
     ros::Rate waiteRate(0.5);
-    while(ros::ok() && lbrPositionSub.getNumPublishers() !=1)
+    while(ros::ok() && !((callBacksCalled+1) >> 10 ==1) )
     {
+        ROS_WARN("ROS is waiting for Startposition!");
         ros::spinOnce();
         waiteRate.sleep();
     }
@@ -60,25 +60,25 @@ void UrsulaTask::loop()
     ros::spinOnce();
     double lastTime = ros::Time::now().toSec();
 
+    ROS_INFO_STREAM(jointAnglesAct);
     masterslave::UrsulaRCM rcmService;
-
     std::vector<double> trocarAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
     rcmService.request.trocarAngles = trocarAngles;
-
     rcmClient.call(rcmService);
-
-    rcmService.request.trocarAngles.clear();
     tf::poseMsgToEigen(rcmService.response.trocar,RCM);
-    masterslave::UrsulaDirectKinematics directKinematicsService;
 
+    masterslave::UrsulaDirectKinematics directKinematicsService;
     std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
     directKinematicsService.request.jointAngles = jointAnglesActual;
-
     directKinematicsClient.call(directKinematicsService);
     directKinematicsService.request.jointAngles.clear();
     tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);
     jointAnglesTar = jointAnglesAct;
+
+    boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
+
     ros::Rate rate(rosRate_);
+
     while(ros::ok())
     {
         ros::spinOnce();
@@ -88,58 +88,41 @@ void UrsulaTask::loop()
         timeMsg.data = cycleTime;
         cycleTimePub.publish(timeMsg);
         Eigen::Affine3d TCP_old = TCP;
+
         // Hier muss der TCP-Service gecallt werden
         masterslave::Manipulation manipulationService;
         tf::poseEigenToMsg(TCP,manipulationService.request.T_0_EE_old);
 
         tcpClient.call(manipulationService);
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
-        if(!TCP.isApprox(TCP_old))
+        if(!TCP.isApprox(TCP_old) && boundingBox->checkBoundingBoxTCP(TCP))
         {
             masterslave::UrsulaInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
             ROS_DEBUG_STREAM(inverseKinematicsService.request.T_0_EE.position);
+
             if(inverseKinematicsClient.call(inverseKinematicsService))
             {
                 jointAnglesTar = Eigen::VectorXd::Map(inverseKinematicsService.response.jointAnglesTarget.data(),inverseKinematicsService.response.jointAnglesTarget.size());
             }
-            else
-            {
-
-                masterslave::UrsulaDirectKinematics directKinematicsService;
-
-                std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
-                directKinematicsService.request.jointAngles = jointAnglesActual;
-
-                if(directKinematicsClient.call(directKinematicsService))
-                {
-                    tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);
-                }
-                else
-                {
-                    TCP = TCP_old;
-                }
-                directKinematicsService.request.jointAngles.clear();
-
-            }
-
         }
+        else
+        {
+            TCP_old = TCP;
+        }
+
         commandVelocities();
         rate.sleep();
     }
     ros::shutdown();
 }
 
-
-void UrsulaTask::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
-{
-    tf::poseMsgToEigen(flangePose->pose,startPositionLBR);
-    lbrPositionSub.shutdown();
-}
-
 void UrsulaTask::lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr &state, int number)
 {
     jointAnglesAct(number) = state->position[0];
+    //check if all LBR callbacks are called once
+    callBacksCalled += 1 << number;
+
 }
 
 void UrsulaTask::calcQ6()
@@ -149,28 +132,47 @@ void UrsulaTask::calcQ6()
         gripper_stop = true;
     else
         gripper_stop = false;
+    // reset the callback counter
+    Q6CallbacksCalled = 0;
+    callBacksCalled += 1 << 9;
 }
 
 void UrsulaTask::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(0) = state->position.at(0);
+    callBacksCalled += 1 << 7;
 }
 
 
 void UrsulaTask::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(1) = state->position.at(0);
+    callBacksCalled += 1 << 8;
 }
 
 void UrsulaTask::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(0)= state->position.at(0);
+    // set  signal that callback Q6n was called
+    Q6CallbacksCalled += 1;
+    // check if both Q6 callbacks were called
+    if(1 == Q6CallbacksCalled+1 >> 2)
+    {
+        calcQ6();
+    }
+
 }
 
 void UrsulaTask::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(1) = state->position.at(0);
-    calcQ6();
+    // set  signal that callback Q6n was called
+    Q6CallbacksCalled += 1 << 1;
+    // check if both Q6 callbacks were called
+    if(1 == Q6CallbacksCalled+1 >> 2)
+    {
+        calcQ6();
+    }
 }
 
 void UrsulaTask::buttonCallback(const masterslave::ButtonConstPtr &button)

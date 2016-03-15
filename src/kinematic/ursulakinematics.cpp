@@ -35,6 +35,9 @@ bool UrsulaKinematics::rcmCallback(masterslave::UrsulaRCM::Request &req, masters
     Eigen::VectorXd jointAngles = Eigen::VectorXd::Map(req.trocarAngles.data(),req.trocarAngles.size());
     calcDirKin(jointAngles);
     RCM = T_0_SCH;
+    tf::poseEigenToMsg(T_0_SCH,resp.trocar);
+    rcmServiceCalled = true;
+    return true;
 }
 
 bool UrsulaKinematics::directKinematicsCallback(masterslave::UrsulaDirectKinematics::Request &req, masterslave::UrsulaDirectKinematics::Response &resp)
@@ -45,17 +48,19 @@ bool UrsulaKinematics::directKinematicsCallback(masterslave::UrsulaDirectKinemat
     geometry_msgs::Pose pose;
     tf::poseEigenToMsg(T_0_EE,pose);
     resp.T_0_EE  = pose;
+    directKinematicsServiceCalled = true;
+    return true;
 }
 
 bool UrsulaKinematics::inverseKinematicsCallback(masterslave::UrsulaInverseKinematics::Request &req, masterslave::UrsulaInverseKinematics::Response &resp)
 {
-    bool retVal;
+    bool retVal=true;
     Eigen::Affine3d desEEPose;
     tf::poseMsgToEigen(req.T_0_EE,desEEPose);
     ROS_DEBUG_STREAM("desEEPose: \n" << desEEPose.matrix());
     retVal = calcInvKin(desEEPose);
     std::vector<double> jointAnglesTarget(jointAnglesTar.data(),jointAnglesTar.data()+jointAnglesTar.rows()*jointAnglesTar.cols());
-
+    ROS_WARN_STREAM(retVal);
     resp.jointAnglesTarget = jointAnglesTarget;
     return retVal;
 }
@@ -114,11 +119,11 @@ Eigen::VectorXd UrsulaKinematics::calcDirKin(Eigen::VectorXd jointAngles)
 
 bool UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
 {
-    if(!checkTCP(T_0_EE))
+    /*if(!checkTCP(T_0_EE))
     {
         ROS_ERROR("BOUNDARY REACHED!");
         return false;
-    }
+    }*/
     int iterations=0;
     double residual = std::numeric_limits<double>::infinity();
     double residualNorm = std::numeric_limits<double>::infinity();
@@ -137,8 +142,8 @@ bool UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
     Eigen::MatrixXd Aieq = Eigen::MatrixXd::Identity(10,20);
     Aieq.rightCols(10) = -Eigen::MatrixXd::Identity(10,10);
     Eigen::VectorXd bieq = Eigen::VectorXd(20);
-    bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed+rescueFactor);
-    bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed+rescueFactor);
+    bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed);
+    bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed);
 
     jointAnglesIterationPrevious = jointAnglesAct;
 
@@ -178,7 +183,7 @@ bool UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
 
 
         Eigen::VectorXd singularityAngles = Eigen::VectorXd::Zero(10);
-        singularityAngles << 0, jointAnglesIterationPrevious(1), 0, jointAnglesIterationPrevious(3), 0, jointAnglesIterationPrevious(5), 0, 0, 0, 0;
+        singularityAngles << jointAnglesIterationPrevious;
 
         double d_sing = 0;
         Eigen::VectorXd C_sing = avoidSingularities(singularityAngles,Eigen::VectorXd::Zero(10),5,d_sing);
@@ -188,8 +193,8 @@ bool UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
 
 
 
-        C << accelerationGain*C_acc, velocityGain*C_vel,0.0000001*C_sing.transpose(),0.0000001*C_ang.transpose();
-        d <<-accelerationGain*d_acc,-velocityGain*d_vel, 0.0000001*d_sing, 0.0000001*d_ang;
+        C << cycleTime*accelerationGain*C_acc, cycleTime*velocityGain*C_vel,cycleTime*singularityGain*C_sing.transpose(),cycleTime*angleMonitoringGain*C_ang.transpose();
+        d <<-cycleTime*accelerationGain*d_acc,-cycleTime*velocityGain*d_vel, -cycleTime*singularityGain*d_sing, -cycleTime*angleMonitoringGain*d_ang;
         ROS_DEBUG_STREAM("C: " << C << "\n d: " << d);
 
         // https://forum.kde.org/viewtopic.php?f=74&t=102468 Normal equation form (transcript robotics 2)
@@ -197,8 +202,18 @@ bool UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
         Eigen::VectorXd cTd = -C.transpose()*d;
         ROS_DEBUG_STREAM("cTc: " << cTc << " cTd: " << cTd);
 
+        Eigen::MatrixXd copyCTC(cTc);
+        Eigen::VectorXd copyCTD(cTd);
         //Optimization
-        residual = Eigen::solve_quadprog(cTc,cTd,Aeq,beq,Aieq,bieq,dQIteration,1);
+        try
+        {
+            residual = Eigen::solve_quadprog(copyCTC,copyCTD,Eigen::MatrixXd(Aeq),Eigen::VectorXd(beq),Eigen::MatrixXd(Aieq),Eigen::VectorXd(bieq),dQIteration,1);
+        }
+        catch(std::exception e)
+        {
+            ROS_ERROR_STREAM(e.what());
+        }
+
         ROS_WARN_STREAM("deltaQ: \n" << dQIteration);
         residualNorm = std::abs(residual);
         for(int i=0;i<dQIteration.rows();i++)
@@ -214,11 +229,11 @@ bool UrsulaKinematics::calcInvKin(Eigen::Affine3d T_0_EE)
     }
     if(residualNorm == std::numeric_limits<double>::infinity())
     {
-
         return false;
     }
-    //ROS_INFO_STREAM("residual: \n" << residual);
-    //ROS_INFO_STREAM("iterations: " << iterations);
+
+    ROS_INFO_STREAM("residual: \n" << residual);
+    ROS_INFO_STREAM("iterations: " << iterations);
     jointAnglesTar = jointAnglesIterationPrevious;
     jointAnglesAct = jointAnglesTar;
     return true;
@@ -495,6 +510,7 @@ void UrsulaKinematics::configurationCallback(masterslave::ursulakinematicsConfig
     accelerationGain = config.AccelerationGain;
     velocityGain = config.VelocityGain;
     maxSpeed = config.MaxSpeed;
+    singularityGain = config.SingularityAvoidanceGain;
 
     apertureMax = config.ApertureLimit;
     penetrationMax = config.MaxPenetrationLimit;

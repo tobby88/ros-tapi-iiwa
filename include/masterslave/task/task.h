@@ -9,6 +9,7 @@
 
 #include "masterslave/descriptionparameters.h"
 #include "masterslave/kinematic/kinematics.h"
+#include "masterslave/kinematic/boundingbox.h"
 
 #include "sensor_msgs/JointState.h"
 #include "masterslave/Button.h"
@@ -28,6 +29,7 @@ class Task
     protected:
         Eigen::Affine3d startPositionLBR;
         Eigen::Affine3d TCP;
+        Eigen::Affine3d RCM;
         double apertureLimit;
         double heightSafety;
         virtual void calcQ6()=0;
@@ -72,6 +74,12 @@ class Task
 
         static int instances;
 
+        std::unique_ptr<BoundingBox> boundingBox;
+
+        Eigen::Vector3d boundingBoxSize{0.35,0.35,0.2};
+        double rcmDistance{0.1};
+
+        int Q6CallbacksCalled{0};
 };
 
 #endif // TASK_H

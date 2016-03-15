@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(masterslave)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries
@@ -106,7 +108,7 @@ include_directories(
 add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
 add_dependencies(controldevice controldevice_gencfg)
 
-add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h src/task/ursulatask.cpp include/masterslave/task/ursulatask.h)
+add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h src/task/task.cpp include/masterslave/task/task.h src/task/laparoscopetask.cpp include/masterslave/task/laparoscopetask.h src/task/ursulatask.cpp include/masterslave/task/ursulatask.h  include/masterslave/task/boundingbox.h src/task/boundingbox.cpp)
 add_dependencies(masterslave $(PROJECT_NAME)_gencfg)
 add_dependencies(masterslave kinematic_gencfg)
 

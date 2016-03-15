@@ -9,12 +9,11 @@ bool Kinematics::checkTCP(Eigen::Affine3d TCP)
     //Öffnungswinkel des Kegels
     double aperture = asin(xEE_RCM.head(2).norm()/xEE_RCM[2]);
     double polarAngle = atan2(xEE_RCM[1],xEE_RCM[0]);
-    if(std::abs(xEE_RCM[2]) > penetrationMax || std::abs(xEE_RCM[2]) < penetrationMin || apertureMax*DEG_TO_RAD < aperture)
+    if(std::abs(xEE_RCM.norm()) > penetrationMax || std::abs(xEE_RCM.norm()) < penetrationMin || apertureMax*DEG_TO_RAD < aperture)
     {
         return false;
     }
     return true;
-
 }
 
 

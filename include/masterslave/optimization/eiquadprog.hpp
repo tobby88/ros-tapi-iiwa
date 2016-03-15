@@ -84,6 +84,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <Eigen/Dense>
 #include <Eigen/Core>
+#include  <ostream>
 
 namespace Eigen {
 
@@ -409,6 +410,8 @@ l2a:/* Step 2a: determine step direction */
       print_matrix("R", R, n);
       print_ivector("A", A, iq);
 #endif
+      try
+      {
 			for (i = 0; i < m; i++)
 				iai(i) = i;
 			for (i = 0; i < iq; i++)
@@ -418,6 +421,12 @@ l2a:/* Step 2a: determine step direction */
 				u(i) = u_old(i);
 			}
 			x = x_old;
+      }
+      catch(std::exception e)
+      {
+          std::cout << e.what();
+      }
+
       goto l2; /* go to step 2 */
 		}    
     else

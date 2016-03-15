@@ -48,13 +48,6 @@ void MasterSlaveManipulation::cycleTimeCallback(const std_msgs::Float64ConstPtr 
 
 bool MasterSlaveManipulation::masterSlaveCallback(masterslave::Manipulation::Request &req, masterslave::Manipulation::Response &resp)
 {
-    //Eigen::Vector3d rcm_shaftBottom = shaftBottom -rcm;
-    // calculation of the aperture of the frustum
-    //double aperture = asin(sqrt(pow(rcm_shaftBottom[0],2)+pow(rcm_shaftBottom[1],2))/rcm_shaftBottom[2]);
-
-    // polar angle in the frustum plane
-    //double polarAngle = atan2(rcm_shaftBottom[1],rcm_shaftBottom[0]);
-
     Eigen::Affine3d TCPold;
     Eigen::Affine3d TCPnew;
     tf::poseMsgToEigen(req.T_0_EE_old,TCPold);
@@ -71,6 +64,7 @@ bool MasterSlaveManipulation::masterSlaveCallback(masterslave::Manipulation::Req
     TCPnew.rotate(TCPold.rotation());
 
     tf::poseEigenToMsg(TCPnew,resp.T_0_EE_new);
+    return true;
 
 }
 

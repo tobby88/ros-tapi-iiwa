@@ -45,12 +45,13 @@ class UrsulaTask: public Task
         void Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state);
         void buttonCallback(const masterslave::ButtonConstPtr&);
-        void flangeCallback(const geometry_msgs::PoseStampedConstPtr&);
         Eigen::Affine3d startPositionLBR;
         void loop();
 
         Eigen::VectorXd lbrJointAngles;
-        Eigen::Affine3d RCM;
+
+        int callBacksCalled{0};
+
 };
 
 #endif // URSULATASK_H
