@@ -1,17 +1,17 @@
-#include "task/ursulatask.h"
+#include "commander/NumericKinematicCommander.h"
 
 /**
- * @brief UrsulaTask::UrsulaTask
+ * @brief NumericKinematicCommander::NumericKinematicCommander
  * @param nh
  * @param rosRate
  */
 
-UrsulaTask::UrsulaTask(ros::NodeHandle& nh, ros::NodeHandle& drNH): nh_(nh)
+NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::NodeHandle& drNH): nh_(nh)
 {
-    dynamic_reconfigure::Server<masterslave::masterslaveConfig> server(drNH);
-    dynamic_reconfigure::Server<masterslave::masterslaveConfig>::CallbackType f;
+    dynamic_reconfigure::Server<masterslave::MasterSlaveConfig> server(drNH);
+    dynamic_reconfigure::Server<masterslave::MasterSlaveConfig>::CallbackType f;
 
-    f = boost::bind(&UrsulaTask::configurationCallback,this,_1,_2);
+    f = boost::bind(&NumericKinematicCommander::configurationCallback,this,_1,_2);
 
     server.setCallback(f);
 
@@ -23,14 +23,14 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, ros::NodeHandle& drNH): nh_(nh)
 
     cycleTimePub = nh_.advertise<std_msgs::Float64>("/cycleTime",1);
     getControlDevice();
-    Q4StateSub = nh_.subscribe("/Q4/joint_states",1,&UrsulaTask::Q4StateCallback, this);
-    Q5StateSub = nh_.subscribe("/Q5/joint_states",1,&UrsulaTask::Q5StateCallback, this);
-    Q6nStateSub = nh_.subscribe("/Q6N/joint_states",1,&UrsulaTask::Q6nStateCallback, this);
-    Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&UrsulaTask::Q6pStateCallback, this);
+    Q4StateSub = nh_.subscribe("/Q4/joint_states",1,&NumericKinematicCommander::Q4StateCallback, this);
+    Q5StateSub = nh_.subscribe("/Q5/joint_states",1,&NumericKinematicCommander::Q5StateCallback, this);
+    Q6nStateSub = nh_.subscribe("/Q6N/joint_states",1,&NumericKinematicCommander::Q6nStateCallback, this);
+    Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&NumericKinematicCommander::Q6pStateCallback, this);
 
-    rcmClient = nh_.serviceClient<masterslave::UrsulaRCM>("/RCM");
-    directKinematicsClient = nh_.serviceClient<masterslave::UrsulaDirectKinematics>("/directKinematics");
-    inverseKinematicsClient = nh_.serviceClient<masterslave::UrsulaInverseKinematics>("/inverseKinematics");
+    rcmClient = nh_.serviceClient<masterslave::NumericKinematicRCM>("/RCM");
+    directKinematicsClient = nh_.serviceClient<masterslave::NumericKinematicDirectKinematics>("/directKinematics");
+    inverseKinematicsClient = nh_.serviceClient<masterslave::NumericKinematicInverseKinematics>("/inverseKinematics");
     tcpClient = nh_.serviceClient<masterslave::Manipulation>("/Manipulation");
 
     for(int i=0; i < 7; i++)
@@ -41,7 +41,7 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, ros::NodeHandle& drNH): nh_(nh)
        sstream.str(std::string());
 
        sstream << "/LBR/act/joint" << i+1;
-       lbrJointAngleSub[i] = nh_.subscribe<sensor_msgs::JointState>(sstream.str().c_str(),1,boost::bind(&UrsulaTask::lbrJointAngleCallback,this,_1,i));
+       lbrJointAngleSub[i] = nh_.subscribe<sensor_msgs::JointState>(sstream.str().c_str(),1,boost::bind(&NumericKinematicCommander::lbrJointAngleCallback,this,_1,i));
        sstream.str(std::string());
     }
 
@@ -49,7 +49,6 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, ros::NodeHandle& drNH): nh_(nh)
     Q5Pub = nh_.advertise<std_msgs::Float64>("/Q5/setPointVelocity",1);
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
-    instances++;
 
     ros::Rate waiteRate(0.5);
     while(ros::ok() && !((callBacksCalled+1) >> 10 ==1) )
@@ -71,26 +70,26 @@ UrsulaTask::UrsulaTask(ros::NodeHandle& nh, ros::NodeHandle& drNH): nh_(nh)
     }
 }
 
-void UrsulaTask::configurationCallback(masterslave::masterslaveConfig &config, uint32_t level)
+void NumericKinematicCommander::configurationCallback(masterslave::MasterSlaveConfig &config, uint32_t level)
 {
     state = static_cast<OPENIGTL_STATE>(config.cur_state);
     rosRate = config.rosRate;
     ROS_INFO("STATE CHANGED");
 }
 
-void UrsulaTask::loop()
+void NumericKinematicCommander::loop()
 {
     ros::spinOnce();
     double lastTime = ros::Time::now().toSec();
 
     ROS_INFO_STREAM(jointAnglesAct);
-    masterslave::UrsulaRCM rcmService;
+    masterslave::NumericKinematicRCM rcmService;
     std::vector<double> trocarAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
     rcmService.request.trocarAngles = trocarAngles;
     rcmClient.call(rcmService);
     tf::poseMsgToEigen(rcmService.response.trocar,RCM);
 
-    masterslave::UrsulaDirectKinematics directKinematicsService;
+    masterslave::NumericKinematicDirectKinematics directKinematicsService;
     std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
     directKinematicsService.request.jointAngles = jointAnglesActual;
     directKinematicsClient.call(directKinematicsService);
@@ -119,7 +118,7 @@ void UrsulaTask::loop()
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
         if(!TCP.isApprox(TCP_old) && boundingBox->checkBoundingBoxTCP(TCP))
         {
-            masterslave::UrsulaInverseKinematics inverseKinematicsService;
+            masterslave::NumericKinematicInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
             ROS_DEBUG_STREAM(inverseKinematicsService.request.T_0_EE.position);
 
@@ -130,7 +129,7 @@ void UrsulaTask::loop()
         }
         else
         {       
-            masterslave::UrsulaDirectKinematics directKinematicsService;
+            masterslave::NumericKinematicDirectKinematics directKinematicsService;
             std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
             directKinematicsService.request.jointAngles = jointAnglesActual;
             directKinematicsClient.call(directKinematicsService);
@@ -144,7 +143,7 @@ void UrsulaTask::loop()
     }
 }
 
-void UrsulaTask::lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr &state, int number)
+void NumericKinematicCommander::lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr &state, int number)
 {
     jointAnglesAct(number) = state->position[0];
     //check if all LBR callbacks are called once
@@ -152,7 +151,7 @@ void UrsulaTask::lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr &st
 
 }
 
-void UrsulaTask::calcQ6()
+void NumericKinematicCommander::calcQ6()
 {
     jointAnglesAct.tail(3)(2) = (motorAngles(0) + motorAngles(1)) / 2;
     if(fabs(motorAngles(0) + motorAngles(1))<0)
@@ -164,20 +163,20 @@ void UrsulaTask::calcQ6()
     callBacksCalled += 1 << 9;
 }
 
-void UrsulaTask::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
+void NumericKinematicCommander::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(0) = state->position.at(0);
     callBacksCalled += 1 << 7;
 }
 
 
-void UrsulaTask::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
+void NumericKinematicCommander::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(1) = state->position.at(0);
     callBacksCalled += 1 << 8;
 }
 
-void UrsulaTask::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
+void NumericKinematicCommander::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(0)= state->position.at(0);
     // set  signal that callback Q6n was called
@@ -190,7 +189,7 @@ void UrsulaTask::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
 
 }
 
-void UrsulaTask::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
+void NumericKinematicCommander::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(1) = state->position.at(0);
     // set  signal that callback Q6n was called
@@ -202,7 +201,7 @@ void UrsulaTask::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
     }
 }
 
-void UrsulaTask::buttonCallback(const masterslave::ButtonConstPtr &button)
+void NumericKinematicCommander::buttonCallback(const masterslave::ButtonConstPtr &button)
 {
     //TODO: Buttonnamen vom Parameterserver holen
     if(button->name == "close_gripper" && button->state == 1)
@@ -224,7 +223,7 @@ void UrsulaTask::buttonCallback(const masterslave::ButtonConstPtr &button)
     }
 }
 
-void UrsulaTask::getControlDevice()
+void NumericKinematicCommander::getControlDevice()
 {
     std::stringstream device_sstream;
     XmlRpc::XmlRpcValue deviceList;
@@ -247,12 +246,12 @@ void UrsulaTask::getControlDevice()
     for(XmlRpc::XmlRpcValue::iterator it = deviceList.begin(); it!=deviceList.end();it++)
     {
         device_sstream << it->first << "/Buttons";
-        buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&UrsulaTask::buttonCallback, this);
+        buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&NumericKinematicCommander::buttonCallback, this);
         device_sstream.str(std::string());
     }
 }
 
-void UrsulaTask::commandVelocities()
+void NumericKinematicCommander::commandVelocities()
 {
     double gripperVelocity;
     std_msgs::Float64 Q4Vel, Q5Vel, Q6nVel, Q6pVel;
@@ -301,10 +300,10 @@ void UrsulaTask::commandVelocities()
 
 int main(int argc, char** argv)
 {
-    ros::init(argc,argv,"UrsulaTask");
+    ros::init(argc,argv,"NumericKinematicCommander");
     ros::NodeHandle taskNH("dynamicReconfigure");
     ros::NodeHandle ControlDeviceNH(argv[1]);
-    UrsulaTask* task = new UrsulaTask(ControlDeviceNH, taskNH);
+    NumericKinematicCommander* commander = new NumericKinematicCommander(ControlDeviceNH, taskNH);
 
     return 0;
 }

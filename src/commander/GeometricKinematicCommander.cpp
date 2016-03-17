@@ -1,24 +1,24 @@
-#include "masterslave/task/laparoscopetask.h"
+#include "masterslave/commander/GeometricKinematicCommander.h"
 
-LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh, ros::NodeHandle& drNH): nh_(nh)
+GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ros::NodeHandle& drNH): nh_(nh)
 {    
-    dynamic_reconfigure::Server<masterslave::masterslaveConfig> server(drNH);
-    dynamic_reconfigure::Server<masterslave::masterslaveConfig>::CallbackType f;
+    dynamic_reconfigure::Server<masterslave::MasterSlaveConfig> server(drNH);
+    dynamic_reconfigure::Server<masterslave::MasterSlaveConfig>::CallbackType f;
 
-    f = boost::bind(&Task::configurationCallback,this,_1,_2);
+    f = boost::bind(&ICommander::configurationCallback,this,_1,_2);
 
     server.setCallback(f);
 
     getControlDevice();
-    Q4StateSub = nh_.subscribe("/Q4/joint_states",1,&LaparoscopeTask::Q4StateCallback, this);
-    Q5StateSub = nh_.subscribe("/Q5/joint_states",1,&LaparoscopeTask::Q5StateCallback, this);
-    Q6nStateSub = nh_.subscribe("/Q6N/joint_states",1,&LaparoscopeTask::Q6nStateCallback, this);
-    Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&LaparoscopeTask::Q6pStateCallback, this);
-    lbrPositionSub = nh_.subscribe("/flangeLBR",1,&LaparoscopeTask::flangeCallback, this);
+    Q4StateSub = nh_.subscribe("/Q4/joint_states",1,&GeometricKinematicCommander::Q4StateCallback, this);
+    Q5StateSub = nh_.subscribe("/Q5/joint_states",1,&GeometricKinematicCommander::Q5StateCallback, this);
+    Q6nStateSub = nh_.subscribe("/Q6N/joint_states",1,&GeometricKinematicCommander::Q6nStateCallback, this);
+    Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&GeometricKinematicCommander::Q6pStateCallback, this);
+    lbrPositionSub = nh_.subscribe("/flangeLBR",1,&GeometricKinematicCommander::flangeCallback, this);
 
-    rcmClient = nh_.serviceClient<masterslave::LaparoscopeRCM>("/RCM");
-    directKinematicsClient = nh_.serviceClient<masterslave::LaparoscopeDirectKinematics>("/directKinematics");
-    inverseKinematicsClient = nh_.serviceClient<masterslave::LaparoscopeInverseKinematics>("/inverseKinematics");
+    rcmClient = nh_.serviceClient<masterslave::GeometricKinematicRCM>("/RCM");
+    directKinematicsClient = nh_.serviceClient<masterslave::GeometricKinematicDirectKinematics>("/directKinematics");
+    inverseKinematicsClient = nh_.serviceClient<masterslave::GeometricKinematicInverseKinematics>("/inverseKinematics");
     tcpClient = nh_.serviceClient<masterslave::Manipulation>("/Manipulation");
 
     Q4Pub = nh_.advertise<std_msgs::Float64>("/Q4/setPointVelocity",1);
@@ -26,12 +26,11 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh, ros::NodeHandle& drNH): nh
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
     lbrTargetPositionPub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeTarget",1);
-    instances++;
 
     ros::Rate waiteRate(0.5);
     while(ros::ok() && lbrPositionSub.getNumPublishers()==1)
     {
-        ROS_INFO("LaparoscopeTask is waiting for a start position of the robot");
+        ROS_INFO("GeometricKinematicCommander is waiting for a start position of the robot");
         ros::spinOnce();
         waiteRate.sleep();
     }
@@ -50,7 +49,7 @@ LaparoscopeTask::LaparoscopeTask(ros::NodeHandle &nh, ros::NodeHandle& drNH): nh
 
 }
 
-void LaparoscopeTask::getControlDevice()
+void GeometricKinematicCommander::getControlDevice()
 {
     std::stringstream device_sstream;
     XmlRpc::XmlRpcValue deviceList;
@@ -73,25 +72,25 @@ void LaparoscopeTask::getControlDevice()
     for(XmlRpc::XmlRpcValue::iterator it = deviceList.begin(); it!=deviceList.end();it++)
     {
         device_sstream << it->first << "/Buttons";
-        buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&LaparoscopeTask::buttonCallback, this);
+        buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&GeometricKinematicCommander::buttonCallback, this);
         device_sstream.str(std::string());
     }
 }
 
-void LaparoscopeTask::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
+void GeometricKinematicCommander::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
 {
     tf::poseMsgToEigen(flangePose->pose,startPositionLBR);
     lbrPositionSub.shutdown();
 }
 
-void LaparoscopeTask::loop()
+void GeometricKinematicCommander::loop()
 {
     double lastTime = ros::Time::now().toSec();
-    masterslave::LaparoscopeRCM rcmService;
+    masterslave::GeometricKinematicRCM rcmService;
     tf::poseEigenToMsg(startPositionLBR,rcmService.request.T_0_FL);
     rcmClient.call(rcmService);
 
-    masterslave::LaparoscopeDirectKinematics directKinematicsService;
+    masterslave::GeometricKinematicDirectKinematics directKinematicsService;
     std::vector<double> jointAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
     directKinematicsService.request.jointAngles = jointAngles;
     tf::poseEigenToMsg(startPositionLBR,rcmService.request.T_0_FL);
@@ -110,7 +109,7 @@ void LaparoscopeTask::loop()
         tcpClient.call(manipulationService);
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
 
-        masterslave::LaparoscopeInverseKinematics inverseKinematicsService;
+        masterslave::GeometricKinematicInverseKinematics inverseKinematicsService;
         tf::poseEigenToMsg(TCP, inverseKinematicsService.request.T_0_EE);
         inverseKinematicsClient.call(inverseKinematicsService);
         tf::poseMsgToEigen(inverseKinematicsService.response.T_0_FL,T_0_FL);
@@ -121,28 +120,28 @@ void LaparoscopeTask::loop()
 }
 
 
-void LaparoscopeTask::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
+void GeometricKinematicCommander::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(0) = state->position.at(0);
 }
 
 
-void LaparoscopeTask::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
+void GeometricKinematicCommander::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(1) = state->position.at(0);
 }
 
-void LaparoscopeTask::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
+void GeometricKinematicCommander::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(2) = state->position.at(0);
 }
 
-void LaparoscopeTask::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
+void GeometricKinematicCommander::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(3)= state->position.at(0);
 }
 
-void LaparoscopeTask::buttonCallback(const masterslave::ButtonConstPtr &button)
+void GeometricKinematicCommander::buttonCallback(const masterslave::ButtonConstPtr &button)
 {
     //TODO: Buttonnamen vom Parameterserver holen
     if(button->name == "close_gripper" && button->state == 1)
@@ -164,12 +163,12 @@ void LaparoscopeTask::buttonCallback(const masterslave::ButtonConstPtr &button)
     }
 }
 
-void LaparoscopeTask::velocityCallback(const geometry_msgs::TwistStampedConstPtr &velocity)
+void GeometricKinematicCommander::velocityCallback(const geometry_msgs::TwistStampedConstPtr &velocity)
 {
     velocity_ = *velocity;
 }
 
-void LaparoscopeTask::calcQ6()
+void GeometricKinematicCommander::calcQ6()
 {
     jointAnglesAct(2) = (motorAngles(4) + motorAngles(3)) / 2;
 
@@ -179,7 +178,7 @@ void LaparoscopeTask::calcQ6()
         gripper_stop = false;
 }
 
-void LaparoscopeTask::commandVelocities()
+void GeometricKinematicCommander::commandVelocities()
 {
     double gripperVelocity;
     std_msgs::Float64 Q4Vel, Q5Vel, Q6nVel, Q6pVel;
@@ -221,10 +220,10 @@ void LaparoscopeTask::commandVelocities()
 
 int main(int argc, char** argv)
 {
-    ros::init(argc,argv,"LaparoscopeTask");
+    ros::init(argc,argv,"GeometricKinematicCommander");
     ros::NodeHandle controlDeviceNH(argv[1]);
     ros::NodeHandle taskNH("dynamicReconfigure");
-    LaparoscopeTask* task= new LaparoscopeTask(controlDeviceNH, taskNH);
+    GeometricKinematicCommander* commander= new GeometricKinematicCommander(controlDeviceNH, taskNH);
 
     return 0;
 }

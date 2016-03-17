@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <launch>
+	<arg name="TestDevice" value="Spacenav"/>
 	<include file="$(find masterslave)/launch/BasicUrsula.launch" />
+	<node pkg="masterslave" type="laparoscopetask" name="LaparoscopeTask" args="$(arg TestDevice)" output="screen"/>
 	<node pkg="masterslave" type="laparoscopekinematics" name="LaparoscopeKinematics" output="screen"/>
 	<remap from="vrep/flangeLBR" to="/flangeLBR"/>
 	<remap from="/flangeTarget" to="/vrep/flangeTarget"/> 

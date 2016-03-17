@@ -1,4 +1,4 @@
-#include "masterslave/task/boundingbox.h"
+#include "masterslave/commander/BoundingBox.h"
 
 BoundingBox::BoundingBox(ros::NodeHandle& nh, Eigen::Affine3d TCP, Eigen::Vector3d RemoteCenterOfMotion, Eigen::Vector3d boundingBoxSizeVector, double rcmDistance): nh_(nh)
 {

@@ -1,15 +1,15 @@
-#include "masterslave/task/task.h"
+#include "masterslave/commander/ICommander.h"
 
 
 
-void Task::configurationCallback(masterslave::masterslaveConfig &config, uint32_t level)
+void ICommander::configurationCallback(masterslave::MasterSlaveConfig &config, uint32_t level)
 {
     state = static_cast<OPENIGTL_STATE>(config.cur_state);
     rosRate = config.rosRate;
     ROS_INFO("STATE CHANGED");
 }
 
-Eigen::Quaternion<double> Task::QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX=true)
+Eigen::Quaternion<double> ICommander::QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX=true)
 {
     Eigen::Quaternion<double> quat;
     quat.Identity();
@@ -24,4 +24,3 @@ Eigen::Quaternion<double> Task::QuaternionFromEuler(const Eigen::Vector3d &euler
     return quat;
 }
 
-int Task::instances = 0;
