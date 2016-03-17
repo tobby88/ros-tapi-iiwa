@@ -4,11 +4,6 @@
 #include <ros/ros.h>
 #include <ros/console.h>
 #include <sstream>
-// My own Button Message for the Button Recognition
-#include "masterslave/Button.h"
-
-// Message of the Faulhaber Driver
-#include <faulhaber_driver/state.h>
 
 
 #include <sensor_msgs/Joy.h>
@@ -25,11 +20,6 @@
 //Dynamic Reconfigure Stuff
 #include <dynamic_reconfigure/server.h>
 #include <masterslave/MasterSlaveConfig.h>
-
-// State Service MEssage
-#include "masterslave/OpenIGTLStateService.h"
-
-#include "masterslave/OpenIGTLStateDescription.h"
 
 class MasterSlave
 {
@@ -48,16 +38,7 @@ class MasterSlave
         ros::Publisher  rcmPub;
         ros::ServiceClient  stateService;
 
-        double rosRate{1000};
 
-        bool start_{false};
-
-        // flag that shows if the OpenIGTL-Statemachine is running
-        bool statemachineIsRunning;
-
-        // current state of the LBR iiwa
-        OPENIGTL_STATE newState;
-        OPENIGTL_STATE curState{NO_STATE};
 
 };
 

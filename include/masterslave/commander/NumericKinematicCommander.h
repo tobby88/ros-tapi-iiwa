@@ -23,13 +23,15 @@ class NumericKinematicCommander: public ICommander
     public:
         NumericKinematicCommander(ros::NodeHandle& nh, ros::NodeHandle& drNH);
     private:
-
+        void statemachineThread(const ros::TimerEvent&);
         void configurationCallback(masterslave::MasterSlaveConfig &config, uint32_t level);
         ros::NodeHandle nh_;
         void buttonCheck();
         void getControlDevice();
         void calcQ6();
         void commandVelocities();
+
+
         std::vector<std::string> buttons;
 
         std::array<ros::Publisher,7> lbrJointAnglePub;

@@ -2,8 +2,8 @@
 <launch>
 	<arg name="TestDevice" value="Spacenav"/>
 	<include file="$(find masterslave)/launch/BasicUrsula.launch" />
-	<node pkg="masterslave" type="ursulatask" name="UrsulaTask" args="$(arg TestDevice)" output="screen"/>
-	<node pkg="masterslave" type="ursulakinematics" name="UrsulaKinematics" output="screen"/>
+	<node pkg="masterslave" type="NumericKinematicCommander" name="NumericKinematicCommander" args="$(arg TestDevice)" output="screen"/>
+	<node pkg="masterslave" type="NumericKinematic" name="NumericKinematic" output="screen"/>
 	<remap from="vrep/flangeLBR" to="/flangeLBR"/>
 	<remap from="/flangeTarget" to="/vrep/flangeTarget"/> 
 

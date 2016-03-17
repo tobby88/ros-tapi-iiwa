@@ -15,10 +15,9 @@ MasterSlave::MasterSlave(ros::NodeHandle& controlDeviceNH, ros::NodeHandle& task
     server.setCallback(f);
 
     // Winkel werden in Rad/s übergeben (siehe server.cpp)
-    stateService = nh_.serviceClient<masterslave::OpenIGTLStateService>("/openIGTLState");
 
-    statemachineIsRunning = true;
-    ros::Timer timer = nh_.createTimer(ros::Duration(0.02), &MasterSlave::statemachineThread, this);
+
+
     ros::spin();
 
 }
@@ -28,36 +27,7 @@ MasterSlave::~MasterSlave()
 
 }
 
-void MasterSlave::statemachineThread(const ros::TimerEvent& event)
-{
-    masterslave::OpenIGTLStateService stateStringMsg;
-    if(newState!=curState)
-    {
-        switch(newState)
-        {
-            case IDLE:
-                if(stateService.exists()) stateStringMsg.request.state = "Idle;";
-                curState = newState;
-                break;
-            case FREE:
-                if(stateService.exists())  stateStringMsg.request.state = "Free;";
-                curState = newState;
-                break;
-            case MOVE_TO_POSE:
-                if(stateService.exists()) stateStringMsg.request.state = "MoveToPose;rob;";
-                curState = newState;
-                break;
-        }
-    }
-    if(stateService.exists())
-    {
-        stateService.call(stateStringMsg);
-        statemachineIsRunning = stateStringMsg.response.alive;
-        ROS_DEBUG_STREAM("Service Call: alive: " << statemachineIsRunning);
-    }
 
-
-}
 
 void MasterSlave::configurationCallback(masterslave::MasterSlaveConfig &config, uint32_t level)
 {

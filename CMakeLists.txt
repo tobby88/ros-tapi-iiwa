@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   sensor_msgs
+  geometry_msgs
   message_generation
   eigen_conversions
   cmake_modules
@@ -62,6 +63,7 @@ generate_messages(
    DEPENDENCIES
    std_msgs
    sensor_msgs
+   geometry_msgs
 )
 
 ################################################
@@ -110,24 +112,25 @@ include_directories(
 add_executable(ControlDevice src/ControlDevice.cpp include/masterslave/ControlDevice.h)
 add_dependencies(ControlDevice ControlDevice_gencfg)
 
-add_executable(MasterSlave src/MasterSlave.cpp include/masterslave/MasterSlave.h)
-add_dependencies(MasterSlave MasterSlave_gencfg)
-
 add_executable(RosOpenIGTLBridge src/RosOpenIGTLBridge.cpp include/masterslave/RosOpenIGTLBridge.h)
 add_dependencies(RosOpenIGTLBridge RosOpenITGLBridge_gencfg)
+add_dependencies(RosOpenIGTLBridge masterslave_gencfg)
 
 add_executable(NumericKinematic src/kinematic/NumericKinematic.cpp include/masterslave/kinematic/NumericKinematic.h include/masterslave/kinematic/IKinematic.h src/kinematic/IKinematic.cpp)
-add_dependencies(NumericKinematic MasterSlave_gencfg)
-add_dependencies(NumericKinematic ursulakinematics_gencfg)
+add_dependencies(NumericKinematic masterslave_gencfg)
+add_dependencies(NumericKinematic NumericKinematic_gencfg)
 
 add_executable(GeometricKinematic src/kinematic/GeometricKinematic.cpp include/masterslave/kinematic/GeometricKinematic.h include/masterslave/kinematic/IKinematic.h src/kinematic/IKinematic.cpp)
 add_dependencies(GeometricKinematic GeometricKinematic_gencfg)
 
 add_executable(MasterSlaveManipulation src/manipulation/MasterSlaveManipulation.cpp include/masterslave/manipulation/MasterSlaveManipulation.h)
 add_dependencies(MasterSlaveManipulation MasterSlaveManipulation_gencfg)
+add_dependencies(MasterSlaveManipulation masterslave_gencfg)
+
 
 add_executable(TrajectoryGenerator src/manipulation/TrajectoryGenerator.cpp include/masterslave/manipulation/TrajectoryGenerator.h include/masterslave/manipulation/trajectory/PTPTrajectory.h src/manipulation/trajectory/PTPTrajectory.cpp include/masterslave/manipulation/trajectory/CircleTrajectory.h src/manipulation/trajectory/CircleTrajectory.cpp include/masterslave/manipulation/trajectory/ITrajectory.h)
 add_dependencies(TrajectoryGenerator TrajectoryGenerator_gencfg)
+add_dependencies(TrajectoryGenerator masterslave_gencfg)
 
 add_executable(NumericKinematicCommander src/commander/NumericKinematicCommander.cpp include/masterslave/commander/NumericKinematicCommander.h src/commander/ICommander.cpp include/masterslave/commander/ICommander.h include/masterslave/commander/BoundingBox.h src/commander/BoundingBox.cpp)
 add_dependencies(NumericKinematicCommander masterslave_gencfg)
@@ -136,8 +139,6 @@ add_executable(GeometricKinematicCommander src/commander/GeometricKinematicComma
 add_dependencies(GeometricKinematicCommander masterslave_gencfg)
 
 ## Add cmake target dependencies of the executable
-add_dependencies(MasterSlave masterslave_generate_messages_cpp)
-add_dependencies(MasterSlave faulhaber_driver_generate_messages_cpp)
 add_dependencies(ControlDevice ControlDevice_generate_messages_cpp)
 add_dependencies(ControlDevice masterslave_generate_messages_cpp)
 add_dependencies(RosOpenIGTLBridge rosopenigtlbridge_generate_messages_cpp)
@@ -159,11 +160,6 @@ add_dependencies(GeometricKinematicCommander masterslave_generate_messages_cpp)
 target_link_libraries(ControlDevice
    ${catkin_LIBRARIES}
    ${Eigen_LIBRARIES}
-)
-
-target_link_libraries(MasterSlave
-    ${catkin_LIBRARIES}
-    ${Eigen_LIBRARIES}
 )
 
 target_link_libraries(RosOpenIGTLBridge

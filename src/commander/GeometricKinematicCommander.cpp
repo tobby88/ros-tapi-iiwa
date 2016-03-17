@@ -20,12 +20,16 @@ GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ro
     directKinematicsClient = nh_.serviceClient<masterslave::GeometricKinematicDirectKinematics>("/directKinematics");
     inverseKinematicsClient = nh_.serviceClient<masterslave::GeometricKinematicInverseKinematics>("/inverseKinematics");
     tcpClient = nh_.serviceClient<masterslave::Manipulation>("/Manipulation");
+    stateService = nh_.serviceClient<masterslave::OpenIGTLStateService>("/openIGTLState");
 
     Q4Pub = nh_.advertise<std_msgs::Float64>("/Q4/setPointVelocity",1);
     Q5Pub = nh_.advertise<std_msgs::Float64>("/Q5/setPointVelocity",1);
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
     lbrTargetPositionPub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeTarget",1);
+
+    statemachineIsRunning = true;
+    ros::Timer timer = nh_.createTimer(ros::Duration(0.02), &GeometricKinematicCommander::statemachineThread, this);
 
     ros::Rate waiteRate(0.5);
     while(ros::ok() && lbrPositionSub.getNumPublishers()==1)
@@ -47,6 +51,35 @@ GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ro
         waiteRate.sleep();
     }
 
+}
+
+void GeometricKinematicCommander::statemachineThread(const ros::TimerEvent& event)
+{
+    masterslave::OpenIGTLStateService stateStringMsg;
+    if(newState!=state)
+    {
+        switch(newState)
+        {
+            case IDLE:
+                if(stateService.exists()) stateStringMsg.request.state = "Idle;";
+                state = newState;
+                break;
+            case FREE:
+                if(stateService.exists())  stateStringMsg.request.state = "Free;";
+                state = newState;
+                break;
+            case MOVE_TO_POSE:
+                if(stateService.exists()) stateStringMsg.request.state = "MoveToPose;rob;";
+                state = newState;
+                break;
+        }
+    }
+    if(stateService.exists())
+    {
+        stateService.call(stateStringMsg);
+        statemachineIsRunning = stateStringMsg.response.alive;
+        ROS_DEBUG_STREAM("Service Call: alive: " << statemachineIsRunning);
+    }
 }
 
 void GeometricKinematicCommander::getControlDevice()

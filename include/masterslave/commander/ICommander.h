@@ -1,7 +1,7 @@
 #ifndef I_COMMANDER_H
 #define I_COMMANDER_H
 
-#include "ros/ros.h"
+#include <ros/ros.h>
 #include <std_msgs/Float64.h>
 
 #include "Eigen/Dense"
@@ -21,7 +21,11 @@
 #include <masterslave/MasterSlaveConfig.h>
 #include <masterslave/BoundingBoxConfig.h>
 
-#include <masterslave/OpenIGTLStateDescription.h>
+// State Service MEssage
+#include "masterslave/OpenIGTLStateService.h"
+
+#include "masterslave/OpenIGTLStateDescription.h"
+
 
 class ICommander
 {
@@ -29,7 +33,9 @@ class ICommander
         void setGripperStatus(bool open, bool close){ gripper_open = open; gripper_close = close;}
         void configurationCallback(masterslave::MasterSlaveConfig &config, uint32_t level);
 
+
     protected:
+        virtual void statemachineThread(const ros::TimerEvent&)=0;
         Eigen::Affine3d startPositionLBR;
         Eigen::Affine3d TCP;
         Eigen::Affine3d RCM;
@@ -51,6 +57,7 @@ class ICommander
         ros::ServiceClient rcmClient;
         ros::ServiceClient directKinematicsClient;
         ros::ServiceClient inverseKinematicsClient;
+        ros::ServiceClient  stateService;
 
         // Publisher for the tool joints
         ros::Publisher  Q4Pub;
@@ -82,6 +89,14 @@ class ICommander
         int Q6CallbacksCalled{0};
 
         int rosRate{1000};
+
+        bool start_{false};
+
+        // flag that shows if the OpenIGTL-Statemachine is running
+        bool statemachineIsRunning;
+
+        // current state of the LBR iiwa
+        OPENIGTL_STATE newState{NO_STATE};
         OPENIGTL_STATE state{NO_STATE};
 
 };

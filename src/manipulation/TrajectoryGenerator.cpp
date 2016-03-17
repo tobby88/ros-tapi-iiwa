@@ -22,48 +22,48 @@ void TrajectoryGenerator::cycleTimeCallback(const std_msgs::Float64ConstPtr &val
 
 bool TrajectoryGenerator::trajectoryCallback(masterslave::Manipulation::Request &req, masterslave::Manipulation::Response &resp)
 {
-    if(!start)
+    if(start && startPositionThere && trajectoryGen.get()!=nullptr)
+    {
+        Eigen::Affine3d currentPosition;
+        currentPosition = trajectoryGen->calculateNextPoint();
+        tf::poseEigenToMsg(currentPosition,resp.T_0_EE_new);
+    }
+    else
     {
         resp.T_0_EE_new = req.T_0_EE_old;
-        return true;
+    }
+    if(!startPositionThere)
+    {
+        startPositionThere = true;
+        tf::poseMsgToEigen(req.T_0_EE_old,startPosition);
     }
 
-    if(start && !startOld)
-    {
-        Eigen::Affine3d T_0_EE;
-        tf::poseMsgToEigen(req.T_0_EE_old,T_0_EE);
-        switch(state)
-        {
-            case PTP:
-                trajectoryGen = std::move(std::unique_ptr<PTPTrajectory>(new PTPTrajectory(T_0_EE,ptpTrajectory,zCoordinate,trajectorySpeed,cycleTime)));
-                break;
-            case CIRCLE:
-                trajectoryGen = std::move(std::unique_ptr<CircleTrajectory>(new CircleTrajectory(T_0_EE,circleRadius,zCoordinate,trajectorySpeed,cycleTime)));
-                break;
-        }
-    }
-    if(!start && startOld)
-    {
-        trajectoryGen.release();
-        ROS_INFO("RELEASED");
-    }
-    ROS_INFO_STREAM(state);
-    Eigen::Affine3d T_0_EE;
-    T_0_EE = trajectoryGen->calculateNextPoint();
-    tf::poseEigenToMsg(T_0_EE,resp.T_0_EE_new);
 
-    startOld = start;
+    return true;
 }
 
 void TrajectoryGenerator::configurationCallback(masterslave::TrajectoryGeneratorConfig &config, uint32_t level)
 {
-
     start = config.Start;
     state = static_cast<TRAJECTORY_STATE>(config.curTrajType);
     ptpTrajectory = Eigen::Vector2i(config.LengthX,config.LengthY);
     trajectorySpeed = config.Speed;
     zCoordinate = config.zCoord;
     circleRadius = config.Radius;
+    if(start && startPositionThere)
+    {
+        switch(state)
+        {
+            case PTP:
+                trajectoryGen.reset(new PTPTrajectory(startPosition,ptpTrajectory,zCoordinate,trajectorySpeed,cycleTime));
+                break;
+            case CIRCLE:
+                trajectoryGen.reset(new CircleTrajectory(startPosition,circleRadius,zCoordinate,trajectorySpeed,cycleTime));
+                break;
+        }
+    }
+
+
     if(trajectoryGen.get()!=nullptr)
     {
         trajectoryGen->setSpeed(config.Speed);

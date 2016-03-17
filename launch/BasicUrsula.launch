@@ -1,6 +1,6 @@
 <launch>
 	<arg name="TestDevice" value="Spacenav"/>
-	<node pkg="masterslave" type="controldevice" name="$(arg TestDevice)" args="$(arg TestDevice)" output="screen">
+	<node pkg="masterslave" type="ControlDevice" name="$(arg TestDevice)" args="$(arg TestDevice)" output="screen">
 		<param name="button/0" type="string" value="close_gripper"/>
 		<param name="button/1" type="string" value="open_gripper"/>
 	</node>
@@ -9,9 +9,5 @@
 		<param name="deadzone" value="0.12"/>
 		<!--<param name="autorepeat_rate" value="60"/>-->
 	</node>
-	<node pkg="masterslave" type="masterslave" name="MasterSlave" args="$(arg TestDevice)" output="screen">
-		<param name="gripper_vel" value="0.1"/>
-		<param name="Mode" type="string" value="Robot"/>
-	</node>
-	<node pkg="masterslave" type="masterslavemanipulation" name="MasterSlaveManipulation" args="$(arg TestDevice)" output="screen"/>
+	<node pkg="masterslave" type="MasterSlaveManipulation" name="MasterSlaveManipulation" args="$(arg TestDevice)" output="screen"/>
 </launch>

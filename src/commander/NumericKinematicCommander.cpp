@@ -32,6 +32,9 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     directKinematicsClient = nh_.serviceClient<masterslave::NumericKinematicDirectKinematics>("/directKinematics");
     inverseKinematicsClient = nh_.serviceClient<masterslave::NumericKinematicInverseKinematics>("/inverseKinematics");
     tcpClient = nh_.serviceClient<masterslave::Manipulation>("/Manipulation");
+    stateService = nh_.serviceClient<masterslave::OpenIGTLStateService>("/openIGTLState");
+
+    ros::Timer timer = nh_.createTimer(ros::Duration(0.02), &NumericKinematicCommander::statemachineThread, this);
 
     for(int i=0; i < 7; i++)
     {
@@ -61,7 +64,6 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     while(ros::ok())
     {
         ros::spinOnce();
-        ROS_INFO_STREAM(state);
         if(state == MOVE_TO_POSE)
         {
            loop();
@@ -69,6 +71,36 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
         waiteRate.sleep();
     }
 }
+
+void NumericKinematicCommander::statemachineThread(const ros::TimerEvent& event)
+{
+    masterslave::OpenIGTLStateService stateStringMsg;
+    if(newState!=state)
+    {
+        switch(newState)
+        {
+            case IDLE:
+                if(stateService.exists()) stateStringMsg.request.state = "Idle;";
+                state = newState;
+                break;
+            case FREE:
+                if(stateService.exists())  stateStringMsg.request.state = "Free;";
+                state = newState;
+                break;
+            case MOVE_TO_POSE:
+                if(stateService.exists()) stateStringMsg.request.state = "MoveToPose;rob;";
+                state = newState;
+                break;
+        }
+    }
+    if(stateService.exists())
+    {
+        stateService.call(stateStringMsg);
+        statemachineIsRunning = stateStringMsg.response.alive;
+        ROS_DEBUG_STREAM("Service Call: alive: " << statemachineIsRunning);
+    }
+}
+
 
 void NumericKinematicCommander::configurationCallback(masterslave::MasterSlaveConfig &config, uint32_t level)
 {

@@ -19,6 +19,7 @@ class GeometricKinematicCommander : public ICommander
 
 
     private:
+        void statemachineThread(const ros::TimerEvent&);
         void calcQ6();
         void commandVelocities();
 
@@ -42,7 +43,6 @@ class GeometricKinematicCommander : public ICommander
         void Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state);
         void velocityCallback(const geometry_msgs::TwistStampedConstPtr&);
         void buttonCallback(const masterslave::ButtonConstPtr&);
-
 
         Eigen::Affine3d T_0_FL;
 

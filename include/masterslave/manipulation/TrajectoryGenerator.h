@@ -45,6 +45,7 @@ private:
     ros::ServiceServer trajectoryServer;
     ros::Subscriber cycleTimeSub;
 
+    Eigen::Affine3d startPosition;
     Eigen::Vector2i ptpTrajectory;
     int zCoordinate;
     int circleRadius;
@@ -52,7 +53,7 @@ private:
     double cycleTime;
 
     bool start{false};
-    bool startOld{false};
+    bool startPositionThere{false};
 
     std::unique_ptr<ITrajectory> trajectoryGen;
 
