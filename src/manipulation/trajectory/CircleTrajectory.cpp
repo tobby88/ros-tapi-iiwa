@@ -1,20 +1,27 @@
 #include "masterslave/manipulation/trajectory/CircleTrajectory.h"
 
-CircleTrajectory::CircleTrajectory(Eigen::Affine3d startPoint, int radius, int zCoord, int speed , double cycleTime)
+#include "ros/ros.h"
+
+CircleTrajectory::CircleTrajectory(Eigen::Affine3d startPoint, Eigen::Vector3d RCM, double radius, double zCoord, double speed , double cycleTime)
 {
-    radius_ = radius*M_TO_MM;
+    radius_ = radius;
     cycleTime_ = cycleTime;
-    startPosition_ = startPoint;
-    startPositionTrajectory_ = startPoint;
-    startPositionTrajectory_.translate(Eigen::Vector3d(radius_,0,zCoord*M_TO_MM-startPoint.translation().z()));
-    circleCenter = startPoint;
-    circleCenter.translate(Eigen::Vector3d(0,0,zCoord*M_TO_MM-startPoint.translation().z()));
     currentPosition = startPoint;
-    speed_ = speed*M_TO_MM;
+    speed_ = speed;
+    startPosition_ = startPoint;
+    startPositionTrajectory_ = Eigen::Affine3d::Identity();
+    startPositionTrajectory_.translate(RCM);
+    startPositionTrajectory_.translate(Eigen::Vector3d(radius_,0,zCoord-startPoint.translation().z()));
+    circleCenter = Eigen::Affine3d::Identity();
+    circleCenter.translate(RCM);
+    circleCenter.translate(Eigen::Vector3d(0,0,zCoord-startPoint.translation().z()));
 }
 
 Eigen::Affine3d CircleTrajectory::calculateNextPoint()
 {
+    ROS_INFO_STREAM("startPosition: " << startPosition_.translation());
+    ROS_INFO_STREAM("startTrajectory: " << startPositionTrajectory_.translation());
+    ROS_INFO_STREAM("circleCentr: " << circleCenter.translation());
     // Start movement to the start position from the current position
     if(pathParameterStart_<=1)
     {
@@ -31,5 +38,6 @@ Eigen::Affine3d CircleTrajectory::calculateNextPoint()
     pathIncrement = cycleTime_/(radius_*2*M_PI)*speed_;
     pathParameter_ += pathIncrement;
     if(pathParameter_>=1) pathParameter_-=1;
+    ROS_INFO_STREAM(currentPosition.translation());
     return currentPosition;
 }

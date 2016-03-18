@@ -32,7 +32,6 @@ class MasterSlaveManipulation
         geometry_msgs::TwistStamped velocity;
         double cycleTime;
 
-
 };
 
 #endif // MASTERSLAVEMANIPULATION_H

@@ -13,7 +13,7 @@ class ITrajectory
 {
 public:
     virtual Eigen::Affine3d calculateNextPoint()=0;
-    void setSpeed(double speed){ speed_ = speed*M_TO_MM;}
+    void setSpeed(double speed){ speed_ = speed;}
 protected:
     Eigen::Affine3d startPositionTrajectory_;
     Eigen::Affine3d endPositionTrajectory_;
@@ -24,8 +24,6 @@ protected:
     double cycleTime_;
     double speed_;
     double pathParameter_{0};
-
-    const double M_TO_MM{0.001};
 
 };
 

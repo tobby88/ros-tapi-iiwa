@@ -16,6 +16,7 @@
 #include <eigen_conversions/eigen_msg.h>
 #include <tf/transform_listener.h>
 
+#include "masterslave/manipulation/trajectory/LineTrajectory.h"
 #include "masterslave/manipulation/trajectory/PTPTrajectory.h"
 #include "masterslave/manipulation/trajectory/CircleTrajectory.h"
 #include "masterslave/manipulation/trajectory/ITrajectory.h"
@@ -45,15 +46,19 @@ private:
     ros::ServiceServer trajectoryServer;
     ros::Subscriber cycleTimeSub;
 
+    Eigen::Vector3d rcm;
     Eigen::Affine3d startPosition;
-    Eigen::Vector2i ptpTrajectory;
-    int zCoordinate;
-    int circleRadius;
-    int trajectorySpeed;
+    Eigen::Vector3d firstPoint;
+    Eigen::Vector3d secondPoint;
+    double zCoordinate;
+    double circleRadius;
+    double trajectorySpeed;
     double cycleTime;
 
     bool start{false};
-    bool startPositionThere{false};
+    bool rcmPositionThere{false};
+
+    const double MM_TO_M{0.001};
 
     std::unique_ptr<ITrajectory> trajectoryGen;
 

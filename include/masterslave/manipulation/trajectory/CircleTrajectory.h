@@ -11,7 +11,7 @@
 class CircleTrajectory: public ITrajectory
 {
     public:
-        CircleTrajectory(Eigen::Affine3d startPoint, int radius, int zCoord, int speed , double cycleTime);
+        CircleTrajectory(Eigen::Affine3d startPoint, Eigen::Vector3d RCM, double radius, double zCoord, double speed , double cycleTime);
         Eigen::Affine3d calculateNextPoint();
     private:
         Eigen::Affine3d circleCenter;

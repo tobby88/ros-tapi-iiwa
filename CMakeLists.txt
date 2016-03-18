@@ -128,7 +128,7 @@ add_dependencies(MasterSlaveManipulation MasterSlaveManipulation_gencfg)
 add_dependencies(MasterSlaveManipulation masterslave_gencfg)
 
 
-add_executable(TrajectoryGenerator src/manipulation/TrajectoryGenerator.cpp include/masterslave/manipulation/TrajectoryGenerator.h include/masterslave/manipulation/trajectory/PTPTrajectory.h src/manipulation/trajectory/PTPTrajectory.cpp include/masterslave/manipulation/trajectory/CircleTrajectory.h src/manipulation/trajectory/CircleTrajectory.cpp include/masterslave/manipulation/trajectory/ITrajectory.h)
+add_executable(TrajectoryGenerator src/manipulation/TrajectoryGenerator.cpp include/masterslave/manipulation/TrajectoryGenerator.h include/masterslave/manipulation/trajectory/PTPTrajectory.h src/manipulation/trajectory/PTPTrajectory.cpp include/masterslave/manipulation/trajectory/CircleTrajectory.h src/manipulation/trajectory/CircleTrajectory.cpp include/masterslave/manipulation/trajectory/ITrajectory.h include/masterslave/manipulation/trajectory/LineTrajectory.h src/manipulation/trajectory/LineTrajectory.cpp)
 add_dependencies(TrajectoryGenerator TrajectoryGenerator_gencfg)
 add_dependencies(TrajectoryGenerator masterslave_gencfg)
 

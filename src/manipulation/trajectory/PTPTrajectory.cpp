@@ -1,14 +1,17 @@
 #include "masterslave/manipulation/trajectory/PTPTrajectory.h"
 
-PTPTrajectory::PTPTrajectory(Eigen::Affine3d startPoint, Eigen::Vector2i length, int zCoord, int speed, double cycleTime)
+PTPTrajectory::PTPTrajectory(Eigen::Affine3d startPoint, Eigen::Vector3d RCM, Eigen::Vector3d firstPoint, Eigen::Vector3d secondPoint, int speed, double cycleTime)
 {
     cycleTime_ = cycleTime;
-    ROS_INFO_STREAM("cycleTime: " << cycleTime_);
-    startPositionTrajectory_ = startPoint;
-    startPositionTrajectory_.translate(Eigen::Vector3d(-length(0)*0.5*M_TO_MM,-length(1)*0.5*M_TO_MM,zCoord*M_TO_MM-startPoint.translation().z()));
-    endPositionTrajectory_ = startPoint;
-    endPositionTrajectory_.translate(Eigen::Vector3d(length(0)*0.5*M_TO_MM, length(1)*0.5*M_TO_MM, zCoord*M_TO_MM-startPoint.translation().z()));
-    speed_ = speed*M_TO_MM;
+
+    startPositionTrajectory_ = Eigen::Affine3d::Identity();
+    startPositionTrajectory_.translate(RCM);
+    startPositionTrajectory_.translate(firstPoint);
+    endPositionTrajectory_ = Eigen::Affine3d::Identity();
+    endPositionTrajectory_.translate(RCM);
+    endPositionTrajectory_.translate(secondPoint);
+
+    speed_ = speed;
     currentPosition = startPoint;
     startPosition_ = startPoint;
 }
