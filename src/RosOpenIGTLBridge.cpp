@@ -1,26 +1,13 @@
 #include "masterslave/RosOpenIGTLBridge.h"
 #include "ros/ros.h"
 
-/*
- * @file rosopenigtlbridge.cpp
- *
- * @author Fabian Baier
- *
- */
+
 
 #define M_TO_MM 1.0/1000.0f
 
 #define MM_TO_M 1000
 
-/*
- * @class ROS-OpenIGTLink-Bridge-Klasse
- *
- * @brief Diese Klasse sorgt zur Anbindung des OpenIGTLink-Protokolls an ROS für das URSULA-Projekt.
- *
- * Mithilfe dieser Klasse wird der LBR iiwa des URSULA-Versuchsstandes an das URSULA-System angebunden.
- * Hier wird die aktuelle Roboterflanschlage von der Robotersteuerung übermittelt und an ROS übergeben.
- * Die neuberechnete Sollflanschlage des LBR wird über ein ROS-Topic empfangen und über OpenIGTLink versendet.
- */
+
 RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
 {
     flangeTargetSub = nh_.subscribe("/flangeTarget",1,&RosOpenIgtlBridge::transformCallback,this);

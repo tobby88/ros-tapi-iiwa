@@ -15,46 +15,105 @@
 #include <dynamic_reconfigure/server.h>
 #include <masterslave/ControlDeviceConfig.h>
 
+/**
+ * \file ControlDevice.h
+ *
+ * \class ControlDevice
+ * \brief Klasse zur Ansteuerung und Verwaltung verschiedener LowLevel-Eingabegeräte, wie GamePads oder dem SpaceNavigator
+ *
+ * \author Fabian Baier
+ * \date 19.03.2016
+ *
+ * \version 0.2
+ */
+
 
 class ControlDevice {
 public:
     ControlDevice(ros::NodeHandle& nh);
+
+    /**
+     * \fn void configurationCallback(masterslave::ControlDeviceConfig &config, uint32_t level)
+     * @brief dynamic reconfigure Callback Methode
+     * @param config Konfiguration für verschiedene Filterlevel und Verstärkungsfaktoren
+     * @param level Bitmaske um Einstellungen zu maskieren
+     * @see ControlDevice.cfg
+     */
     void configurationCallback(masterslave::ControlDeviceConfig &config, uint32_t level);
     ~ControlDevice();
 
 
 private:
+
+    /**
+     * @fn controlDeviceCallback
+     * \brief Callback-Methode für die Eigabegeräte bzw. deren Achsen und Knöpfe
+     * @param joy Achs- und Knopfvektoren des jeweiligen Eingabegeräts
+     */
     void controlDeviceCallback(const sensor_msgs::Joy::ConstPtr& joy);
+    /**
+     * @fn registration
+     * @brief Registrierung des Eingabegerätes mit Informationen des Parameterserver
+     */
     void registration();
+
+    /**
+     * @fn buttonCheck
+     * @brief Festlegung der Knopfbelegung
+     */
     void buttonCheck();
 
-    //flag if error is shown one time
+    /**
+     * @var errorShown
+     * @brief Flag, welches anzeigt, ob der "Kein-Eingabegerät"-Fehler bereits gezeigt wird
+     */
     bool errorShown;
-
 
     ros::NodeHandle globalNH_;
     ros::NodeHandle nh_;
 
-    //Subscriber for the device topic (gamepad, spacenav or marker device)
+    /**
+     * @var deviceSub
+     * @brief Empfänger in ROS, der die Daten der Eingabegeräte empfängt
+     */
     ros::Subscriber deviceSub;
 
-    //Publisher for the six axis values
+    /**
+     * @var axisPub
+     * @brief Sender in ROS, der die gefilterten und skalierten Achswerte weitersendet
+     */
     ros::Publisher  axisPub;
 
-    //Publisher for the buttons, which are configured
+    /**
+     * @var buttonsPub
+     * @brief Sender in ROS, der die Knöpfe sendet
+     */
     ros::Publisher  buttonsPub;
 
-    //Map of configured and registred buttons
+    /**
+     * @var buttons
+     * @brief Buttons und Funktionen sind in dieser Map verknüpft
+     */
     std::map<int, std::string> buttons;
 
-    //Gains for the Control Device
+    /**
+     * @var rotGain
+     * @var transGain
+     * @brief Verstärkungen für die Rotations- und Translationsachsen
+     */
     double rotGain;
     double transGain;
 
-    // Threshold for the input filtering
+    /**
+     * @var joyThresh
+     * @brief Schwellwert für die Joystickachsen
+     */
     double joyThresh;
 
-    // used device type (gamepad, spacenav, or marker device)
+    /**
+     * @var curDeviceType
+     * @brief aktueller Eingabegerätetyp (GAMEPAD, SPACENAV)
+     */
     std::string curDeviceType;
 
     std::string apiDevice;
@@ -62,7 +121,10 @@ private:
     //number of the device
     int curDeviceNum;
 
-    //old joystick data to check if the joystick values have changed
+    /**
+     * @var joy_old
+     * @brief Joystickachswerte des letzten Zyklus, um Änderungen detektieren zu können
+     */
     sensor_msgs::Joy joy_old;
 
 

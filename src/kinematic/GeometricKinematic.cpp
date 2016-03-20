@@ -163,10 +163,6 @@ Eigen::Affine3d GeometricKinematic::buildAffine3d(const Eigen::Vector3d &translX
     return transl;
 }
 
-const toolDescriptionParameters GeometricKinematic::TOOL_PARAMETERS = {0.438, 0.0, 0.062, 0.0, 90.0, 0.0, 0.0088, 0.017, 0.305};
-
-
-
 int main(int argc, char** argv)
 {
     ros::init(argc,argv,"GeometricKinematicKinematics");
