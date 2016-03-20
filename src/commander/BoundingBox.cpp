@@ -39,24 +39,20 @@ bool BoundingBox::checkBoundingBoxTCP(Eigen::Affine3d TCP)
 void BoundingBox::setTCPDistance(double value)
 {
     rcmDistanceZ = value;
-    allThingsSet += 1;
 }
 void BoundingBox::setTCP(Eigen::Affine3d TCP)
 {
     TCP_old = TCP;
-    allThingsSet += 1 << 1;
 }
 
 void BoundingBox::setRCM(Eigen::Vector3d remoteCenterOfMotion)
 {
     RCM = remoteCenterOfMotion;
-    allThingsSet += 1 << 2;
 }
 
 void BoundingBox::setBoundingBox(Eigen::Vector3d value)
 {
     boundingBoxSize = value;
-    allThingsSet += 1 << 3;
 }
 
 

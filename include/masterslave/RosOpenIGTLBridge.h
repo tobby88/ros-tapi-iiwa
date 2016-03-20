@@ -246,6 +246,7 @@ private:
     /**
      * \var CMD_UID
      * \brief Nummer des übermittelten Datenpakets
+     */
     unsigned long long CMD_UID{0};
 
     /**

@@ -144,7 +144,7 @@ class IKinematic
          * @var rcmServer
          * @brief ServiceServer für die Bestimmung des Trokarpunktes
          */
-        ros::ServiceServer rcmServer;
+        ros::ServiceServer rcmServiceServer;
 
         /**
          * @var directKinematicsServer

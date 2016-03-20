@@ -133,7 +133,7 @@ class NumericKinematicCommander: public ICommander
         /**
          * @var callBacksCalled
          * @brief Test, ob alle Gelenkwinkelcallbacks aufgerufen wurden
-         *
+         */
         int callBacksCalled{0};
 
 };

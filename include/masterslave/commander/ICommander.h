@@ -11,6 +11,8 @@
 #include "masterslave/kinematic/IKinematic.h"
 #include "masterslave/commander/BoundingBox.h"
 
+#include "geometry_msgs/PoseStamped.h"
+#include "geometry_msgs/TwistStamped.h"
 #include "sensor_msgs/JointState.h"
 #include "masterslave/Button.h"
 
@@ -127,12 +129,6 @@ class ICommander
          * @todo check ob noch benötigt
          */
         ros::Subscriber velocitySub;
-
-        /**
-         * @var buttonSub
-         * @brief Empfänger der Knopfeingaben in ROS
-         */
-        ros::Subscriber buttonSub;
 
         /**
          * @var Q4StateSub

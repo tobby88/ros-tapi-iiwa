@@ -3,6 +3,7 @@ project(masterslave)
 
 set(CMAKE_BUILD_TYPE Debug)
 
+
 add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries

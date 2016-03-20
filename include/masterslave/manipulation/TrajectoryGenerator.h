@@ -142,6 +142,7 @@ private:
     /**
      * @var start
      * @brief Startflag, die über Dynamic Reconfigure übertragen wird
+     */
     bool start{false};
 
     /**
