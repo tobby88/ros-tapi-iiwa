@@ -21,12 +21,12 @@ msgs:
 package_type: package
 repo_url: ''
 srvs:
-- NumericKinematicDirectKinematics
-- GeometricKinematicDirectKinematics
-- OpenIGTLStateService
 - Manipulation
+- NumericKinematicInverseKinematics
+- OpenIGTLStateService
 - GeometricKinematicRCM
 - GeometricKinematicInverseKinematics
-- NumericKinematicInverseKinematics
+- NumericKinematicDirectKinematics
+- GeometricKinematicDirectKinematics
 - NumericKinematicRCM
 url: ''

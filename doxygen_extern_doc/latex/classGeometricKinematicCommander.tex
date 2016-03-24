@@ -1,0 +1,215 @@
+\hypertarget{classGeometricKinematicCommander}{\section{Geometric\-Kinematic\-Commander Klassenreferenz}
+\label{classGeometricKinematicCommander}\index{Geometric\-Kinematic\-Commander@{Geometric\-Kinematic\-Commander}}
+}
+
+
+Klasse, die sich um die R\-O\-S-\/\-Kommunikation für die geometrisch bestimmte Kinematik kümmert.  
+
+
+
+
+{\ttfamily \#include $<$Geometric\-Kinematic\-Commander.\-h$>$}
+
+
+
+Klassendiagramm für Geometric\-Kinematic\-Commander\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classGeometricKinematicCommander__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Zusammengehörigkeiten von Geometric\-Kinematic\-Commander\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{classGeometricKinematicCommander__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Öffentliche Methoden}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classGeometricKinematicCommander_a7bb3cf43a3e4f09f71433f11af17dfcc}{{\bfseries Geometric\-Kinematic\-Commander} (ros\-::\-Node\-Handle \&nh, ros\-::\-Node\-Handle \&dr\-N\-H)}\label{classGeometricKinematicCommander_a7bb3cf43a3e4f09f71433f11af17dfcc}
+
+\end{DoxyCompactItemize}
+\subsection*{Private Methoden}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classGeometricKinematicCommander_a85c8118bd74639548f6791880aeb8f81}{statemachine\-Thread} (const ros\-::\-Timer\-Event \&)
+\begin{DoxyCompactList}\small\item\em Thread der alle 20ms aufgerufen wird und den Status an R\-O\-S\-Open\-I\-G\-T\-L\-Bridge schickt. \end{DoxyCompactList}\item 
+void \hyperlink{classGeometricKinematicCommander_a8f2f1e6428ae88ccdd630d59eff6d5af}{calc\-Q6} ()
+\begin{DoxyCompactList}\small\item\em Berechnet aus dem Gelenkwinkel Q6 die Gelenkwinkel Q6n und Q6p des Zangengreifers. \end{DoxyCompactList}\item 
+void \hyperlink{classGeometricKinematicCommander_a79cc755ef52804b1cbd1e71dd2f77339}{command\-Velocities} ()
+\begin{DoxyCompactList}\small\item\em Schickt die Gelenkwinkelgeschwindigkeiten an die Nodes der Antriebe des Werkzeuges. \end{DoxyCompactList}\item 
+void \hyperlink{classGeometricKinematicCommander_a54f853173048f2d5b55c00d711e3542a}{button\-Check} ()
+\begin{DoxyCompactList}\small\item\em Die Methode holt die Knopfkonfiguration vom Parameterserver. \end{DoxyCompactList}\item 
+void \hyperlink{classGeometricKinematicCommander_a91fbbc67883244f37fff899029855140}{get\-Control\-Device} ()
+\begin{DoxyCompactList}\small\item\em Die Methode findet den Typ des Eingabegerätes auf dem Parameterserver. \end{DoxyCompactList}\item 
+\hypertarget{classGeometricKinematicCommander_a61edc35487744095113c99b29b7c57bd}{void \hyperlink{classGeometricKinematicCommander_a61edc35487744095113c99b29b7c57bd}{flange\-Callback} (const geometry\-\_\-msgs\-::\-Pose\-Stamped\-Const\-Ptr \&)}\label{classGeometricKinematicCommander_a61edc35487744095113c99b29b7c57bd}
+
+\begin{DoxyCompactList}\small\item\em Methode zum Empfang der aktuellen Roboterflanschlage. \end{DoxyCompactList}\item 
+void \hyperlink{classGeometricKinematicCommander_aa813582c3cf973c6704dc24077150b3b}{loop} ()
+\item 
+\hypertarget{classGeometricKinematicCommander_afe8ae9fce613511a87435a920eaa6299}{void {\bfseries Q4\-State\-Callback} (const sensor\-\_\-msgs\-::\-Joint\-State\-Const\-Ptr \&\hyperlink{classICommander_a72cb524deeb95b224db0242efc4728d4}{state})}\label{classGeometricKinematicCommander_afe8ae9fce613511a87435a920eaa6299}
+
+\item 
+\hypertarget{classGeometricKinematicCommander_aad8e587222c5aef18ebb28e5df2afbbc}{void {\bfseries Q5\-State\-Callback} (const sensor\-\_\-msgs\-::\-Joint\-State\-Const\-Ptr \&\hyperlink{classICommander_a72cb524deeb95b224db0242efc4728d4}{state})}\label{classGeometricKinematicCommander_aad8e587222c5aef18ebb28e5df2afbbc}
+
+\item 
+\hypertarget{classGeometricKinematicCommander_a08ace2af8ea41575b97d4e64425fdd5c}{void {\bfseries Q6n\-State\-Callback} (const sensor\-\_\-msgs\-::\-Joint\-State\-Const\-Ptr \&\hyperlink{classICommander_a72cb524deeb95b224db0242efc4728d4}{state})}\label{classGeometricKinematicCommander_a08ace2af8ea41575b97d4e64425fdd5c}
+
+\item 
+\hypertarget{classGeometricKinematicCommander_ad227d224cca51469aed89e3f63a2224b}{void {\bfseries Q6p\-State\-Callback} (const sensor\-\_\-msgs\-::\-Joint\-State\-Const\-Ptr \&\hyperlink{classICommander_a72cb524deeb95b224db0242efc4728d4}{state})}\label{classGeometricKinematicCommander_ad227d224cca51469aed89e3f63a2224b}
+
+\item 
+\hypertarget{classGeometricKinematicCommander_a86060fb1189ba2d304bcab2f058609b1}{void {\bfseries velocity\-Callback} (const geometry\-\_\-msgs\-::\-Twist\-Stamped\-Const\-Ptr \&)}\label{classGeometricKinematicCommander_a86060fb1189ba2d304bcab2f058609b1}
+
+\item 
+\hypertarget{classGeometricKinematicCommander_a780e85603f9b7201784cfb09706734ae}{void {\bfseries button\-Callback} (const masterslave\-::\-Button\-Const\-Ptr \&)}\label{classGeometricKinematicCommander_a780e85603f9b7201784cfb09706734ae}
+
+\end{DoxyCompactItemize}
+\subsection*{Private Attribute}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classGeometricKinematicCommander_ab2d3302d1b9cdad6bc363403811b6e5e}{ros\-::\-Publisher \hyperlink{classGeometricKinematicCommander_ab2d3302d1b9cdad6bc363403811b6e5e}{lbr\-Target\-Position\-Pub}}\label{classGeometricKinematicCommander_ab2d3302d1b9cdad6bc363403811b6e5e}
+
+\begin{DoxyCompactList}\small\item\em Sender der L\-B\-R-\/\-Flanschlage in R\-O\-S. \end{DoxyCompactList}\item 
+geometry\-\_\-msgs\-::\-Twist\-Stamped \hyperlink{classGeometricKinematicCommander_afbfee50f578ff4098026413f41b916a3}{velocity\-\_\-}
+\item 
+\hypertarget{classGeometricKinematicCommander_a9aa4841981737548fa4dc94d7ddec84a}{ros\-::\-Node\-Handle {\bfseries nh\-\_\-}}\label{classGeometricKinematicCommander_a9aa4841981737548fa4dc94d7ddec84a}
+
+\item 
+\hypertarget{classGeometricKinematicCommander_ae58f3ee72e4ff68fe5d4e720e42cddbc}{Eigen\-::\-Affine3d \hyperlink{classGeometricKinematicCommander_ae58f3ee72e4ff68fe5d4e720e42cddbc}{T\-\_\-0\-\_\-\-F\-L}}\label{classGeometricKinematicCommander_ae58f3ee72e4ff68fe5d4e720e42cddbc}
+
+\begin{DoxyCompactList}\small\item\em Roboterflanschlage des L\-B\-R iiwa. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Weitere Geerbte Elemente}
+
+
+\subsection{Ausführliche Beschreibung}
+Klasse, die sich um die R\-O\-S-\/\-Kommunikation für die geometrisch bestimmte Kinematik kümmert. 
+
+\begin{DoxyAuthor}{Autor}
+Fabian Baier 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Datum}
+19.\-03.\-2016 
+\end{DoxyDate}
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classICommander}{I\-Commander} 
+\end{DoxySeeAlso}
+
+
+\subsection{Dokumentation der Elementfunktionen}
+\hypertarget{classGeometricKinematicCommander_a54f853173048f2d5b55c00d711e3542a}{\index{Geometric\-Kinematic\-Commander@{Geometric\-Kinematic\-Commander}!button\-Check@{button\-Check}}
+\index{button\-Check@{button\-Check}!GeometricKinematicCommander@{Geometric\-Kinematic\-Commander}}
+\subsubsection[{button\-Check}]{\setlength{\rightskip}{0pt plus 5cm}Geometric\-Kinematic\-Commander\-::button\-Check (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classGeometricKinematicCommander_a54f853173048f2d5b55c00d711e3542a}
+
+
+Die Methode holt die Knopfkonfiguration vom Parameterserver. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classControlDevice}{Control\-Device} 
+\end{DoxySeeAlso}
+\hypertarget{classGeometricKinematicCommander_a8f2f1e6428ae88ccdd630d59eff6d5af}{\index{Geometric\-Kinematic\-Commander@{Geometric\-Kinematic\-Commander}!calc\-Q6@{calc\-Q6}}
+\index{calc\-Q6@{calc\-Q6}!GeometricKinematicCommander@{Geometric\-Kinematic\-Commander}}
+\subsubsection[{calc\-Q6}]{\setlength{\rightskip}{0pt plus 5cm}Geometric\-Kinematic\-Commander\-::calc\-Q6 (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}, {\ttfamily [virtual]}}}\label{classGeometricKinematicCommander_a8f2f1e6428ae88ccdd630d59eff6d5af}
+
+
+Berechnet aus dem Gelenkwinkel Q6 die Gelenkwinkel Q6n und Q6p des Zangengreifers. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classICommander}{I\-Commander} 
+\end{DoxySeeAlso}
+
+
+Implementiert \hyperlink{classICommander_a1967688a309974862c4a81b5fe04c3eb}{I\-Commander}.
+
+\hypertarget{classGeometricKinematicCommander_a79cc755ef52804b1cbd1e71dd2f77339}{\index{Geometric\-Kinematic\-Commander@{Geometric\-Kinematic\-Commander}!command\-Velocities@{command\-Velocities}}
+\index{command\-Velocities@{command\-Velocities}!GeometricKinematicCommander@{Geometric\-Kinematic\-Commander}}
+\subsubsection[{command\-Velocities}]{\setlength{\rightskip}{0pt plus 5cm}Geometric\-Kinematic\-Commander\-::command\-Velocities (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}, {\ttfamily [virtual]}}}\label{classGeometricKinematicCommander_a79cc755ef52804b1cbd1e71dd2f77339}
+
+
+Schickt die Gelenkwinkelgeschwindigkeiten an die Nodes der Antriebe des Werkzeuges. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classICommander}{I\-Commander} 
+\end{DoxySeeAlso}
+
+
+Implementiert \hyperlink{classICommander_a43c10dd80f4815afd4058226450c7af3}{I\-Commander}.
+
+\hypertarget{classGeometricKinematicCommander_a91fbbc67883244f37fff899029855140}{\index{Geometric\-Kinematic\-Commander@{Geometric\-Kinematic\-Commander}!get\-Control\-Device@{get\-Control\-Device}}
+\index{get\-Control\-Device@{get\-Control\-Device}!GeometricKinematicCommander@{Geometric\-Kinematic\-Commander}}
+\subsubsection[{get\-Control\-Device}]{\setlength{\rightskip}{0pt plus 5cm}Geometric\-Kinematic\-Commander\-::get\-Control\-Device (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classGeometricKinematicCommander_a91fbbc67883244f37fff899029855140}
+
+
+Die Methode findet den Typ des Eingabegerätes auf dem Parameterserver. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classControlDevice}{Control\-Device} 
+\end{DoxySeeAlso}
+\hypertarget{classGeometricKinematicCommander_aa813582c3cf973c6704dc24077150b3b}{\index{Geometric\-Kinematic\-Commander@{Geometric\-Kinematic\-Commander}!loop@{loop}}
+\index{loop@{loop}!GeometricKinematicCommander@{Geometric\-Kinematic\-Commander}}
+\subsubsection[{loop}]{\setlength{\rightskip}{0pt plus 5cm}Geometric\-Kinematic\-Commander\-::loop (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}, {\ttfamily [virtual]}}}\label{classGeometricKinematicCommander_aa813582c3cf973c6704dc24077150b3b}
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classICommander}{I\-Commander} 
+\end{DoxySeeAlso}
+
+
+Implementiert \hyperlink{classICommander_aa5f882f46d3629fa754162a9ee11984c}{I\-Commander}.
+
+\hypertarget{classGeometricKinematicCommander_a85c8118bd74639548f6791880aeb8f81}{\index{Geometric\-Kinematic\-Commander@{Geometric\-Kinematic\-Commander}!statemachine\-Thread@{statemachine\-Thread}}
+\index{statemachine\-Thread@{statemachine\-Thread}!GeometricKinematicCommander@{Geometric\-Kinematic\-Commander}}
+\subsubsection[{statemachine\-Thread}]{\setlength{\rightskip}{0pt plus 5cm}Geometric\-Kinematic\-Commander\-::statemachine\-Thread (
+\begin{DoxyParamCaption}
+\item[{const ros\-::\-Timer\-Event \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}, {\ttfamily [virtual]}}}\label{classGeometricKinematicCommander_a85c8118bd74639548f6791880aeb8f81}
+
+
+Thread der alle 20ms aufgerufen wird und den Status an R\-O\-S\-Open\-I\-G\-T\-L\-Bridge schickt. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classICommander}{I\-Commander} 
+\end{DoxySeeAlso}
+
+
+Implementiert \hyperlink{classICommander_abcacd07f49f646d08e1722a1df08b8ce}{I\-Commander}.
+
+
+
+\subsection{Dokumentation der Datenelemente}
+\hypertarget{classGeometricKinematicCommander_afbfee50f578ff4098026413f41b916a3}{\index{Geometric\-Kinematic\-Commander@{Geometric\-Kinematic\-Commander}!velocity\-\_\-@{velocity\-\_\-}}
+\index{velocity\-\_\-@{velocity\-\_\-}!GeometricKinematicCommander@{Geometric\-Kinematic\-Commander}}
+\subsubsection[{velocity\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}Geometric\-Kinematic\-Commander\-::velocity\-\_\-\hspace{0.3cm}{\ttfamily [private]}}}\label{classGeometricKinematicCommander_afbfee50f578ff4098026413f41b916a3}
+\begin{DoxyRefDesc}{Noch zu erledigen}
+\item[\hyperlink{todo__todo000001}{Noch zu erledigen}]check ob noch benötigt \end{DoxyRefDesc}
+
+
+Die Dokumentation für diese Klasse wurde erzeugt aufgrund der Datei\-:\begin{DoxyCompactItemize}
+\item 
+include/masterslave/commander/\hyperlink{GeometricKinematicCommander_8h}{Geometric\-Kinematic\-Commander.\-h}\end{DoxyCompactItemize}

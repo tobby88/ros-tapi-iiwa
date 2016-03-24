@@ -55,27 +55,30 @@ public:
      * \fn bool stateService(masterslave::OpenIGTLStateService::Request&, masterslave::OpenIGTLStateService::Response&)
      * \brief Dieses ist eine Callback-Methode, die aufgerufen wird, wenn der Zustand des Roboters geändert werden soll
      * Mögliche Zustände: IDLE, FREE, MOVE_TO_POSE
+     * \param req Request
+     * \param res Respones
      * \return War der Service-Call erfolgreich?
+     * \see OpenIGTLStateService.srv
      */
-    bool stateService(masterslave::OpenIGTLStateService::Request&, masterslave::OpenIGTLStateService::Response&);
+    bool stateService(masterslave::OpenIGTLStateService::Request &req, masterslave::OpenIGTLStateService::Response &res);
 private:
 
     /**
      * \fn void transformCallback(geometry_msgs::PoseStampedConstPtr)
      * \brief In der Methode werden die Sollpositionen aus der geometrischen Kinematik entgegen genommen
      *
-     * \param Die Solllage des Roboterendeffektors
+     * \param transform Die Solllage des Roboterendeffektors
      * \see GeometricKinematic.h
      */
-    void transformCallback(geometry_msgs::PoseStampedConstPtr);
+    void transformCallback(geometry_msgs::PoseStampedConstPtr transform);
 
     /**
      * \fn void lbrJointAngleCallback(const std_msgs::Float64ConstPtr&, int number)
      * \brief In dieser Methode werden die
-     * \param Gelenkwinkel des Gelenks
+     * \param jointAngle Gelenkwinkel des Gelenks
      * \param number Nummer des LBR-Gelenks
      */
-    void lbrJointAngleCallback(const std_msgs::Float64ConstPtr&, int number);
+    void lbrJointAngleCallback(const std_msgs::Float64ConstPtr &jointAngle, int number);
 
     /**
      * \fn void openIGTLinkThread()
@@ -92,44 +95,45 @@ private:
     /**
      * \fn int sendCommand(igtl::ClientSocket::Pointer&, std::string)
      * \brief Methode zum Versenden von std::strings über den OpenIGTLink-Socket
-     * \param Zeiger auf den Socket, über den gesendet werden soll
-     * \param Zuversendende String-Nachricht
+     * \param socket Referenz auf den Socket, über den gesendet werden soll
+     * \param command Zuversendende String-Nachricht
      * \return Status nach Versendung des Pakets
      */
-    int sendCommand(igtl::ClientSocket::Pointer&, std::string);
+    int sendCommand(igtl::ClientSocket::Pointer &socket, std::string command);
 
     /**
      * \fn int positionReached(igtl::ClientSocket::Pointer&, igtl::MessageBase::Pointer&)
      * @brief Überwachung, ob die angegebene Zielpose bereits erreicht wurde
-     * \param Zeiger auf den Socket, über den gesendet wurde
-     * \param Zeiger auf den Nachrichtenkopf, der als Acknowledge zurück kam
+     * \param socket Referenz auf den Socket, über den gesendet wurde
+     * \param msgHeader Referenz auf den Nachrichtenkopf, der als Acknowledge zurück kam
      * @return Empfangsstatus des Pakets
      */
-    int positionReached(igtl::ClientSocket::Pointer&, igtl::MessageBase::Pointer&);
+    int positionReached(igtl::ClientSocket::Pointer &socket, igtl::MessageBase::Pointer &msgHeader);
 
     /**
      * \fn int receiveTransform(igtl::ClientSocket::Pointer&, igtl::MessageBase::Pointer&)
      * @brief Empfang der Transformationsnachrichten
-     * \param Zeiger auf den Socket, mithilfe dessen die Nachrichten empfangen werden
-     * \param Zeiger auf den Nachrichtenkopf, and die Transformationen angehängt sind
+     * \param socket Referenz auf den Socket, mithilfe dessen die Nachrichten empfangen werden
+     * \param msgHeader Referenz auf den Nachrichtenkopf, and die Transformationen angehängt sind
      * @return Empfangsstatus des Pakets
      */
-    int receiveTransform(igtl::ClientSocket::Pointer&, igtl::MessageBase::Pointer&);
+    int receiveTransform(igtl::ClientSocket::Pointer &socket, igtl::MessageBase::Pointer &msgHeader);
 
     /**
      * \fn std::string rosPoseToIGTL(geometry_msgs::Pose)
      * @brief Hilfsfunktion um eine geometry_msgs::Pose in einen String zu verwandeln, um diesen anschließend über OpenIGTLink zu versenden
-     * \param Die gewünschen Solllage im Variablentyp geometry_msgs::Pose
+     * \param pose Die gewünschen Solllage im Variablentyp geometry_msgs::Pose
      * @return die Transformationsmatrix im Variablentyp std::string
      */
-    std::string rosPoseToIGTL(geometry_msgs::Pose);
+    std::string rosPoseToIGTL(geometry_msgs::Pose pose);
 
     /**
      * \fn geometry_msgs::Pose igtlMatrixToRosPose(igtl::Matrix4x4&)
      * @brief Hilfsfunktion um eine igtl::Matrix4x4 in eine geometry_msgs::Pose zu wandeln und diese in ROS zu übertragen
-     * @return
+     * \param igtlMatrix Eingehende Transformation in OpenIGTLink
+     * @return Pose
      */
-    geometry_msgs::Pose igtlMatrixToRosPose(igtl::Matrix4x4&);
+    geometry_msgs::Pose igtlMatrixToRosPose(igtl::Matrix4x4& igtlMatrix);
 
     /**
      * \fn configurationIGTLCallback(masterslave::RosOpenIGTLBridgeConfig &config, uint32_t level)

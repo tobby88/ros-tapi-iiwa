@@ -1,3 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classITask.html" title="ITask" alt="" coords="6,5,61,32"/>
+<area shape="rect" id="node1" href="$classITrajectory.html" title="Abstrakte Basisklasse für verschiedene Trajektorienarten. " alt="" coords="6,56,90,83"/>
+<area shape="rect" id="node2" href="$classCircleTrajectory.html" title="Klasse, die eine Interpolation einer Kreistrajektorie ermöglicht. " alt="" coords="139,5,253,32"/>
+<area shape="rect" id="node3" href="$classLineTrajectory.html" title="Eine Klasse, die eine Interpolation eines Polynom fünften Grades zwischen zwei Punkten ermöglicht..." alt="" coords="144,56,248,83"/>
+<area shape="rect" id="node4" href="$classPTPTrajectory.html" title="PTPTrajectory" alt="" coords="143,107,249,133"/>
 </map>

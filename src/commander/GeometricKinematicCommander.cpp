@@ -39,11 +39,11 @@ GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ro
     ros::Rate waiteRate(0.5);
     while(ros::ok() && !(callBacksCalled+1 >> 4 == 1))
     {
-        ROS_INFO("GeometricKinematicCommander is waiting for a start position of the robot");
+        ROS_INFO_STREAM(nh_.getNamespace() <<" is waiting for a start position of the robot");
         ros::spinOnce();
         waiteRate.sleep();
     }
-    ROS_INFO("LaroscopeTask has found the start position of the robot!");
+    ROS_INFO_STREAM(nh_.getNamespace() << " has found the start position of the robot!");
     while(ros::ok())
     {
         ros::spinOnce();

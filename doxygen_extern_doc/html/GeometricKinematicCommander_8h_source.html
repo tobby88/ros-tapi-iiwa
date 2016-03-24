@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.6"/>
+<title>Master-Slave: include/masterslave/commander/GeometricKinematicCommander.h Quellcode</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">Master-Slave
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Erzeugt von Doxygen 1.8.6 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Suchen');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>Hauptseite</span></a></li>
+      <li><a href="pages.html"><span>Zusätzliche&#160;Informationen</span></a></li>
+      <li><a href="annotated.html"><span>Klassen</span></a></li>
+      <li class="current"><a href="files.html"><span>Dateien</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Suchen" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="files.html"><span>Auflistung&#160;der&#160;Dateien</span></a></li>
+      <li><a href="globals.html"><span>Datei-Elemente</span></a></li>
+    </ul>
+  </div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Alle</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Klassen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Dateien</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Funktionen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variablen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Aufzählungen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Seiten</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_6f4a0b2fc6f2ce09175717fe052f298d.html">include</a></li><li class="navelem"><a class="el" href="dir_35f06720d9aa0f1d8c18e27f703bb5d7.html">masterslave</a></li><li class="navelem"><a class="el" href="dir_4d2d63ea618361c2bf458addfbc7fab3.html">commander</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">GeometricKinematicCommander.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="GeometricKinematicCommander_8h.html">gehe zur Dokumentation dieser Datei</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef GEOMETRICKINEMATICCOMMANDER_H</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define GEOMETRICKINEMATICCOMMANDER_H</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ICommander_8h.html">ICommander.h</a>&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="GeometricKinematic_8h.html">masterslave/kinematic/GeometricKinematic.h</a>&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;ros/ros.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;tf/tf.h&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;tf_conversions/tf_eigen.h&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;eigen_conversions/eigen_msg.h&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;tf/transform_listener.h&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classGeometricKinematicCommander.html">   24</a></span>&#160;<span class="keyword">class </span><a class="code" href="classGeometricKinematicCommander.html">GeometricKinematicCommander</a> : <span class="keyword">public</span> <a class="code" href="classICommander.html">ICommander</a></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <a class="code" href="classGeometricKinematicCommander.html">GeometricKinematicCommander</a>(ros::NodeHandle&amp; nh, ros::NodeHandle&amp; drNH);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classGeometricKinematicCommander.html#a85c8118bd74639548f6791880aeb8f81">statemachineThread</a>(<span class="keyword">const</span> ros::TimerEvent&amp;);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classGeometricKinematicCommander.html#a8f2f1e6428ae88ccdd630d59eff6d5af">calcQ6</a>();</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classGeometricKinematicCommander.html#a79cc755ef52804b1cbd1e71dd2f77339">commandVelocities</a>();</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classGeometricKinematicCommander.html#a54f853173048f2d5b55c00d711e3542a">buttonCheck</a>();</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classGeometricKinematicCommander.html#a91fbbc67883244f37fff899029855140">getControlDevice</a>();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classGeometricKinematicCommander.html#ab2d3302d1b9cdad6bc363403811b6e5e">   72</a></span>&#160;        ros::Publisher <a class="code" href="classGeometricKinematicCommander.html#ab2d3302d1b9cdad6bc363403811b6e5e">lbrTargetPositionPub</a>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="classGeometricKinematicCommander.html#afbfee50f578ff4098026413f41b916a3">   78</a></span>&#160;        geometry_msgs::TwistStamped <a class="code" href="classGeometricKinematicCommander.html#afbfee50f578ff4098026413f41b916a3">velocity_</a>;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classGeometricKinematicCommander.html#a61edc35487744095113c99b29b7c57bd">flangeCallback</a>(<span class="keyword">const</span> geometry_msgs::PoseStampedConstPtr&amp;);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classGeometricKinematicCommander.html#aa813582c3cf973c6704dc24077150b3b">loop</a>();</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        ros::NodeHandle nh_;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keywordtype">void</span> Q4StateCallback(<span class="keyword">const</span> sensor_msgs::JointStateConstPtr &amp;<a class="code" href="classICommander.html#a72cb524deeb95b224db0242efc4728d4">state</a>);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordtype">void</span> Q5StateCallback(<span class="keyword">const</span> sensor_msgs::JointStateConstPtr &amp;<a class="code" href="classICommander.html#a72cb524deeb95b224db0242efc4728d4">state</a>);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordtype">void</span> Q6nStateCallback(<span class="keyword">const</span> sensor_msgs::JointStateConstPtr &amp;<a class="code" href="classICommander.html#a72cb524deeb95b224db0242efc4728d4">state</a>);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="keywordtype">void</span> Q6pStateCallback(<span class="keyword">const</span> sensor_msgs::JointStateConstPtr &amp;<a class="code" href="classICommander.html#a72cb524deeb95b224db0242efc4728d4">state</a>);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keywordtype">void</span> velocityCallback(<span class="keyword">const</span> geometry_msgs::TwistStampedConstPtr&amp;);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordtype">void</span> buttonCallback(<span class="keyword">const</span> masterslave::ButtonConstPtr&amp;);</div>
+<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="classGeometricKinematicCommander.html#ae58f3ee72e4ff68fe5d4e720e42cddbc">  101</a></span>&#160;        Eigen::Affine3d <a class="code" href="classGeometricKinematicCommander.html#ae58f3ee72e4ff68fe5d4e720e42cddbc">T_0_FL</a>;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;};</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="preprocessor">#endif // LAPAROSCOPETASK_H</span></div>
+<div class="ttc" id="classICommander_html"><div class="ttname"><a href="classICommander.html">ICommander</a></div><div class="ttdoc">Abstrakte Basisklasse zur Ansteuerung der beiden Kinematikmodelle über ROS. </div><div class="ttdef"><b>Definition:</b> ICommander.h:42</div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html_a85c8118bd74639548f6791880aeb8f81"><div class="ttname"><a href="classGeometricKinematicCommander.html#a85c8118bd74639548f6791880aeb8f81">GeometricKinematicCommander::statemachineThread</a></div><div class="ttdeci">void statemachineThread(const ros::TimerEvent &amp;)</div><div class="ttdoc">Thread der alle 20ms aufgerufen wird und den Status an ROSOpenIGTLBridge schickt. ...</div></div>
+<div class="ttc" id="GeometricKinematic_8h_html"><div class="ttname"><a href="GeometricKinematic_8h.html">GeometricKinematic.h</a></div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html_aa813582c3cf973c6704dc24077150b3b"><div class="ttname"><a href="classGeometricKinematicCommander.html#aa813582c3cf973c6704dc24077150b3b">GeometricKinematicCommander::loop</a></div><div class="ttdeci">void loop()</div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html_ae58f3ee72e4ff68fe5d4e720e42cddbc"><div class="ttname"><a href="classGeometricKinematicCommander.html#ae58f3ee72e4ff68fe5d4e720e42cddbc">GeometricKinematicCommander::T_0_FL</a></div><div class="ttdeci">Eigen::Affine3d T_0_FL</div><div class="ttdoc">Roboterflanschlage des LBR iiwa. </div><div class="ttdef"><b>Definition:</b> GeometricKinematicCommander.h:101</div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html_a79cc755ef52804b1cbd1e71dd2f77339"><div class="ttname"><a href="classGeometricKinematicCommander.html#a79cc755ef52804b1cbd1e71dd2f77339">GeometricKinematicCommander::commandVelocities</a></div><div class="ttdeci">void commandVelocities()</div><div class="ttdoc">Schickt die Gelenkwinkelgeschwindigkeiten an die Nodes der Antriebe des Werkzeuges. </div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html"><div class="ttname"><a href="classGeometricKinematicCommander.html">GeometricKinematicCommander</a></div><div class="ttdoc">Klasse, die sich um die ROS-Kommunikation für die geometrisch bestimmte Kinematik kümmert...</div><div class="ttdef"><b>Definition:</b> GeometricKinematicCommander.h:24</div></div>
+<div class="ttc" id="classICommander_html_a72cb524deeb95b224db0242efc4728d4"><div class="ttname"><a href="classICommander.html#a72cb524deeb95b224db0242efc4728d4">ICommander::state</a></div><div class="ttdeci">OPENIGTL_STATE state</div><div class="ttdoc">OpenIGTLink-Zustand. </div><div class="ttdef"><b>Definition:</b> ICommander.h:318</div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html_a54f853173048f2d5b55c00d711e3542a"><div class="ttname"><a href="classGeometricKinematicCommander.html#a54f853173048f2d5b55c00d711e3542a">GeometricKinematicCommander::buttonCheck</a></div><div class="ttdeci">void buttonCheck()</div><div class="ttdoc">Die Methode holt die Knopfkonfiguration vom Parameterserver. </div></div>
+<div class="ttc" id="ICommander_8h_html"><div class="ttname"><a href="ICommander_8h.html">ICommander.h</a></div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html_afbfee50f578ff4098026413f41b916a3"><div class="ttname"><a href="classGeometricKinematicCommander.html#afbfee50f578ff4098026413f41b916a3">GeometricKinematicCommander::velocity_</a></div><div class="ttdeci">geometry_msgs::TwistStamped velocity_</div><div class="ttdef"><b>Definition:</b> GeometricKinematicCommander.h:78</div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html_a91fbbc67883244f37fff899029855140"><div class="ttname"><a href="classGeometricKinematicCommander.html#a91fbbc67883244f37fff899029855140">GeometricKinematicCommander::getControlDevice</a></div><div class="ttdeci">void getControlDevice()</div><div class="ttdoc">Die Methode findet den Typ des Eingabegerätes auf dem Parameterserver. </div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html_a61edc35487744095113c99b29b7c57bd"><div class="ttname"><a href="classGeometricKinematicCommander.html#a61edc35487744095113c99b29b7c57bd">GeometricKinematicCommander::flangeCallback</a></div><div class="ttdeci">void flangeCallback(const geometry_msgs::PoseStampedConstPtr &amp;)</div><div class="ttdoc">Methode zum Empfang der aktuellen Roboterflanschlage. </div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html_a8f2f1e6428ae88ccdd630d59eff6d5af"><div class="ttname"><a href="classGeometricKinematicCommander.html#a8f2f1e6428ae88ccdd630d59eff6d5af">GeometricKinematicCommander::calcQ6</a></div><div class="ttdeci">void calcQ6()</div><div class="ttdoc">Berechnet aus dem Gelenkwinkel Q6 die Gelenkwinkel Q6n und Q6p des Zangengreifers. </div></div>
+<div class="ttc" id="classGeometricKinematicCommander_html_ab2d3302d1b9cdad6bc363403811b6e5e"><div class="ttname"><a href="classGeometricKinematicCommander.html#ab2d3302d1b9cdad6bc363403811b6e5e">GeometricKinematicCommander::lbrTargetPositionPub</a></div><div class="ttdeci">ros::Publisher lbrTargetPositionPub</div><div class="ttdoc">Sender der LBR-Flanschlage in ROS. </div><div class="ttdef"><b>Definition:</b> GeometricKinematicCommander.h:72</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Erzeugt am Don Mär 24 2016 18:39:32 für Master-Slave von &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.6
+</small></address>
+</body>
+</html>

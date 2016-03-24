@@ -50,10 +50,10 @@ private:
     /**
      * @fn calcDirKin
      * @brief Berechnung der direkten Kinematik der Gesamtkinematik mit 10 Gelenkfreiheitsgraden
-     * @param Gelenkwinkelvektor
+     * @param jointAngles Gelenkwinkelvektor
      * @return Kartesische Position und Vektor der Eulerwinkel in Z-Y'-X''-Reihenfolge
      */
-    Eigen::VectorXd calcDirKin(Eigen::VectorXd);
+    Eigen::VectorXd calcDirKin(Eigen::VectorXd jointAngles);
 
     /**
      * @fn calcAnalyticalJacobian
@@ -66,10 +66,10 @@ private:
     /**
      * @fn calcInvKin
      * @brief Berechnung der inversen Kinematik durch numerische Optimierung eines Least-Squares-Problem nach verschiedenen Kriterien
-     * @param TCP-Lage
+     * @param T_0_EE gewünschte TCP-Lage
      * @return Flag, ob der definierte Arbeitsraum eingehalten wurde
      */
-    bool calcInvKin(Eigen::Affine3d);
+    bool calcInvKin(Eigen::Affine3d T_0_EE);
 
     // Methoden, welche die Kriterien für die Optimierungsbedingungen definieren
 
@@ -98,11 +98,11 @@ private:
     /**
      * @fn minimizeVelocities
      * @brief Minimiert und verteilt die Gelenkwinkelgeschwindigkeiten abhängig von der Wichtungsmatrix
-     * @param Zykluszeit
-     * @param Wichtungsmatrix
+     * @param cycleTime Zykluszeit
+     * @param weightMatrix Wichtungsmatrix
      * @return Vektor der Gelenkwinkelpotentiale abgeleitet nach den Gelenkwinkeln
      */
-    Eigen::MatrixXd minimizeVelocities(double, Eigen::MatrixXd);
+    Eigen::MatrixXd minimizeVelocities(double cycleTime, Eigen::MatrixXd weightMatrix);
 
     /**
      * @fn minimizeAcceleration
@@ -151,7 +151,7 @@ private:
 
     /**
      * @var URSULA_MAX_ANGLES
-     * @brieg Vektor der maximalen Gelenkwinkel
+     * @brief Vektor der maximalen Gelenkwinkel
      * @see MAX_ANGLES
      */
     Eigen::Matrix<double, 10, 1> URSULA_MAX_ANGLES;
@@ -357,10 +357,10 @@ private:
     /**
      * @fn rotation2RPY
      * @brief Umrechnung einer Rotation einer Affinen Transformation in Euler-Winkel und Übergabe der Translation
-     * @param Affine Transformation
+     * @param transformation Transformation
      * @return Vektor mit Translation und Rotation in Euler-Winkeln
      */
-    Eigen::VectorXd rotation2RPY(Eigen::Affine3d);
+    Eigen::VectorXd rotation2RPY(Eigen::Affine3d transformation);
 
     /**
      * @fn buildAffine3d

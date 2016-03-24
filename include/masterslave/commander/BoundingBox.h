@@ -29,10 +29,10 @@ public:
     /**
      * @fn checkBoundingBoxTCP
      * @brief Überprüft, ob der TCP außerhalb des erlaubten Arbeitsraumes liegt
-     * @parameter aktueller TCP
+     * \param TCP aktueller TCP
      * @return Flag, ob der TCP im erlaubten Arbeitsraum liegt
      */
-    bool checkBoundingBoxTCP(Eigen::Affine3d);
+    bool checkBoundingBoxTCP(Eigen::Affine3d TCP);
 private:
     ros::NodeHandle nh_;
     /**

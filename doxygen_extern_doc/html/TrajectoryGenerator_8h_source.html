@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.6"/>
+<title>Master-Slave: include/masterslave/manipulation/TrajectoryGenerator.h Quellcode</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">Master-Slave
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Erzeugt von Doxygen 1.8.6 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Suchen');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>Hauptseite</span></a></li>
+      <li><a href="pages.html"><span>Zusätzliche&#160;Informationen</span></a></li>
+      <li><a href="annotated.html"><span>Klassen</span></a></li>
+      <li class="current"><a href="files.html"><span>Dateien</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Suchen" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="files.html"><span>Auflistung&#160;der&#160;Dateien</span></a></li>
+      <li><a href="globals.html"><span>Datei-Elemente</span></a></li>
+    </ul>
+  </div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Alle</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Klassen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Dateien</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Funktionen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variablen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Aufzählungen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Seiten</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_6f4a0b2fc6f2ce09175717fe052f298d.html">include</a></li><li class="navelem"><a class="el" href="dir_35f06720d9aa0f1d8c18e27f703bb5d7.html">masterslave</a></li><li class="navelem"><a class="el" href="dir_22de5e097b58e1e095ae3f3d44c81519.html">manipulation</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">TrajectoryGenerator.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="TrajectoryGenerator_8h.html">gehe zur Dokumentation dieser Datei</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef TRAJECTORYGENERATOR_H</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define TRAJECTORYGENERATOR_H</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;ros/ros.h&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;masterslave/Manipulation.h&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;geometry_msgs/Pose.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;geometry_msgs/TwistStamped.h&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;std_msgs/Float64.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;Eigen/Core&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;tf/tf.h&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;tf_conversions/tf_eigen.h&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;eigen_conversions/eigen_msg.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;tf/transform_listener.h&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="LineTrajectory_8h.html">masterslave/manipulation/trajectory/LineTrajectory.h</a>&quot;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;masterslave/manipulation/trajectory/PTPTrajectory.h&quot;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="CircleTrajectory_8h.html">masterslave/manipulation/trajectory/CircleTrajectory.h</a>&quot;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ITrajectory_8h.html">masterslave/manipulation/trajectory/ITrajectory.h</a>&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;dynamic_reconfigure/server.h&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &quot;masterslave/TrajectoryGeneratorConfig.h&quot;</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="TrajectoryGenerator_8h.html#ab7e9971a19ca76371c40959c478f6618">   31</a></span>&#160;<span class="keyword">enum</span> <a class="code" href="TrajectoryGenerator_8h.html#ab7e9971a19ca76371c40959c478f6618">TRAJECTORY_STATE</a></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;{</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    NO_STATE = -1,</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    PTP,</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    LINE,</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    CIRCLE</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;};</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html">   49</a></span>&#160;<span class="keyword">class </span><a class="code" href="classTrajectoryGenerator.html">TrajectoryGenerator</a></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;{</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="classTrajectoryGenerator.html">TrajectoryGenerator</a>(ros::NodeHandle&amp; nh);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    ~<a class="code" href="classTrajectoryGenerator.html">TrajectoryGenerator</a>();</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classTrajectoryGenerator.html#a78db2b3652839b0f16e959a859be78d1">trajectoryCallback</a>(masterslave::Manipulation::Request&amp; req, masterslave::Manipulation::Response&amp; resp);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classTrajectoryGenerator.html#a348c539543ae503b73b4f5380026a7cd">cycleTimeCallback</a>(<span class="keyword">const</span> std_msgs::Float64ConstPtr&amp;);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classTrajectoryGenerator.html#a542a3d9e6012e504a9bdd3e4d4415d97">configurationCallback</a>(masterslave::TrajectoryGeneratorConfig &amp;config, uint32_t level);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    ros::NodeHandle nh_;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#a33fc40f24dfab51390b800280dd8ce46">   85</a></span>&#160;    ros::ServiceServer <a class="code" href="classTrajectoryGenerator.html#a33fc40f24dfab51390b800280dd8ce46">trajectoryServer</a>;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#a7250335d598f1d556b5e826dd206fbc8">   91</a></span>&#160;    ros::Subscriber <a class="code" href="classTrajectoryGenerator.html#a7250335d598f1d556b5e826dd206fbc8">cycleTimeSub</a>;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#a676b24e0945d8a8623b3d9ca310b621b">   98</a></span>&#160;    Eigen::Vector3d <a class="code" href="classTrajectoryGenerator.html#a676b24e0945d8a8623b3d9ca310b621b">rcm</a>;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#a08c164f7f59ef59a7da96c96f0f60f73">  104</a></span>&#160;    Eigen::Affine3d <a class="code" href="classTrajectoryGenerator.html#a08c164f7f59ef59a7da96c96f0f60f73">startPosition</a>;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#a608c44ff96e9d2504f35b8ff0233ec3b">  110</a></span>&#160;    Eigen::Vector3d <a class="code" href="classTrajectoryGenerator.html#a608c44ff96e9d2504f35b8ff0233ec3b">firstPoint</a>;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#a1d6419470b689dd6cb23b0c7236fffd9">  116</a></span>&#160;    Eigen::Vector3d <a class="code" href="classTrajectoryGenerator.html#a1d6419470b689dd6cb23b0c7236fffd9">secondPoint</a>;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#abffbe637a297379a60c22f6efd53b8d9">  122</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classTrajectoryGenerator.html#abffbe637a297379a60c22f6efd53b8d9">zCoordinate</a>;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#ac02b6a2df43dc5706507835ad5cb84d8">  128</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classTrajectoryGenerator.html#ac02b6a2df43dc5706507835ad5cb84d8">circleRadius</a>;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#a908a13ec9428ff58ea9c4622b3845337">  134</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classTrajectoryGenerator.html#a908a13ec9428ff58ea9c4622b3845337">trajectorySpeed</a>;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
+<div class="line"><a name="l00140"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#aac65fb524447f9d1e77fb52bfcf70307">  140</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classTrajectoryGenerator.html#aac65fb524447f9d1e77fb52bfcf70307">cycleTime</a>;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;</div>
+<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#acebd9fea08097528dbf013d327c39f7c">  146</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classTrajectoryGenerator.html#acebd9fea08097528dbf013d327c39f7c">start</a>{<span class="keyword">false</span>};</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
+<div class="line"><a name="l00152"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#a4692340647fc11a62aec0cd32194cb45">  152</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classTrajectoryGenerator.html#a4692340647fc11a62aec0cd32194cb45">rcmPositionThere</a>{<span class="keyword">false</span>};</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> MM_TO_M{0.001};</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
+<div class="line"><a name="l00161"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#ad945c2000eeab78342a67d627886e211">  161</a></span>&#160;    std::unique_ptr&lt;ITrajectory&gt; <a class="code" href="classTrajectoryGenerator.html#ad945c2000eeab78342a67d627886e211">trajectoryGen</a>;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;</div>
+<div class="line"><a name="l00167"></a><span class="lineno"><a class="line" href="classTrajectoryGenerator.html#a3ac417739c130895c6fbdea8b751d496">  167</a></span>&#160;    <a class="code" href="TrajectoryGenerator_8h.html#ab7e9971a19ca76371c40959c478f6618">TRAJECTORY_STATE</a> <a class="code" href="classTrajectoryGenerator.html#a3ac417739c130895c6fbdea8b751d496">state</a>{NO_STATE};</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;};</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="preprocessor">#endif // TRAJECTORYGENERATOR_H</span></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a4692340647fc11a62aec0cd32194cb45"><div class="ttname"><a href="classTrajectoryGenerator.html#a4692340647fc11a62aec0cd32194cb45">TrajectoryGenerator::rcmPositionThere</a></div><div class="ttdeci">bool rcmPositionThere</div><div class="ttdoc">Flag, ob der RCM empfangen wurde. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:152</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a608c44ff96e9d2504f35b8ff0233ec3b"><div class="ttname"><a href="classTrajectoryGenerator.html#a608c44ff96e9d2504f35b8ff0233ec3b">TrajectoryGenerator::firstPoint</a></div><div class="ttdeci">Eigen::Vector3d firstPoint</div><div class="ttdoc">Erster Punkt der Trajektorie. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:110</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a348c539543ae503b73b4f5380026a7cd"><div class="ttname"><a href="classTrajectoryGenerator.html#a348c539543ae503b73b4f5380026a7cd">TrajectoryGenerator::cycleTimeCallback</a></div><div class="ttdeci">void cycleTimeCallback(const std_msgs::Float64ConstPtr &amp;)</div><div class="ttdoc">Bereitstellung der Zykluszeit über ein ROS-Topic. </div></div>
+<div class="ttc" id="TrajectoryGenerator_8h_html_ab7e9971a19ca76371c40959c478f6618"><div class="ttname"><a href="TrajectoryGenerator_8h.html#ab7e9971a19ca76371c40959c478f6618">TRAJECTORY_STATE</a></div><div class="ttdeci">TRAJECTORY_STATE</div><div class="ttdoc">Verschiedene Trajektorienarten, die die Klassen TrajectoryGenerator zur Verfügung stellt...</div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:31</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a7250335d598f1d556b5e826dd206fbc8"><div class="ttname"><a href="classTrajectoryGenerator.html#a7250335d598f1d556b5e826dd206fbc8">TrajectoryGenerator::cycleTimeSub</a></div><div class="ttdeci">ros::Subscriber cycleTimeSub</div><div class="ttdoc">Empfänger in ROS für die bereitgestellte Zykluszeit. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:91</div></div>
+<div class="ttc" id="LineTrajectory_8h_html"><div class="ttname"><a href="LineTrajectory_8h.html">LineTrajectory.h</a></div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a08c164f7f59ef59a7da96c96f0f60f73"><div class="ttname"><a href="classTrajectoryGenerator.html#a08c164f7f59ef59a7da96c96f0f60f73">TrajectoryGenerator::startPosition</a></div><div class="ttdeci">Eigen::Affine3d startPosition</div><div class="ttdoc">Aktuelle Startposition bzw. aktuelle TCP-Lage. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:104</div></div>
+<div class="ttc" id="CircleTrajectory_8h_html"><div class="ttname"><a href="CircleTrajectory_8h.html">CircleTrajectory.h</a></div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_acebd9fea08097528dbf013d327c39f7c"><div class="ttname"><a href="classTrajectoryGenerator.html#acebd9fea08097528dbf013d327c39f7c">TrajectoryGenerator::start</a></div><div class="ttdeci">bool start</div><div class="ttdoc">Startflag, die über Dynamic Reconfigure übertragen wird. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:146</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_ac02b6a2df43dc5706507835ad5cb84d8"><div class="ttname"><a href="classTrajectoryGenerator.html#ac02b6a2df43dc5706507835ad5cb84d8">TrajectoryGenerator::circleRadius</a></div><div class="ttdeci">double circleRadius</div><div class="ttdoc">Radius der Kreistrajectorie. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:128</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a676b24e0945d8a8623b3d9ca310b621b"><div class="ttname"><a href="classTrajectoryGenerator.html#a676b24e0945d8a8623b3d9ca310b621b">TrajectoryGenerator::rcm</a></div><div class="ttdeci">Eigen::Vector3d rcm</div><div class="ttdoc">Position des Trokarpunktes im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:98</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a908a13ec9428ff58ea9c4622b3845337"><div class="ttname"><a href="classTrajectoryGenerator.html#a908a13ec9428ff58ea9c4622b3845337">TrajectoryGenerator::trajectorySpeed</a></div><div class="ttdeci">double trajectorySpeed</div><div class="ttdoc">Durchschnittliche Trajektoriengeschwindigkeit in [mm/s]. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:134</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_abffbe637a297379a60c22f6efd53b8d9"><div class="ttname"><a href="classTrajectoryGenerator.html#abffbe637a297379a60c22f6efd53b8d9">TrajectoryGenerator::zCoordinate</a></div><div class="ttdeci">double zCoordinate</div><div class="ttdoc">z-Koordinate des Kreismittelpunktes </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:122</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a33fc40f24dfab51390b800280dd8ce46"><div class="ttname"><a href="classTrajectoryGenerator.html#a33fc40f24dfab51390b800280dd8ce46">TrajectoryGenerator::trajectoryServer</a></div><div class="ttdeci">ros::ServiceServer trajectoryServer</div><div class="ttdoc">Bereitstellung des Service Servers zur Manipulation des TCP. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:85</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a542a3d9e6012e504a9bdd3e4d4415d97"><div class="ttname"><a href="classTrajectoryGenerator.html#a542a3d9e6012e504a9bdd3e4d4415d97">TrajectoryGenerator::configurationCallback</a></div><div class="ttdeci">void configurationCallback(masterslave::TrajectoryGeneratorConfig &amp;config, uint32_t level)</div><div class="ttdoc">Dynamic Reconfigure Callbackmethode. </div></div>
+<div class="ttc" id="classTrajectoryGenerator_html"><div class="ttname"><a href="classTrajectoryGenerator.html">TrajectoryGenerator</a></div><div class="ttdoc">Klasse zum Abfahren verschiedener Trajektorien zur quantitativen Bestimmung des Trokarpunktes. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:49</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_ad945c2000eeab78342a67d627886e211"><div class="ttname"><a href="classTrajectoryGenerator.html#ad945c2000eeab78342a67d627886e211">TrajectoryGenerator::trajectoryGen</a></div><div class="ttdeci">std::unique_ptr&lt; ITrajectory &gt; trajectoryGen</div><div class="ttdoc">Zeiger auf das Trajectorienobjekt. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:161</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a78db2b3652839b0f16e959a859be78d1"><div class="ttname"><a href="classTrajectoryGenerator.html#a78db2b3652839b0f16e959a859be78d1">TrajectoryGenerator::trajectoryCallback</a></div><div class="ttdeci">bool trajectoryCallback(masterslave::Manipulation::Request &amp;req, masterslave::Manipulation::Response &amp;resp)</div><div class="ttdoc">Callback der den aktuellen TCP bereitstellt und den neu bestimmten TCP als Antwort fordert...</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a1d6419470b689dd6cb23b0c7236fffd9"><div class="ttname"><a href="classTrajectoryGenerator.html#a1d6419470b689dd6cb23b0c7236fffd9">TrajectoryGenerator::secondPoint</a></div><div class="ttdeci">Eigen::Vector3d secondPoint</div><div class="ttdoc">Zweiter Punkt der Trajektorie. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:116</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_a3ac417739c130895c6fbdea8b751d496"><div class="ttname"><a href="classTrajectoryGenerator.html#a3ac417739c130895c6fbdea8b751d496">TrajectoryGenerator::state</a></div><div class="ttdeci">TRAJECTORY_STATE state</div><div class="ttdoc">Aktuell gewünschte Trajektorienform. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:167</div></div>
+<div class="ttc" id="classTrajectoryGenerator_html_aac65fb524447f9d1e77fb52bfcf70307"><div class="ttname"><a href="classTrajectoryGenerator.html#aac65fb524447f9d1e77fb52bfcf70307">TrajectoryGenerator::cycleTime</a></div><div class="ttdeci">double cycleTime</div><div class="ttdoc">Zykluszeit. </div><div class="ttdef"><b>Definition:</b> TrajectoryGenerator.h:140</div></div>
+<div class="ttc" id="ITrajectory_8h_html"><div class="ttname"><a href="ITrajectory_8h.html">ITrajectory.h</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Erzeugt am Don Mär 24 2016 18:39:32 für Master-Slave von &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.6
+</small></address>
+</body>
+</html>

@@ -64,18 +64,18 @@ class GeometricKinematic: public IKinematic
         /**
          * @fn calcDirKin
          * @brief Methode zur Berechnung der direkten Kinematik des Werkzeuges
-         * @param Gelenkwinkel des Werkzeuges
+         * @param jointAngles Gelenkwinkel des Werkzeuges
          * @return Affine Transformation zwischen Flansch und Endeffektor
          */
-        Eigen::Affine3d calcDirKin(Eigen::VectorXd);
+        Eigen::Affine3d calcDirKin(Eigen::VectorXd jointAngles);
 
         /**
          * @fn calcInvKin
          * @brief Methode zur Berechnung der inversen Kinematik des Werkzeuges auf Basis geometrischer Bedingungen
-         * @param Endeffektorlage im Weltkoordinatensystem
+         * @param desEEPosition gewünschte Endeffektorlage im Weltkoordinatensystem
          * @return Flag, ob der Arbeitsraum eingehalten wurde
          */
-        bool calcInvKin(Eigen::Affine3d);
+        bool calcInvKin(Eigen::Affine3d desEEPosition);
 
         /**
          * @fn rcmCallback

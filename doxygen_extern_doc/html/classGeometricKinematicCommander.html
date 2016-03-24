@@ -1,0 +1,543 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.6"/>
+<title>Master-Slave: GeometricKinematicCommander Klassenreferenz</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">Master-Slave
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Erzeugt von Doxygen 1.8.6 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Suchen');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>Hauptseite</span></a></li>
+      <li><a href="pages.html"><span>Zusätzliche&#160;Informationen</span></a></li>
+      <li class="current"><a href="annotated.html"><span>Klassen</span></a></li>
+      <li><a href="files.html"><span>Dateien</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Suchen" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="annotated.html"><span>Auflistung&#160;der&#160;Klassen</span></a></li>
+      <li><a href="classes.html"><span>Klassen-Verzeichnis</span></a></li>
+      <li><a href="inherits.html"><span>Klassenhierarchie</span></a></li>
+      <li><a href="functions.html"><span>Klassen-Elemente</span></a></li>
+    </ul>
+  </div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Alle</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Klassen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Dateien</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Funktionen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variablen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Aufzählungen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Seiten</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Öffentliche Methoden</a> &#124;
+<a href="#pri-methods">Private Methoden</a> &#124;
+<a href="#pri-attribs">Private Attribute</a> &#124;
+<a href="classGeometricKinematicCommander-members.html">Aufstellung aller Elemente</a>  </div>
+  <div class="headertitle">
+<div class="title">GeometricKinematicCommander Klassenreferenz</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>Klasse, die sich um die ROS-Kommunikation für die geometrisch bestimmte Kinematik kümmert.  
+ <a href="classGeometricKinematicCommander.html#details">Mehr ...</a></p>
+
+<p><code>#include &lt;<a class="el" href="GeometricKinematicCommander_8h_source.html">GeometricKinematicCommander.h</a>&gt;</code></p>
+<div class="dynheader">
+Klassendiagramm für GeometricKinematicCommander:</div>
+<div class="dyncontent">
+<div class="center"><img src="classGeometricKinematicCommander__inherit__graph.png" border="0" usemap="#GeometricKinematicCommander_inherit__map" alt="Inheritance graph"/></div>
+<map name="GeometricKinematicCommander_inherit__map" id="GeometricKinematicCommander_inherit__map">
+<area shape="rect" id="node2" href="classICommander.html" title="Abstrakte Basisklasse zur Ansteuerung der beiden Kinematikmodelle über ROS. " alt="" coords="37,5,203,317"/></map>
+</div>
+<div class="dynheader">
+Zusammengehörigkeiten von GeometricKinematicCommander:</div>
+<div class="dyncontent">
+<div class="center"><img src="classGeometricKinematicCommander__coll__graph.png" border="0" usemap="#GeometricKinematicCommander_coll__map" alt="Collaboration graph"/></div>
+<map name="GeometricKinematicCommander_coll__map" id="GeometricKinematicCommander_coll__map">
+<area shape="rect" id="node2" href="classICommander.html" title="Abstrakte Basisklasse zur Ansteuerung der beiden Kinematikmodelle über ROS. " alt="" coords="37,5,203,317"/></map>
+</div>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Öffentliche Methoden</h2></td></tr>
+<tr class="memitem:a7bb3cf43a3e4f09f71433f11af17dfcc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7bb3cf43a3e4f09f71433f11af17dfcc"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>GeometricKinematicCommander</b> (ros::NodeHandle &amp;nh, ros::NodeHandle &amp;drNH)</td></tr>
+<tr class="separator:a7bb3cf43a3e4f09f71433f11af17dfcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classICommander"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classICommander')"><img src="closed.png" alt="-"/>&#160;Öffentliche Methoden geerbt von <a class="el" href="classICommander.html">ICommander</a></td></tr>
+<tr class="memitem:a8a9f1636cbe5526d490266be84e6a57f inherit pub_methods_classICommander"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a8a9f1636cbe5526d490266be84e6a57f">setGripperStatus</a> (bool open, bool close)</td></tr>
+<tr class="separator:a8a9f1636cbe5526d490266be84e6a57f inherit pub_methods_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c55ba4a6c61efe9dc33ed76fd180a4e inherit pub_methods_classICommander"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a9c55ba4a6c61efe9dc33ed76fd180a4e">configurationCallback</a> (masterslave::MasterSlaveConfig &amp;config, uint32_t level)</td></tr>
+<tr class="memdesc:a9c55ba4a6c61efe9dc33ed76fd180a4e inherit pub_methods_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">dynamic reconfigure Callbackmethode  <a href="#a9c55ba4a6c61efe9dc33ed76fd180a4e">Mehr ...</a><br/></td></tr>
+<tr class="separator:a9c55ba4a6c61efe9dc33ed76fd180a4e inherit pub_methods_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Methoden</h2></td></tr>
+<tr class="memitem:a85c8118bd74639548f6791880aeb8f81"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGeometricKinematicCommander.html#a85c8118bd74639548f6791880aeb8f81">statemachineThread</a> (const ros::TimerEvent &amp;)</td></tr>
+<tr class="memdesc:a85c8118bd74639548f6791880aeb8f81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thread der alle 20ms aufgerufen wird und den Status an ROSOpenIGTLBridge schickt.  <a href="#a85c8118bd74639548f6791880aeb8f81">Mehr ...</a><br/></td></tr>
+<tr class="separator:a85c8118bd74639548f6791880aeb8f81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f2f1e6428ae88ccdd630d59eff6d5af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGeometricKinematicCommander.html#a8f2f1e6428ae88ccdd630d59eff6d5af">calcQ6</a> ()</td></tr>
+<tr class="memdesc:a8f2f1e6428ae88ccdd630d59eff6d5af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Berechnet aus dem Gelenkwinkel Q6 die Gelenkwinkel Q6n und Q6p des Zangengreifers.  <a href="#a8f2f1e6428ae88ccdd630d59eff6d5af">Mehr ...</a><br/></td></tr>
+<tr class="separator:a8f2f1e6428ae88ccdd630d59eff6d5af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79cc755ef52804b1cbd1e71dd2f77339"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGeometricKinematicCommander.html#a79cc755ef52804b1cbd1e71dd2f77339">commandVelocities</a> ()</td></tr>
+<tr class="memdesc:a79cc755ef52804b1cbd1e71dd2f77339"><td class="mdescLeft">&#160;</td><td class="mdescRight">Schickt die Gelenkwinkelgeschwindigkeiten an die Nodes der Antriebe des Werkzeuges.  <a href="#a79cc755ef52804b1cbd1e71dd2f77339">Mehr ...</a><br/></td></tr>
+<tr class="separator:a79cc755ef52804b1cbd1e71dd2f77339"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54f853173048f2d5b55c00d711e3542a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGeometricKinematicCommander.html#a54f853173048f2d5b55c00d711e3542a">buttonCheck</a> ()</td></tr>
+<tr class="memdesc:a54f853173048f2d5b55c00d711e3542a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Die Methode holt die Knopfkonfiguration vom Parameterserver.  <a href="#a54f853173048f2d5b55c00d711e3542a">Mehr ...</a><br/></td></tr>
+<tr class="separator:a54f853173048f2d5b55c00d711e3542a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91fbbc67883244f37fff899029855140"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGeometricKinematicCommander.html#a91fbbc67883244f37fff899029855140">getControlDevice</a> ()</td></tr>
+<tr class="memdesc:a91fbbc67883244f37fff899029855140"><td class="mdescLeft">&#160;</td><td class="mdescRight">Die Methode findet den Typ des Eingabegerätes auf dem Parameterserver.  <a href="#a91fbbc67883244f37fff899029855140">Mehr ...</a><br/></td></tr>
+<tr class="separator:a91fbbc67883244f37fff899029855140"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61edc35487744095113c99b29b7c57bd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61edc35487744095113c99b29b7c57bd"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGeometricKinematicCommander.html#a61edc35487744095113c99b29b7c57bd">flangeCallback</a> (const geometry_msgs::PoseStampedConstPtr &amp;)</td></tr>
+<tr class="memdesc:a61edc35487744095113c99b29b7c57bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Methode zum Empfang der aktuellen Roboterflanschlage. <br/></td></tr>
+<tr class="separator:a61edc35487744095113c99b29b7c57bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa813582c3cf973c6704dc24077150b3b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGeometricKinematicCommander.html#aa813582c3cf973c6704dc24077150b3b">loop</a> ()</td></tr>
+<tr class="separator:aa813582c3cf973c6704dc24077150b3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe8ae9fce613511a87435a920eaa6299"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afe8ae9fce613511a87435a920eaa6299"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Q4StateCallback</b> (const sensor_msgs::JointStateConstPtr &amp;<a class="el" href="classICommander.html#a72cb524deeb95b224db0242efc4728d4">state</a>)</td></tr>
+<tr class="separator:afe8ae9fce613511a87435a920eaa6299"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad8e587222c5aef18ebb28e5df2afbbc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aad8e587222c5aef18ebb28e5df2afbbc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Q5StateCallback</b> (const sensor_msgs::JointStateConstPtr &amp;<a class="el" href="classICommander.html#a72cb524deeb95b224db0242efc4728d4">state</a>)</td></tr>
+<tr class="separator:aad8e587222c5aef18ebb28e5df2afbbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08ace2af8ea41575b97d4e64425fdd5c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a08ace2af8ea41575b97d4e64425fdd5c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Q6nStateCallback</b> (const sensor_msgs::JointStateConstPtr &amp;<a class="el" href="classICommander.html#a72cb524deeb95b224db0242efc4728d4">state</a>)</td></tr>
+<tr class="separator:a08ace2af8ea41575b97d4e64425fdd5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad227d224cca51469aed89e3f63a2224b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad227d224cca51469aed89e3f63a2224b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Q6pStateCallback</b> (const sensor_msgs::JointStateConstPtr &amp;<a class="el" href="classICommander.html#a72cb524deeb95b224db0242efc4728d4">state</a>)</td></tr>
+<tr class="separator:ad227d224cca51469aed89e3f63a2224b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86060fb1189ba2d304bcab2f058609b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86060fb1189ba2d304bcab2f058609b1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>velocityCallback</b> (const geometry_msgs::TwistStampedConstPtr &amp;)</td></tr>
+<tr class="separator:a86060fb1189ba2d304bcab2f058609b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a780e85603f9b7201784cfb09706734ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a780e85603f9b7201784cfb09706734ae"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>buttonCallback</b> (const masterslave::ButtonConstPtr &amp;)</td></tr>
+<tr class="separator:a780e85603f9b7201784cfb09706734ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attribute</h2></td></tr>
+<tr class="memitem:ab2d3302d1b9cdad6bc363403811b6e5e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2d3302d1b9cdad6bc363403811b6e5e"></a>
+ros::Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGeometricKinematicCommander.html#ab2d3302d1b9cdad6bc363403811b6e5e">lbrTargetPositionPub</a></td></tr>
+<tr class="memdesc:ab2d3302d1b9cdad6bc363403811b6e5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sender der LBR-Flanschlage in ROS. <br/></td></tr>
+<tr class="separator:ab2d3302d1b9cdad6bc363403811b6e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbfee50f578ff4098026413f41b916a3"><td class="memItemLeft" align="right" valign="top">geometry_msgs::TwistStamped&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGeometricKinematicCommander.html#afbfee50f578ff4098026413f41b916a3">velocity_</a></td></tr>
+<tr class="separator:afbfee50f578ff4098026413f41b916a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9aa4841981737548fa4dc94d7ddec84a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9aa4841981737548fa4dc94d7ddec84a"></a>
+ros::NodeHandle&#160;</td><td class="memItemRight" valign="bottom"><b>nh_</b></td></tr>
+<tr class="separator:a9aa4841981737548fa4dc94d7ddec84a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae58f3ee72e4ff68fe5d4e720e42cddbc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae58f3ee72e4ff68fe5d4e720e42cddbc"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGeometricKinematicCommander.html#ae58f3ee72e4ff68fe5d4e720e42cddbc">T_0_FL</a></td></tr>
+<tr class="memdesc:ae58f3ee72e4ff68fe5d4e720e42cddbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Roboterflanschlage des LBR iiwa. <br/></td></tr>
+<tr class="separator:ae58f3ee72e4ff68fe5d4e720e42cddbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Weitere Geerbte Elemente</h2></td></tr>
+<tr class="inherit_header pro_methods_classICommander"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classICommander')"><img src="closed.png" alt="-"/>&#160;Geschützte Methoden geerbt von <a class="el" href="classICommander.html">ICommander</a></td></tr>
+<tr class="memitem:a3f9e89737d7d924553d2ed6704eb8af7 inherit pro_methods_classICommander"><td class="memItemLeft" align="right" valign="top">Eigen::Quaternion&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a3f9e89737d7d924553d2ed6704eb8af7">QuaternionFromEuler</a> (const Eigen::Vector3d &amp;eulerXYZ, bool ZYX)</td></tr>
+<tr class="memdesc:a3f9e89737d7d924553d2ed6704eb8af7 inherit pro_methods_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hilfsmethode um ein Quaternion aus Eulerwinkel zu erstellen.  <a href="#a3f9e89737d7d924553d2ed6704eb8af7">Mehr ...</a><br/></td></tr>
+<tr class="separator:a3f9e89737d7d924553d2ed6704eb8af7 inherit pro_methods_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classICommander"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classICommander')"><img src="closed.png" alt="-"/>&#160;Geschützte Attribute geerbt von <a class="el" href="classICommander.html">ICommander</a></td></tr>
+<tr class="memitem:af6a774cc1d571b4858ebae680d1f0939 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af6a774cc1d571b4858ebae680d1f0939"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#af6a774cc1d571b4858ebae680d1f0939">startPositionLBR</a></td></tr>
+<tr class="memdesc:af6a774cc1d571b4858ebae680d1f0939 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">kartesische Startposition des Endeffektors des LBR <br/></td></tr>
+<tr class="separator:af6a774cc1d571b4858ebae680d1f0939 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8762a3ea77233f9700166908ad4d1987 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8762a3ea77233f9700166908ad4d1987"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a8762a3ea77233f9700166908ad4d1987">TCP</a></td></tr>
+<tr class="memdesc:a8762a3ea77233f9700166908ad4d1987 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">kartesische Startposition des TCP des Werkzeuges <br/></td></tr>
+<tr class="separator:a8762a3ea77233f9700166908ad4d1987 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec4eecfaa992cfb2ede1f1d339548326 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec4eecfaa992cfb2ede1f1d339548326"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#aec4eecfaa992cfb2ede1f1d339548326">RCM</a></td></tr>
+<tr class="memdesc:aec4eecfaa992cfb2ede1f1d339548326 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trokarpunkt. <br/></td></tr>
+<tr class="separator:aec4eecfaa992cfb2ede1f1d339548326 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01ec4010dc037bfb600cee7f0be9311c inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a01ec4010dc037bfb600cee7f0be9311c">apertureLimit</a></td></tr>
+<tr class="separator:a01ec4010dc037bfb600cee7f0be9311c inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a166295c90210dae6c74e96d749c8ea1a inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a166295c90210dae6c74e96d749c8ea1a">heightSafety</a></td></tr>
+<tr class="separator:a166295c90210dae6c74e96d749c8ea1a inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a038f78434eb525d73414c84624d3c3e4 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a038f78434eb525d73414c84624d3c3e4">buttons</a></td></tr>
+<tr class="memdesc:a038f78434eb525d73414c84624d3c3e4 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vektor, der die Knopfkonfiguration enthält.  <a href="#a038f78434eb525d73414c84624d3c3e4">Mehr ...</a><br/></td></tr>
+<tr class="separator:a038f78434eb525d73414c84624d3c3e4 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77d12525f98994352e2f2a450e04305b inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">ros::Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a77d12525f98994352e2f2a450e04305b">velocitySub</a></td></tr>
+<tr class="separator:a77d12525f98994352e2f2a450e04305b inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf7b291fe6f704d0a05ca9c51c00eee5 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf7b291fe6f704d0a05ca9c51c00eee5"></a>
+ros::Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#aaf7b291fe6f704d0a05ca9c51c00eee5">Q4StateSub</a></td></tr>
+<tr class="memdesc:aaf7b291fe6f704d0a05ca9c51c00eee5 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empfänger in ROS für den Gelenkwinkel Q4. <br/></td></tr>
+<tr class="separator:aaf7b291fe6f704d0a05ca9c51c00eee5 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a7a812f85d4e474a206e44028c3d16d inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a7a812f85d4e474a206e44028c3d16d"></a>
+ros::Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a1a7a812f85d4e474a206e44028c3d16d">Q5StateSub</a></td></tr>
+<tr class="memdesc:a1a7a812f85d4e474a206e44028c3d16d inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empfänger in ROS für den Gelenkwinkel Q5. <br/></td></tr>
+<tr class="separator:a1a7a812f85d4e474a206e44028c3d16d inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67354975e870a8d2d5f419be68c16150 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a67354975e870a8d2d5f419be68c16150"></a>
+ros::Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a67354975e870a8d2d5f419be68c16150">Q6pStateSub</a></td></tr>
+<tr class="memdesc:a67354975e870a8d2d5f419be68c16150 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empfänger in ROS für den Gelenkwinkel Q6p. <br/></td></tr>
+<tr class="separator:a67354975e870a8d2d5f419be68c16150 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a407e8cf738a603b645cf4065f25fe961 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a407e8cf738a603b645cf4065f25fe961"></a>
+ros::Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a407e8cf738a603b645cf4065f25fe961">Q6nStateSub</a></td></tr>
+<tr class="memdesc:a407e8cf738a603b645cf4065f25fe961 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empfänger in ROS für den Gelenkwinkel Q6n. <br/></td></tr>
+<tr class="separator:a407e8cf738a603b645cf4065f25fe961 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca2bb439e90e5197ac0a90c9b997cd35 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aca2bb439e90e5197ac0a90c9b997cd35"></a>
+ros::Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#aca2bb439e90e5197ac0a90c9b997cd35">lbrPositionSub</a></td></tr>
+<tr class="memdesc:aca2bb439e90e5197ac0a90c9b997cd35 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empfänger in ROS für die kartesische Flanschpose. <br/></td></tr>
+<tr class="separator:aca2bb439e90e5197ac0a90c9b997cd35 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29cbc1faa4cb0346bdc26ca7bc4b5ba3 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a29cbc1faa4cb0346bdc26ca7bc4b5ba3"></a>
+ros::Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a29cbc1faa4cb0346bdc26ca7bc4b5ba3">buttonSub</a></td></tr>
+<tr class="memdesc:a29cbc1faa4cb0346bdc26ca7bc4b5ba3 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empfänger in ROS für die Knopfeingaben für das Eingabegerät. <br/></td></tr>
+<tr class="separator:a29cbc1faa4cb0346bdc26ca7bc4b5ba3 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70e1238a1a2b14736c467ffc6d658648 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a70e1238a1a2b14736c467ffc6d658648"></a>
+ros::ServiceClient&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a70e1238a1a2b14736c467ffc6d658648">tcpClient</a></td></tr>
+<tr class="memdesc:a70e1238a1a2b14736c467ffc6d658648 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">ServiceClient zur Ansteuerung der Manipulationsschnittstelle in ROS. <br/></td></tr>
+<tr class="separator:a70e1238a1a2b14736c467ffc6d658648 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a441d8b0887e38b3e3856884f5a4e188d inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a441d8b0887e38b3e3856884f5a4e188d"></a>
+ros::ServiceClient&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a441d8b0887e38b3e3856884f5a4e188d">rcmClient</a></td></tr>
+<tr class="memdesc:a441d8b0887e38b3e3856884f5a4e188d inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">ServiceClient zur Bestimmung des Trokarpunktes. <br/></td></tr>
+<tr class="separator:a441d8b0887e38b3e3856884f5a4e188d inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e2cbc4750713bd9374e9d818d63745b inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e2cbc4750713bd9374e9d818d63745b"></a>
+ros::ServiceClient&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a2e2cbc4750713bd9374e9d818d63745b">directKinematicsClient</a></td></tr>
+<tr class="memdesc:a2e2cbc4750713bd9374e9d818d63745b inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">ServiceClient zur Durchführung der direkten Kinematik in ROS mit der jeweiligen Kinematik. <br/></td></tr>
+<tr class="separator:a2e2cbc4750713bd9374e9d818d63745b inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a284d04230dd8431983c33eefcd2dc84b inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a284d04230dd8431983c33eefcd2dc84b"></a>
+ros::ServiceClient&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a284d04230dd8431983c33eefcd2dc84b">inverseKinematicsClient</a></td></tr>
+<tr class="memdesc:a284d04230dd8431983c33eefcd2dc84b inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">ServiceClient zur Durchführung der inversen Kinematik in ROS mit der jeweiligen Kinematik. <br/></td></tr>
+<tr class="separator:a284d04230dd8431983c33eefcd2dc84b inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a10e7e0d95c6fe556879527ea18806e inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">ros::ServiceClient&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a2a10e7e0d95c6fe556879527ea18806e">stateService</a></td></tr>
+<tr class="memdesc:a2a10e7e0d95c6fe556879527ea18806e inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">ServiceClient zum Zustandswechsel des OpenIGTLink-Interfaces in der ROSOpenIGTLinkBridge.  <a href="#a2a10e7e0d95c6fe556879527ea18806e">Mehr ...</a><br/></td></tr>
+<tr class="separator:a2a10e7e0d95c6fe556879527ea18806e inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8b8c2d60e8a21ac1ce39041647465e6 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa8b8c2d60e8a21ac1ce39041647465e6"></a>
+ros::Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#aa8b8c2d60e8a21ac1ce39041647465e6">Q4Pub</a></td></tr>
+<tr class="memdesc:aa8b8c2d60e8a21ac1ce39041647465e6 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sender in ROS für den Gelenkwinkel Q4. <br/></td></tr>
+<tr class="separator:aa8b8c2d60e8a21ac1ce39041647465e6 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ccda2ae0d3445b0182d215511288d3b inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ccda2ae0d3445b0182d215511288d3b"></a>
+ros::Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a7ccda2ae0d3445b0182d215511288d3b">Q5Pub</a></td></tr>
+<tr class="memdesc:a7ccda2ae0d3445b0182d215511288d3b inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sender in ROS für den Gelenkwinkel Q5. <br/></td></tr>
+<tr class="separator:a7ccda2ae0d3445b0182d215511288d3b inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac970af125f62bb073bbfa1aed1d92459 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac970af125f62bb073bbfa1aed1d92459"></a>
+ros::Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#ac970af125f62bb073bbfa1aed1d92459">Q6pPub</a></td></tr>
+<tr class="memdesc:ac970af125f62bb073bbfa1aed1d92459 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sender in ROS für den Gelenkwinkel Q6p. <br/></td></tr>
+<tr class="separator:ac970af125f62bb073bbfa1aed1d92459 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01e435c9f23dadd81033b6482a042553 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01e435c9f23dadd81033b6482a042553"></a>
+ros::Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a01e435c9f23dadd81033b6482a042553">Q6nPub</a></td></tr>
+<tr class="memdesc:a01e435c9f23dadd81033b6482a042553 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sender in ROS für den Gelenkwinkel Q6n. <br/></td></tr>
+<tr class="separator:a01e435c9f23dadd81033b6482a042553 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1ed71f514ce422461e6cae7fb6e3c04 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#ab1ed71f514ce422461e6cae7fb6e3c04">motorAngles</a></td></tr>
+<tr class="memdesc:ab1ed71f514ce422461e6cae7fb6e3c04 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zwischenspeicher für die eingehenden Motorwinkel der Gelenke Q6n und Q6p.  <a href="#ab1ed71f514ce422461e6cae7fb6e3c04">Mehr ...</a><br/></td></tr>
+<tr class="separator:ab1ed71f514ce422461e6cae7fb6e3c04 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d15c8d08f17b853ecb8437e4f68b4a6 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8d15c8d08f17b853ecb8437e4f68b4a6"></a>
+Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a8d15c8d08f17b853ecb8437e4f68b4a6">jointAnglesTar</a></td></tr>
+<tr class="memdesc:a8d15c8d08f17b853ecb8437e4f68b4a6 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vektor der gewünschten Gelenkwinkel des Werkzeuges bzw. des Gesamtsystems. <br/></td></tr>
+<tr class="separator:a8d15c8d08f17b853ecb8437e4f68b4a6 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f66c83e970a1d8543be3a6c553dcd06 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f66c83e970a1d8543be3a6c553dcd06"></a>
+Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a7f66c83e970a1d8543be3a6c553dcd06">jointAnglesAct</a></td></tr>
+<tr class="memdesc:a7f66c83e970a1d8543be3a6c553dcd06 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vektor der aktuellen Gelenkwinkel des Werkzeuges bzw. des Gesamtsystems. <br/></td></tr>
+<tr class="separator:a7f66c83e970a1d8543be3a6c553dcd06 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b8886169747ff21c2bab443e1e10eb2 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a1b8886169747ff21c2bab443e1e10eb2">gripper_stop</a></td></tr>
+<tr class="memdesc:a1b8886169747ff21c2bab443e1e10eb2 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag, ob der Greifer gestoppt werden soll.  <a href="#a1b8886169747ff21c2bab443e1e10eb2">Mehr ...</a><br/></td></tr>
+<tr class="separator:a1b8886169747ff21c2bab443e1e10eb2 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9a42ff9cb09194140ae0da24399a41f inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#aa9a42ff9cb09194140ae0da24399a41f">gripper_open</a></td></tr>
+<tr class="memdesc:aa9a42ff9cb09194140ae0da24399a41f inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag, ob der Greifer geöffnet werden soll.  <a href="#aa9a42ff9cb09194140ae0da24399a41f">Mehr ...</a><br/></td></tr>
+<tr class="separator:aa9a42ff9cb09194140ae0da24399a41f inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe4d559901acda2eb5ac159be812b85e inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#abe4d559901acda2eb5ac159be812b85e">gripper_close</a></td></tr>
+<tr class="memdesc:abe4d559901acda2eb5ac159be812b85e inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag, ob der Greifer geschlossen werden soll.  <a href="#abe4d559901acda2eb5ac159be812b85e">Mehr ...</a><br/></td></tr>
+<tr class="separator:abe4d559901acda2eb5ac159be812b85e inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf214207db2edcd8f663ecbd9a593b86 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf214207db2edcd8f663ecbd9a593b86"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>cycleTime</b></td></tr>
+<tr class="separator:aaf214207db2edcd8f663ecbd9a593b86 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ed8870f46e2138a7cc4bf9f3709e9f8 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ed8870f46e2138a7cc4bf9f3709e9f8"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a7ed8870f46e2138a7cc4bf9f3709e9f8">gripperVelocityValue</a> {0.1}</td></tr>
+<tr class="memdesc:a7ed8870f46e2138a7cc4bf9f3709e9f8 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Greifergeschwindigkeit in der Einheit [rad/s]. <br/></td></tr>
+<tr class="separator:a7ed8870f46e2138a7cc4bf9f3709e9f8 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08933d01e147310671495c100a138704 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a08933d01e147310671495c100a138704"></a>
+const double&#160;</td><td class="memItemRight" valign="bottom"><b>DEG_TO_RAD</b> {M_PI/180}</td></tr>
+<tr class="separator:a08933d01e147310671495c100a138704 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0d02021fcc73daaebcfe0a826e15f50 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classBoundingBox.html">BoundingBox</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#ab0d02021fcc73daaebcfe0a826e15f50">boundingBox</a></td></tr>
+<tr class="memdesc:ab0d02021fcc73daaebcfe0a826e15f50 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeiger auf ein BoundingBox-Objekt.  <a href="#ab0d02021fcc73daaebcfe0a826e15f50">Mehr ...</a><br/></td></tr>
+<tr class="separator:ab0d02021fcc73daaebcfe0a826e15f50 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6ca762d9b45d0887b1b9b3d5effb2f4 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae6ca762d9b45d0887b1b9b3d5effb2f4"></a>
+Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>boundingBoxSize</b> {0.18,0.18,0.23}</td></tr>
+<tr class="separator:ae6ca762d9b45d0887b1b9b3d5effb2f4 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a0a53e2fda9aaa4b1a655b68097d2d0 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a0a53e2fda9aaa4b1a655b68097d2d0"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>rcmDistance</b> {0.05}</td></tr>
+<tr class="separator:a1a0a53e2fda9aaa4b1a655b68097d2d0 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a578cacc14d6c644d965a2ce604c71b inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a578cacc14d6c644d965a2ce604c71b"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>Q6CallbacksCalled</b> {0}</td></tr>
+<tr class="separator:a5a578cacc14d6c644d965a2ce604c71b inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9c3f7cbbafbf647a9dbf19cd02e0d76 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9c3f7cbbafbf647a9dbf19cd02e0d76"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#af9c3f7cbbafbf647a9dbf19cd02e0d76">callBacksCalled</a> {0}</td></tr>
+<tr class="memdesc:af9c3f7cbbafbf647a9dbf19cd02e0d76 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test, ob alle Gelenkwinkelcallbacks aufgerufen wurden. <br/></td></tr>
+<tr class="separator:af9c3f7cbbafbf647a9dbf19cd02e0d76 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f627b0b2345050f4bd3df6ee75ceb91 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4f627b0b2345050f4bd3df6ee75ceb91"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>rosRate</b> {1000}</td></tr>
+<tr class="separator:a4f627b0b2345050f4bd3df6ee75ceb91 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45a3e0a1ffb9f748fbda252a2d93ac2a inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45a3e0a1ffb9f748fbda252a2d93ac2a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>start_</b> {false}</td></tr>
+<tr class="separator:a45a3e0a1ffb9f748fbda252a2d93ac2a inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7996c54233c00c34a8858a0f64b40531 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7996c54233c00c34a8858a0f64b40531"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a7996c54233c00c34a8858a0f64b40531">statemachineIsRunning</a></td></tr>
+<tr class="memdesc:a7996c54233c00c34a8858a0f64b40531 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag, ob das OpenIGTLink-Interface noch läuft. <br/></td></tr>
+<tr class="separator:a7996c54233c00c34a8858a0f64b40531 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a322fe21caa9419cea0c0f3656501a4 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a322fe21caa9419cea0c0f3656501a4"></a>
+OPENIGTL_STATE&#160;</td><td class="memItemRight" valign="bottom"><b>newState</b> {NO_STATE}</td></tr>
+<tr class="separator:a0a322fe21caa9419cea0c0f3656501a4 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72cb524deeb95b224db0242efc4728d4 inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top">OPENIGTL_STATE&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#a72cb524deeb95b224db0242efc4728d4">state</a> {NO_STATE}</td></tr>
+<tr class="memdesc:a72cb524deeb95b224db0242efc4728d4 inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenIGTLink-Zustand.  <a href="#a72cb524deeb95b224db0242efc4728d4">Mehr ...</a><br/></td></tr>
+<tr class="separator:a72cb524deeb95b224db0242efc4728d4 inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2fc22c262d3abaf1ad1a07ae6412cbd inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af2fc22c262d3abaf1ad1a07ae6412cbd"></a>
+geometry_msgs::TwistStamped&#160;</td><td class="memItemRight" valign="bottom"><b>velocity_</b></td></tr>
+<tr class="separator:af2fc22c262d3abaf1ad1a07ae6412cbd inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaad7e25cb857441c6ec7f3b9c5608ccc inherit pro_attribs_classICommander"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaad7e25cb857441c6ec7f3b9c5608ccc"></a>
+ros::Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classICommander.html#aaad7e25cb857441c6ec7f3b9c5608ccc">cycleTimePub</a></td></tr>
+<tr class="memdesc:aaad7e25cb857441c6ec7f3b9c5608ccc inherit pro_attribs_classICommander"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sender zur Bereitstellung der Zykluszeit für verschiedene ROS-Nodes. <br/></td></tr>
+<tr class="separator:aaad7e25cb857441c6ec7f3b9c5608ccc inherit pro_attribs_classICommander"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Ausführliche Beschreibung</h2>
+<div class="textblock"><p>Klasse, die sich um die ROS-Kommunikation für die geometrisch bestimmte Kinematik kümmert. </p>
+<dl class="section author"><dt>Autor</dt><dd>Fabian Baier </dd></dl>
+<dl class="section date"><dt>Datum</dt><dd>19.03.2016 </dd></dl>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classICommander.html" title="Abstrakte Basisklasse zur Ansteuerung der beiden Kinematikmodelle über ROS. ">ICommander</a> </dd></dl>
+</div><h2 class="groupheader">Dokumentation der Elementfunktionen</h2>
+<a class="anchor" id="a54f853173048f2d5b55c00d711e3542a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">GeometricKinematicCommander::buttonCheck </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Die Methode holt die Knopfkonfiguration vom Parameterserver. </p>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classControlDevice.html" title="Klasse zur Ansteuerung und Verwaltung verschiedener LowLevel-Eingabegeräte, wie GamePads oder dem Spa...">ControlDevice</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a8f2f1e6428ae88ccdd630d59eff6d5af"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">GeometricKinematicCommander::calcQ6 </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Berechnet aus dem Gelenkwinkel Q6 die Gelenkwinkel Q6n und Q6p des Zangengreifers. </p>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classICommander.html" title="Abstrakte Basisklasse zur Ansteuerung der beiden Kinematikmodelle über ROS. ">ICommander</a> </dd></dl>
+
+<p>Implementiert <a class="el" href="classICommander.html#a1967688a309974862c4a81b5fe04c3eb">ICommander</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a79cc755ef52804b1cbd1e71dd2f77339"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">GeometricKinematicCommander::commandVelocities </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Schickt die Gelenkwinkelgeschwindigkeiten an die Nodes der Antriebe des Werkzeuges. </p>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classICommander.html" title="Abstrakte Basisklasse zur Ansteuerung der beiden Kinematikmodelle über ROS. ">ICommander</a> </dd></dl>
+
+<p>Implementiert <a class="el" href="classICommander.html#a43c10dd80f4815afd4058226450c7af3">ICommander</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a91fbbc67883244f37fff899029855140"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">GeometricKinematicCommander::getControlDevice </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Die Methode findet den Typ des Eingabegerätes auf dem Parameterserver. </p>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classControlDevice.html" title="Klasse zur Ansteuerung und Verwaltung verschiedener LowLevel-Eingabegeräte, wie GamePads oder dem Spa...">ControlDevice</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa813582c3cf973c6704dc24077150b3b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">GeometricKinematicCommander::loop </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classICommander.html" title="Abstrakte Basisklasse zur Ansteuerung der beiden Kinematikmodelle über ROS. ">ICommander</a> </dd></dl>
+
+<p>Implementiert <a class="el" href="classICommander.html#aa5f882f46d3629fa754162a9ee11984c">ICommander</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a85c8118bd74639548f6791880aeb8f81"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">GeometricKinematicCommander::statemachineThread </td>
+          <td>(</td>
+          <td class="paramtype">const ros::TimerEvent &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Thread der alle 20ms aufgerufen wird und den Status an ROSOpenIGTLBridge schickt. </p>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classICommander.html" title="Abstrakte Basisklasse zur Ansteuerung der beiden Kinematikmodelle über ROS. ">ICommander</a> </dd></dl>
+
+<p>Implementiert <a class="el" href="classICommander.html#abcacd07f49f646d08e1722a1df08b8ce">ICommander</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Dokumentation der Datenelemente</h2>
+<a class="anchor" id="afbfee50f578ff4098026413f41b916a3"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">GeometricKinematicCommander::velocity_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Noch zu erledigen:</a></b></dt><dd>check ob noch benötigt </dd></dl>
+
+</div>
+</div>
+<hr/>Die Dokumentation für diese Klasse wurde erzeugt aufgrund der Datei:<ul>
+<li>include/masterslave/commander/<a class="el" href="GeometricKinematicCommander_8h_source.html">GeometricKinematicCommander.h</a></li>
+</ul>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Erzeugt am Don Mär 24 2016 18:39:32 für Master-Slave von &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.6
+</small></address>
+</body>
+</html>

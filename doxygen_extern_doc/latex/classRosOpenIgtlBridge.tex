@@ -1,0 +1,419 @@
+\hypertarget{classRosOpenIgtlBridge}{\section{Ros\-Open\-Igtl\-Bridge Klassenreferenz}
+\label{classRosOpenIgtlBridge}\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}}
+}
+
+
+Eine R\-O\-S-\/\-Node zur Kommunikation zwischen R\-O\-S und dem L\-B\-R iiwa, welche über das Open\-I\-G\-T\-Link-\/\-Protokoll durchgeführt.  
+
+
+
+
+{\ttfamily \#include $<$Ros\-Open\-I\-G\-T\-L\-Bridge.\-h$>$}
+
+
+
+Zusammengehörigkeiten von Ros\-Open\-Igtl\-Bridge\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=236pt]{classRosOpenIgtlBridge__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Öffentliche Methoden}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classRosOpenIgtlBridge_a46b348ca4dee935c87eea78653046cc0}{{\bfseries Ros\-Open\-Igtl\-Bridge} (ros\-::\-Node\-Handle)}\label{classRosOpenIgtlBridge_a46b348ca4dee935c87eea78653046cc0}
+
+\item 
+bool \hyperlink{classRosOpenIgtlBridge_ac8d2f37fe82fb7d0496d937920f48db6}{state\-Service} (masterslave\-::\-Open\-I\-G\-T\-L\-State\-Service\-::\-Request \&req, masterslave\-::\-Open\-I\-G\-T\-L\-State\-Service\-::\-Response \&res)
+\begin{DoxyCompactList}\small\item\em Dieses ist eine Callback-\/\-Methode, die aufgerufen wird, wenn der Zustand des Roboters geändert werden soll Mögliche Zustände\-: I\-D\-L\-E, F\-R\-E\-E, M\-O\-V\-E\-\_\-\-T\-O\-\_\-\-P\-O\-S\-E. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Methoden}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classRosOpenIgtlBridge_a654f0a40a6e10644de54f0a47efcbb9d}{transform\-Callback} (geometry\-\_\-msgs\-::\-Pose\-Stamped\-Const\-Ptr transform)
+\begin{DoxyCompactList}\small\item\em In der Methode werden die Sollpositionen aus der geometrischen Kinematik entgegen genommen. \end{DoxyCompactList}\item 
+void \hyperlink{classRosOpenIgtlBridge_a8f02e3d18f60754c8d282db55eaed4c2}{lbr\-Joint\-Angle\-Callback} (const std\-\_\-msgs\-::\-Float64\-Const\-Ptr \&joint\-Angle, int number)
+\begin{DoxyCompactList}\small\item\em In dieser Methode werden die. \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_adb7ae9d852083bcb79e2172ecc380cd6}{void \hyperlink{classRosOpenIgtlBridge_adb7ae9d852083bcb79e2172ecc380cd6}{open\-I\-G\-T\-Link\-Thread} ()}\label{classRosOpenIgtlBridge_adb7ae9d852083bcb79e2172ecc380cd6}
+
+\begin{DoxyCompactList}\small\item\em zyklische Versendung der durch R\-O\-S empfangenen Daten über einen Open\-I\-G\-T\-Link-\/\-Clientsocket \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a7477fb39f8246408e1e82e69fb17e866}{void \hyperlink{classRosOpenIgtlBridge_a7477fb39f8246408e1e82e69fb17e866}{open\-I\-G\-T\-Link\-Transform\-Thread} ()}\label{classRosOpenIgtlBridge_a7477fb39f8246408e1e82e69fb17e866}
+
+\begin{DoxyCompactList}\small\item\em zyklischer Empfang der Gelenktransformationen bzw. der Endeffektorlage des L\-B\-R \end{DoxyCompactList}\item 
+int \hyperlink{classRosOpenIgtlBridge_a741e133a8fbd1fed1508ec636723de5a}{send\-Command} (igtl\-::\-Client\-Socket\-::\-Pointer \&socket, std\-::string command)
+\begin{DoxyCompactList}\small\item\em Methode zum Versenden von std\-::strings über den Open\-I\-G\-T\-Link-\/\-Socket. \end{DoxyCompactList}\item 
+int \hyperlink{classRosOpenIgtlBridge_aa375549cb5b12c850c363a992eb87340}{position\-Reached} (igtl\-::\-Client\-Socket\-::\-Pointer \&socket, igtl\-::\-Message\-Base\-::\-Pointer \&msg\-Header)
+\begin{DoxyCompactList}\small\item\em Überwachung, ob die angegebene Zielpose bereits erreicht wurde. \end{DoxyCompactList}\item 
+int \hyperlink{classRosOpenIgtlBridge_a051b146bbe2dd3d1ea63677efeb62155}{receive\-Transform} (igtl\-::\-Client\-Socket\-::\-Pointer \&socket, igtl\-::\-Message\-Base\-::\-Pointer \&msg\-Header)
+\begin{DoxyCompactList}\small\item\em Empfang der Transformationsnachrichten. \end{DoxyCompactList}\item 
+std\-::string \hyperlink{classRosOpenIgtlBridge_a99c187746613fa369b79e73c2ccb7c62}{ros\-Pose\-To\-I\-G\-T\-L} (geometry\-\_\-msgs\-::\-Pose pose)
+\begin{DoxyCompactList}\small\item\em Hilfsfunktion um eine geometry\-\_\-msgs\-::\-Pose in einen String zu verwandeln, um diesen anschließend über Open\-I\-G\-T\-Link zu versenden. \end{DoxyCompactList}\item 
+geometry\-\_\-msgs\-::\-Pose \hyperlink{classRosOpenIgtlBridge_ac9e20d912d93a8c7723511a255033cae}{igtl\-Matrix\-To\-Ros\-Pose} (igtl\-::\-Matrix4x4 \&igtl\-Matrix)
+\begin{DoxyCompactList}\small\item\em Hilfsfunktion um eine igtl\-::\-Matrix4x4 in eine geometry\-\_\-msgs\-::\-Pose zu wandeln und diese in R\-O\-S zu übertragen. \end{DoxyCompactList}\item 
+void \hyperlink{classRosOpenIgtlBridge_a6efbb5bd82d24454e040ea03549d4426}{configuration\-I\-G\-T\-L\-Callback} (masterslave\-::\-Ros\-Open\-I\-G\-T\-L\-Bridge\-Config \&config, uint32\-\_\-t level)
+\begin{DoxyCompactList}\small\item\em Callbackmethode für dynamic reconfigure. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attribute}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classRosOpenIgtlBridge_a7f2d1b92afa2a0e5c5a96abf15e559fc}{ros\-::\-Subscriber \hyperlink{classRosOpenIgtlBridge_a7f2d1b92afa2a0e5c5a96abf15e559fc}{flange\-Target\-Sub}}\label{classRosOpenIgtlBridge_a7f2d1b92afa2a0e5c5a96abf15e559fc}
+
+\begin{DoxyCompactList}\small\item\em Empfänger für Solllagen des Endeffektors in R\-O\-S. \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a2cec061ef757bb52933768c2dd3fde1e}{std\-::array$<$ ros\-::\-Subscriber, 7 $>$ \hyperlink{classRosOpenIgtlBridge_a2cec061ef757bb52933768c2dd3fde1e}{lbr\-Joint\-Angle\-Sub}}\label{classRosOpenIgtlBridge_a2cec061ef757bb52933768c2dd3fde1e}
+
+\begin{DoxyCompactList}\small\item\em Empfänger für die gewünschte Gelenkwinkelposition des L\-B\-R iiwa in R\-O\-S. \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_ac97a67c4e0f7afbc2811acb3857464e3}{ros\-::\-Publisher \hyperlink{classRosOpenIgtlBridge_ac97a67c4e0f7afbc2811acb3857464e3}{flange\-Pub}}\label{classRosOpenIgtlBridge_ac97a67c4e0f7afbc2811acb3857464e3}
+
+\begin{DoxyCompactList}\small\item\em Sender für die eingenommene Endeffektorlage in R\-O\-S. \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a777b34678fb3d17d5ad177b1e7ec1225}{std\-::array$<$ ros\-::\-Publisher, 7 $>$ \hyperlink{classRosOpenIgtlBridge_a777b34678fb3d17d5ad177b1e7ec1225}{lbr\-Joint\-Angle\-Pub}}\label{classRosOpenIgtlBridge_a777b34678fb3d17d5ad177b1e7ec1225}
+
+\begin{DoxyCompactList}\small\item\em Sender für die aktuelle Gelenkwinkelkonfiguration des L\-B\-R iiwa. \end{DoxyCompactList}\item 
+ros\-::\-Service\-Server \hyperlink{classRosOpenIgtlBridge_ad7c6b0430970a8faf6cc9e934d6f889e}{state\-Service\-Server}
+\begin{DoxyCompactList}\small\item\em Objekt zur Bereitstellung des state\-Services. \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a69a4a87ec19cd98435f0376f58f3e525}{ros\-::\-Node\-Handle {\bfseries nh\-\_\-}}\label{classRosOpenIgtlBridge_a69a4a87ec19cd98435f0376f58f3e525}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_ac28588689dc275b6b06efa56e9bfbcc3}{boost\-::mutex {\bfseries update\-\_\-mutex\-\_\-}}\label{classRosOpenIgtlBridge_ac28588689dc275b6b06efa56e9bfbcc3}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_ab7c09ef893ace60f12429b6df7d295e6}{boost\-::thread {\bfseries open\-I\-G\-T\-L\-Thread}}\label{classRosOpenIgtlBridge_ab7c09ef893ace60f12429b6df7d295e6}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_a1a2f941f4f0fcb4fee19f01acc3ff32b}{int \hyperlink{classRosOpenIgtlBridge_a1a2f941f4f0fcb4fee19f01acc3ff32b}{position\-Reached\-\_\-}}\label{classRosOpenIgtlBridge_a1a2f941f4f0fcb4fee19f01acc3ff32b}
+
+\begin{DoxyCompactList}\small\item\em wurde die Pose durch den L\-B\-R erfolgreich angefahren? \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a1b105e3199f1f2faf21b2479c4518db1}{bool \hyperlink{classRosOpenIgtlBridge_a1b105e3199f1f2faf21b2479c4518db1}{send\-Transform\-Flag} \{false\}}\label{classRosOpenIgtlBridge_a1b105e3199f1f2faf21b2479c4518db1}
+
+\begin{DoxyCompactList}\small\item\em wurde die aktuell vorliegende Solllage des L\-B\-R iiwa schon über Open\-I\-G\-T\-Link übertragen? \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a0517326bc17e781461b2a1391298f620}{boost\-::mutex {\bfseries transform\-Update\-Mutex\-\_\-}}\label{classRosOpenIgtlBridge_a0517326bc17e781461b2a1391298f620}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_a8dbc016aacf3ff2caad058ec50a96e77}{igtl\-::\-Matrix4x4 \hyperlink{classRosOpenIgtlBridge_a8dbc016aacf3ff2caad058ec50a96e77}{T\-\_\-\-F\-L}}\label{classRosOpenIgtlBridge_a8dbc016aacf3ff2caad058ec50a96e77}
+
+\begin{DoxyCompactList}\small\item\em Solllage des Endeffektors des L\-B\-R. \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_ace49281b853f92fbd9decbaa2dcd5b70}{igtl\-::\-Matrix4x4 \hyperlink{classRosOpenIgtlBridge_ace49281b853f92fbd9decbaa2dcd5b70}{T\-\_\-\-F\-L\-\_\-new}}\label{classRosOpenIgtlBridge_ace49281b853f92fbd9decbaa2dcd5b70}
+
+\begin{DoxyCompactList}\small\item\em aktuell empfangene Lage des Endeffektors des L\-B\-R \end{DoxyCompactList}\item 
+geometry\-\_\-msgs\-::\-Pose \hyperlink{classRosOpenIgtlBridge_a43a57e8fe72fa4a233b744a3576310da}{pose\-F\-L}
+\begin{DoxyCompactList}\small\item\em Solllage des Endeffektors im R\-O\-S-\/konformen Variablentyp. \end{DoxyCompactList}\item 
+geometry\-\_\-msgs\-::\-Pose \hyperlink{classRosOpenIgtlBridge_afee0e87dfe158f8980081554b3f8dac2}{pose\-F\-L\-\_\-new}
+\begin{DoxyCompactList}\small\item\em aktuell empfangene Lage des Endeffektors des L\-B\-R im R\-O\-S-\/konformen Variablentyp \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a4cb6ad04d4d51de2228ba529efb85a89}{Eigen\-::\-Vector\-Xd \hyperlink{classRosOpenIgtlBridge_a4cb6ad04d4d51de2228ba529efb85a89}{joint\-Angles}}\label{classRosOpenIgtlBridge_a4cb6ad04d4d51de2228ba529efb85a89}
+
+\begin{DoxyCompactList}\small\item\em gewünschte Gelenkwinkel des L\-B\-R iiwa \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a2fa9f49baaba81330c1d19967754738d}{Eigen\-::\-Vector\-Xd \hyperlink{classRosOpenIgtlBridge_a2fa9f49baaba81330c1d19967754738d}{joint\-Angles\-\_\-new}}\label{classRosOpenIgtlBridge_a2fa9f49baaba81330c1d19967754738d}
+
+\begin{DoxyCompactList}\small\item\em aktuell empfangene Gelenkwinkel des L\-B\-R iiwa \end{DoxyCompactList}\item 
+igtl\-::\-Client\-Socket\-::\-Pointer \hyperlink{classRosOpenIgtlBridge_a06df713358aa522ed6dd363d78bb8def}{command\-Socket\-\_\-}
+\begin{DoxyCompactList}\small\item\em Socket über den Gelenkwinkel oder Endeffektorsolllagen kommandiert werden mit I\-P und Port als Konstanten. \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a18105c3a5c5cbb4b71bb1ae5c9ee103b}{const int {\bfseries C\-O\-M\-M\-A\-N\-D\-\_\-\-P\-O\-R\-T} \{49001\}}\label{classRosOpenIgtlBridge_a18105c3a5c5cbb4b71bb1ae5c9ee103b}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_a808bb79742c62aaea43bf539f1ac677a}{const char $\ast$ {\bfseries C\-O\-M\-M\-A\-N\-D\-\_\-\-I\-P} \{\char`\"{}172.\-31.\-1.\-147\char`\"{}\}}\label{classRosOpenIgtlBridge_a808bb79742c62aaea43bf539f1ac677a}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_ad0b28209a738b231f97717f234e380ec}{int \hyperlink{classRosOpenIgtlBridge_ad0b28209a738b231f97717f234e380ec}{r\-Command}}\label{classRosOpenIgtlBridge_ad0b28209a738b231f97717f234e380ec}
+
+\begin{DoxyCompactList}\small\item\em Status des Sockets. \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a8b21f91b5ef292bbc6a3be6c3d987602}{unsigned long long \hyperlink{classRosOpenIgtlBridge_a8b21f91b5ef292bbc6a3be6c3d987602}{C\-M\-D\-\_\-\-U\-I\-D} \{0\}}\label{classRosOpenIgtlBridge_a8b21f91b5ef292bbc6a3be6c3d987602}
+
+\begin{DoxyCompactList}\small\item\em Nummer des übermittelten Datenpakets. \end{DoxyCompactList}\item 
+igtl\-::\-Client\-Socket\-::\-Pointer \hyperlink{classRosOpenIgtlBridge_ac1cd3818cb07542c4534f7dfdb3b0258}{transform\-Socket\-\_\-}
+\begin{DoxyCompactList}\small\item\em Socket über den die Gelenktransformationen und die Endeffektorlage empfangen werden mit I\-P und Port als Konstanten. \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a3e034f310cd5ccc3a3c53986b13cbb16}{const int {\bfseries T\-R\-A\-N\-S\-F\-O\-R\-M\-\_\-\-P\-O\-R\-T} \{49002\}}\label{classRosOpenIgtlBridge_a3e034f310cd5ccc3a3c53986b13cbb16}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_a9f4462ec60da6213f9c8e3e5aa804d25}{const char $\ast$ {\bfseries T\-R\-A\-N\-S\-F\-O\-R\-M\-\_\-\-I\-P} \{\char`\"{}172.\-31.\-1.\-147\char`\"{}\}}\label{classRosOpenIgtlBridge_a9f4462ec60da6213f9c8e3e5aa804d25}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_a48389d9a54fe5bb8dde3bd6b44ca85c9}{int \hyperlink{classRosOpenIgtlBridge_a48389d9a54fe5bb8dde3bd6b44ca85c9}{r\-Transform}}\label{classRosOpenIgtlBridge_a48389d9a54fe5bb8dde3bd6b44ca85c9}
+
+\begin{DoxyCompactList}\small\item\em Status des Empfangssockets. \end{DoxyCompactList}\item 
+\hypertarget{classRosOpenIgtlBridge_a691ab680de3cd5e45c7ac40816b732a6}{std\-::string {\bfseries open\-I\-G\-T\-L\-Command\-String}}\label{classRosOpenIgtlBridge_a691ab680de3cd5e45c7ac40816b732a6}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_a0a5db0b04705372961630bb4c027695c}{std\-::string {\bfseries state\-String}}\label{classRosOpenIgtlBridge_a0a5db0b04705372961630bb4c027695c}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_a2ea062eeab4c7158b07ee976503ef043}{double {\bfseries sample\-Time\-\_\-}}\label{classRosOpenIgtlBridge_a2ea062eeab4c7158b07ee976503ef043}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_a38daf9dd118068189027ba9ba94c4490}{bool {\bfseries stop\-\_\-}}\label{classRosOpenIgtlBridge_a38daf9dd118068189027ba9ba94c4490}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_ac71d24bebd6fc3271705f429e72e3073}{bool {\bfseries start\-\_\-}}\label{classRosOpenIgtlBridge_ac71d24bebd6fc3271705f429e72e3073}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_a739a2b4feace96f89628c36a9357ccfe}{bool {\bfseries transform\-Received\-\_\-} \{false\}}\label{classRosOpenIgtlBridge_a739a2b4feace96f89628c36a9357ccfe}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_aab902594c15e9b69c6f0b7bdb2c2814c}{bool {\bfseries ros\-Transform\-Received\-\_\-} \{false\}}\label{classRosOpenIgtlBridge_aab902594c15e9b69c6f0b7bdb2c2814c}
+
+\item 
+\hypertarget{classRosOpenIgtlBridge_a701bc14cf735f3e01d807e8c7074d0e5}{const unsigned int {\bfseries C\-O\-N\-N\-E\-C\-T\-I\-O\-N\-\_\-\-T\-I\-M\-E\-O\-U\-T} \{30\}}\label{classRosOpenIgtlBridge_a701bc14cf735f3e01d807e8c7074d0e5}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Ausführliche Beschreibung}
+Eine R\-O\-S-\/\-Node zur Kommunikation zwischen R\-O\-S und dem L\-B\-R iiwa, welche über das Open\-I\-G\-T\-Link-\/\-Protokoll durchgeführt. 
+
+\begin{DoxyAuthor}{Autor}
+Fabian Baier 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Datum}
+19.\-03.\-2016
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+0.\-3 
+\end{DoxyVersion}
+
+
+\subsection{Dokumentation der Elementfunktionen}
+\hypertarget{classRosOpenIgtlBridge_a6efbb5bd82d24454e040ea03549d4426}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!configuration\-I\-G\-T\-L\-Callback@{configuration\-I\-G\-T\-L\-Callback}}
+\index{configuration\-I\-G\-T\-L\-Callback@{configuration\-I\-G\-T\-L\-Callback}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{configuration\-I\-G\-T\-L\-Callback}]{\setlength{\rightskip}{0pt plus 5cm}Ros\-Open\-Igtl\-Bridge\-::configuration\-I\-G\-T\-L\-Callback (
+\begin{DoxyParamCaption}
+\item[{masterslave\-::\-Ros\-Open\-I\-G\-T\-L\-Bridge\-Config \&}]{config, }
+\item[{uint32\-\_\-t}]{level}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_a6efbb5bd82d24454e040ea03549d4426}
+
+
+Callbackmethode für dynamic reconfigure. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em config} & Konfiguration von dynamic reconfigure \\
+\hline
+{\em level} & Bitmaske zur Maskierung einzelner Einstellungen \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{Siehe auch}
+Ros\-Open\-I\-G\-T\-L\-Bridge.\-cfg 
+\end{DoxySeeAlso}
+\hypertarget{classRosOpenIgtlBridge_ac9e20d912d93a8c7723511a255033cae}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!igtl\-Matrix\-To\-Ros\-Pose@{igtl\-Matrix\-To\-Ros\-Pose}}
+\index{igtl\-Matrix\-To\-Ros\-Pose@{igtl\-Matrix\-To\-Ros\-Pose}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{igtl\-Matrix\-To\-Ros\-Pose}]{\setlength{\rightskip}{0pt plus 5cm}geometry\-\_\-msgs\-::\-Pose Ros\-Open\-Igtl\-Bridge\-::igtl\-Matrix\-To\-Ros\-Pose (
+\begin{DoxyParamCaption}
+\item[{igtl\-::\-Matrix4x4 \&}]{igtl\-Matrix}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_ac9e20d912d93a8c7723511a255033cae}
+
+
+Hilfsfunktion um eine igtl\-::\-Matrix4x4 in eine geometry\-\_\-msgs\-::\-Pose zu wandeln und diese in R\-O\-S zu übertragen. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em igtl\-Matrix} & Eingehende Transformation in Open\-I\-G\-T\-Link \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Rückgabe}
+Pose 
+\end{DoxyReturn}
+\hypertarget{classRosOpenIgtlBridge_a8f02e3d18f60754c8d282db55eaed4c2}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!lbr\-Joint\-Angle\-Callback@{lbr\-Joint\-Angle\-Callback}}
+\index{lbr\-Joint\-Angle\-Callback@{lbr\-Joint\-Angle\-Callback}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{lbr\-Joint\-Angle\-Callback}]{\setlength{\rightskip}{0pt plus 5cm}void Ros\-Open\-Igtl\-Bridge\-::lbr\-Joint\-Angle\-Callback (
+\begin{DoxyParamCaption}
+\item[{const std\-\_\-msgs\-::\-Float64\-Const\-Ptr \&}]{joint\-Angle, }
+\item[{int}]{number}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_a8f02e3d18f60754c8d282db55eaed4c2}
+
+
+In dieser Methode werden die. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em joint\-Angle} & Gelenkwinkel des Gelenks \\
+\hline
+{\em number} & Nummer des L\-B\-R-\/\-Gelenks \\
+\hline
+\end{DoxyParams}
+\hypertarget{classRosOpenIgtlBridge_aa375549cb5b12c850c363a992eb87340}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!position\-Reached@{position\-Reached}}
+\index{position\-Reached@{position\-Reached}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{position\-Reached}]{\setlength{\rightskip}{0pt plus 5cm}int Ros\-Open\-Igtl\-Bridge\-::position\-Reached (
+\begin{DoxyParamCaption}
+\item[{igtl\-::\-Client\-Socket\-::\-Pointer \&}]{socket, }
+\item[{igtl\-::\-Message\-Base\-::\-Pointer \&}]{msg\-Header}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_aa375549cb5b12c850c363a992eb87340}
+
+
+Überwachung, ob die angegebene Zielpose bereits erreicht wurde. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em socket} & Referenz auf den Socket, über den gesendet wurde \\
+\hline
+{\em msg\-Header} & Referenz auf den Nachrichtenkopf, der als Acknowledge zurück kam \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Rückgabe}
+Empfangsstatus des Pakets 
+\end{DoxyReturn}
+\hypertarget{classRosOpenIgtlBridge_a051b146bbe2dd3d1ea63677efeb62155}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!receive\-Transform@{receive\-Transform}}
+\index{receive\-Transform@{receive\-Transform}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{receive\-Transform}]{\setlength{\rightskip}{0pt plus 5cm}int Ros\-Open\-Igtl\-Bridge\-::receive\-Transform (
+\begin{DoxyParamCaption}
+\item[{igtl\-::\-Client\-Socket\-::\-Pointer \&}]{socket, }
+\item[{igtl\-::\-Message\-Base\-::\-Pointer \&}]{msg\-Header}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_a051b146bbe2dd3d1ea63677efeb62155}
+
+
+Empfang der Transformationsnachrichten. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em socket} & Referenz auf den Socket, mithilfe dessen die Nachrichten empfangen werden \\
+\hline
+{\em msg\-Header} & Referenz auf den Nachrichtenkopf, and die Transformationen angehängt sind \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Rückgabe}
+Empfangsstatus des Pakets 
+\end{DoxyReturn}
+\hypertarget{classRosOpenIgtlBridge_a99c187746613fa369b79e73c2ccb7c62}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!ros\-Pose\-To\-I\-G\-T\-L@{ros\-Pose\-To\-I\-G\-T\-L}}
+\index{ros\-Pose\-To\-I\-G\-T\-L@{ros\-Pose\-To\-I\-G\-T\-L}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{ros\-Pose\-To\-I\-G\-T\-L}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string Ros\-Open\-Igtl\-Bridge\-::ros\-Pose\-To\-I\-G\-T\-L (
+\begin{DoxyParamCaption}
+\item[{geometry\-\_\-msgs\-::\-Pose}]{pose}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_a99c187746613fa369b79e73c2ccb7c62}
+
+
+Hilfsfunktion um eine geometry\-\_\-msgs\-::\-Pose in einen String zu verwandeln, um diesen anschließend über Open\-I\-G\-T\-Link zu versenden. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em pose} & Die gewünschen Solllage im Variablentyp geometry\-\_\-msgs\-::\-Pose \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Rückgabe}
+die Transformationsmatrix im Variablentyp std\-::string 
+\end{DoxyReturn}
+\hypertarget{classRosOpenIgtlBridge_a741e133a8fbd1fed1508ec636723de5a}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!send\-Command@{send\-Command}}
+\index{send\-Command@{send\-Command}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{send\-Command}]{\setlength{\rightskip}{0pt plus 5cm}int Ros\-Open\-Igtl\-Bridge\-::send\-Command (
+\begin{DoxyParamCaption}
+\item[{igtl\-::\-Client\-Socket\-::\-Pointer \&}]{socket, }
+\item[{std\-::string}]{command}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_a741e133a8fbd1fed1508ec636723de5a}
+
+
+Methode zum Versenden von std\-::strings über den Open\-I\-G\-T\-Link-\/\-Socket. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em socket} & Referenz auf den Socket, über den gesendet werden soll \\
+\hline
+{\em command} & Zuversendende String-\/\-Nachricht \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Rückgabe}
+Status nach Versendung des Pakets 
+\end{DoxyReturn}
+\hypertarget{classRosOpenIgtlBridge_ac8d2f37fe82fb7d0496d937920f48db6}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!state\-Service@{state\-Service}}
+\index{state\-Service@{state\-Service}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{state\-Service}]{\setlength{\rightskip}{0pt plus 5cm}bool Ros\-Open\-Igtl\-Bridge\-::state\-Service (
+\begin{DoxyParamCaption}
+\item[{masterslave\-::\-Open\-I\-G\-T\-L\-State\-Service\-::\-Request \&}]{req, }
+\item[{masterslave\-::\-Open\-I\-G\-T\-L\-State\-Service\-::\-Response \&}]{res}
+\end{DoxyParamCaption}
+)}}\label{classRosOpenIgtlBridge_ac8d2f37fe82fb7d0496d937920f48db6}
+
+
+Dieses ist eine Callback-\/\-Methode, die aufgerufen wird, wenn der Zustand des Roboters geändert werden soll Mögliche Zustände\-: I\-D\-L\-E, F\-R\-E\-E, M\-O\-V\-E\-\_\-\-T\-O\-\_\-\-P\-O\-S\-E. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em req} & Request \\
+\hline
+{\em res} & Respones \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Rückgabe}
+War der Service-\/\-Call erfolgreich? 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{Siehe auch}
+Open\-I\-G\-T\-L\-State\-Service.\-srv 
+\end{DoxySeeAlso}
+\hypertarget{classRosOpenIgtlBridge_a654f0a40a6e10644de54f0a47efcbb9d}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!transform\-Callback@{transform\-Callback}}
+\index{transform\-Callback@{transform\-Callback}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{transform\-Callback}]{\setlength{\rightskip}{0pt plus 5cm}void Ros\-Open\-Igtl\-Bridge\-::transform\-Callback (
+\begin{DoxyParamCaption}
+\item[{geometry\-\_\-msgs\-::\-Pose\-Stamped\-Const\-Ptr}]{transform}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_a654f0a40a6e10644de54f0a47efcbb9d}
+
+
+In der Methode werden die Sollpositionen aus der geometrischen Kinematik entgegen genommen. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em transform} & Die Solllage des Roboterendeffektors \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{GeometricKinematic_8h}{Geometric\-Kinematic.\-h} 
+\end{DoxySeeAlso}
+
+
+\subsection{Dokumentation der Datenelemente}
+\hypertarget{classRosOpenIgtlBridge_a06df713358aa522ed6dd363d78bb8def}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!command\-Socket\-\_\-@{command\-Socket\-\_\-}}
+\index{command\-Socket\-\_\-@{command\-Socket\-\_\-}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{command\-Socket\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}Ros\-Open\-Igtl\-Bridge\-::command\-Socket\-\_\-\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_a06df713358aa522ed6dd363d78bb8def}
+
+
+Socket über den Gelenkwinkel oder Endeffektorsolllagen kommandiert werden mit I\-P und Port als Konstanten. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+C\-O\-M\-M\-A\-N\-D\-\_\-\-P\-O\-R\-T, C\-O\-M\-M\-A\-N\-D\-\_\-\-I\-P 
+\end{DoxySeeAlso}
+\hypertarget{classRosOpenIgtlBridge_a43a57e8fe72fa4a233b744a3576310da}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!pose\-F\-L@{pose\-F\-L}}
+\index{pose\-F\-L@{pose\-F\-L}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{pose\-F\-L}]{\setlength{\rightskip}{0pt plus 5cm}Ros\-Open\-Igtl\-Bridge\-::pose\-F\-L\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_a43a57e8fe72fa4a233b744a3576310da}
+
+
+Solllage des Endeffektors im R\-O\-S-\/konformen Variablentyp. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classRosOpenIgtlBridge_a8dbc016aacf3ff2caad058ec50a96e77}{T\-\_\-\-F\-L} 
+\end{DoxySeeAlso}
+\hypertarget{classRosOpenIgtlBridge_afee0e87dfe158f8980081554b3f8dac2}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!pose\-F\-L\-\_\-new@{pose\-F\-L\-\_\-new}}
+\index{pose\-F\-L\-\_\-new@{pose\-F\-L\-\_\-new}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{pose\-F\-L\-\_\-new}]{\setlength{\rightskip}{0pt plus 5cm}Ros\-Open\-Igtl\-Bridge\-::pose\-F\-L\-\_\-new\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_afee0e87dfe158f8980081554b3f8dac2}
+
+
+aktuell empfangene Lage des Endeffektors des L\-B\-R im R\-O\-S-\/konformen Variablentyp 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classRosOpenIgtlBridge_ace49281b853f92fbd9decbaa2dcd5b70}{T\-\_\-\-F\-L\-\_\-new} 
+\end{DoxySeeAlso}
+\hypertarget{classRosOpenIgtlBridge_ad7c6b0430970a8faf6cc9e934d6f889e}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!state\-Service\-Server@{state\-Service\-Server}}
+\index{state\-Service\-Server@{state\-Service\-Server}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{state\-Service\-Server}]{\setlength{\rightskip}{0pt plus 5cm}Ros\-Open\-Igtl\-Bridge\-::state\-Service\-Server\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_ad7c6b0430970a8faf6cc9e934d6f889e}
+
+
+Objekt zur Bereitstellung des state\-Services. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+bool \hyperlink{classRosOpenIgtlBridge_ac8d2f37fe82fb7d0496d937920f48db6}{state\-Service(masterslave\-::\-Open\-I\-G\-T\-L\-State\-Service\-::\-Request\&, masterslave\-::\-Open\-I\-G\-T\-L\-State\-Service\-::\-Response\&)} 
+\end{DoxySeeAlso}
+\hypertarget{classRosOpenIgtlBridge_ac1cd3818cb07542c4534f7dfdb3b0258}{\index{Ros\-Open\-Igtl\-Bridge@{Ros\-Open\-Igtl\-Bridge}!transform\-Socket\-\_\-@{transform\-Socket\-\_\-}}
+\index{transform\-Socket\-\_\-@{transform\-Socket\-\_\-}!RosOpenIgtlBridge@{Ros\-Open\-Igtl\-Bridge}}
+\subsubsection[{transform\-Socket\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}Ros\-Open\-Igtl\-Bridge\-::transform\-Socket\-\_\-\hspace{0.3cm}{\ttfamily [private]}}}\label{classRosOpenIgtlBridge_ac1cd3818cb07542c4534f7dfdb3b0258}
+
+
+Socket über den die Gelenktransformationen und die Endeffektorlage empfangen werden mit I\-P und Port als Konstanten. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+T\-R\-A\-N\-S\-F\-O\-R\-M\-\_\-\-P\-O\-R\-T, C\-O\-M\-M\-A\-N\-D\-\_\-\-I\-P 
+\end{DoxySeeAlso}
+
+
+Die Dokumentation für diese Klasse wurde erzeugt aufgrund der Datei\-:\begin{DoxyCompactItemize}
+\item 
+include/masterslave/\hyperlink{RosOpenIGTLBridge_8h}{Ros\-Open\-I\-G\-T\-L\-Bridge.\-h}\end{DoxyCompactItemize}

@@ -1,10 +1,5 @@
 #include "commander/NumericKinematicCommander.h"
 
-/**
- * @brief NumericKinematicCommander::NumericKinematicCommander
- * @param nh
- * @param rosRate
- */
 
 NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::NodeHandle& drNH): nh_(nh)
 {

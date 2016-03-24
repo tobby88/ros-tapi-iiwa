@@ -37,10 +37,10 @@ class IKinematic
         /**
          * @fn calcInvKin
          * @brief Abstrakte Methode zur Berechnung der inversen Kinematik
-         * @param Aktuelle TCP-Lage
+         * @param T_0_EE Aktuelle TCP-Lage
          * @return Arbeitsraumgrenzen eingehalten?
          */
-        virtual bool calcInvKin(Eigen::Affine3d)=0;
+        virtual bool calcInvKin(Eigen::Affine3d T_0_EE)=0;
 
         /**
          * @fn buildAffine3d
@@ -141,7 +141,7 @@ class IKinematic
         bool directKinematicsServiceCalled{false};
 
         /**
-         * @var rcmServer
+         * @var rcmServiceServer
          * @brief ServiceServer für die Bestimmung des Trokarpunktes
          */
         ros::ServiceServer rcmServiceServer;
