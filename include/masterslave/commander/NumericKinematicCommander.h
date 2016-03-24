@@ -88,12 +88,6 @@ class NumericKinematicCommander: public ICommander
         std::array<ros::Publisher,7> lbrJointAnglePub;
 
         /**
-         * @var cycleTimePub
-         * @brief Sender zur Bereitstellung der Zykluszeit für verschiedene ROS-Nodes
-         */
-        ros::Publisher cycleTimePub;
-
-        /**
          * @var lbrJointAngleSub
          * @brief Array mit den Empfängern für die LBR-Gelenkwinkeln
          */
@@ -130,11 +124,7 @@ class NumericKinematicCommander: public ICommander
          */
         Eigen::VectorXd lbrJointAngles;
 
-        /**
-         * @var callBacksCalled
-         * @brief Test, ob alle Gelenkwinkelcallbacks aufgerufen wurden
-         */
-        int callBacksCalled{0};
+
 
 };
 

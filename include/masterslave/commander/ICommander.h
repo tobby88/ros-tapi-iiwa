@@ -267,7 +267,7 @@ class ICommander
          * @var gripperVelocityValue
          * @brief Greifergeschwindigkeit in der Einheit [rad/s]
          */
-        double gripperVelocityValue;
+        double gripperVelocityValue{0.1};
 
         /**
          * @fn QuaternionFromEuler
@@ -292,6 +292,12 @@ class ICommander
 
         int Q6CallbacksCalled{0};
 
+        /**
+         * @var callBacksCalled
+         * @brief Test, ob alle Gelenkwinkelcallbacks aufgerufen wurden
+         */
+        int callBacksCalled{0};
+
         int rosRate{1000};
 
         bool start_{false};
@@ -312,6 +318,13 @@ class ICommander
         OPENIGTL_STATE state{NO_STATE};
 
         geometry_msgs::TwistStamped velocity_;
+
+        /**
+         * @var cycleTimePub
+         * @brief Sender zur Bereitstellung der Zykluszeit für verschiedene ROS-Nodes
+         */
+        ros::Publisher cycleTimePub;
+
 
 };
 
