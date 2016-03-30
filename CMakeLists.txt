@@ -139,6 +139,8 @@ add_dependencies(NumericKinematicCommander masterslave_gencfg)
 add_executable(GeometricKinematicCommander src/commander/GeometricKinematicCommander.cpp include/masterslave/commander/GeometricKinematicCommander.h src/commander/ICommander.cpp include/masterslave/commander/ICommander.h include/masterslave/commander/BoundingBox.h src/commander/BoundingBox.cpp)
 add_dependencies(GeometricKinematicCommander masterslave_gencfg)
 
+add_executable(VisualServoing src/manipulation/VisualServoing.cpp include/masterslave/manipulation/VisualServoing.h)
+
 ## Add cmake target dependencies of the executable
 add_dependencies(ControlDevice ControlDevice_generate_messages_cpp)
 add_dependencies(ControlDevice masterslave_generate_messages_cpp)
@@ -156,6 +158,7 @@ add_dependencies(NumericKinematicCommander NumericKinematicCommander_generate_me
 add_dependencies(NumericKinematicCommander masterslave_generate_messages_cpp)
 add_dependencies(GeometricKinematicCommander GeometricKinematicCommander_generate_messages_cpp)
 add_dependencies(GeometricKinematicCommander masterslave_generate_messages_cpp)
+add_dependencies(VisualServoing masterslave_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(ControlDevice
@@ -195,6 +198,11 @@ target_link_libraries(NumericKinematicCommander
 )
 
 target_link_libraries(GeometricKinematicCommander
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(VisualServoing
     ${catkin_LIBRARIES}
     ${Eigen_LIBRARIES}
 )
