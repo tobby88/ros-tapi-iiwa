@@ -75,6 +75,7 @@ generate_dynamic_reconfigure_options(
   cfg/BoundingBox.cfg
   cfg/MasterSlave.cfg
   cfg/ControlDevice.cfg
+  cfg/VisualServoing.cfg
   cfg/NumericKinematic.cfg
   cfg/RosOpenIGTLBridge.cfg
   cfg/TrajectoryGenerator.cfg
@@ -140,6 +141,7 @@ add_executable(GeometricKinematicCommander src/commander/GeometricKinematicComma
 add_dependencies(GeometricKinematicCommander masterslave_gencfg)
 
 add_executable(VisualServoing src/manipulation/VisualServoing.cpp include/masterslave/manipulation/VisualServoing.h)
+add_dependencies(VisualServoing masterslave_gencfg)
 
 ## Add cmake target dependencies of the executable
 add_dependencies(ControlDevice ControlDevice_generate_messages_cpp)

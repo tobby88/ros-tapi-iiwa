@@ -1,11 +1,11 @@
 <launch>
 	<node ns="camera" pkg="libuvc_camera" type="camera_node" name="camera" output="screen">
 		<param name="camera_frame_id" type="string" value="/camera" />
-		<param name="framerate" value="60" />
+		<param name="framerate" value="30" />
 	</node>
 	<node ns="camera" pkg="image_proc" type="image_proc" name="image_proc_node" output="screen"/>
 	
-	<arg name="marker_size" default="0.5" />
+	<arg name="marker_size" default="4.4" />
         <arg name="max_new_marker_error" default="0.08" />
         <arg name="max_track_error" default="0.2" />
 
@@ -17,10 +17,5 @@
 
 	<node pkg="tf" type="static_transform_publisher" name="mav_to_camera" output="screen" args="0 0 0 0.785398163 0 0 mav camera 10" />
 
-  	<node pkg="rviz" type="rviz" name="rviz" />
-
 	<node pkg="masterslave" type="VisualServoing" name="VisualServoing" output="screen" />
 </launch>
-
-
-
