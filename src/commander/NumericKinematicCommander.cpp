@@ -48,7 +48,7 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
 
-    ros::Rate waiteRate(0.5);
+    ros::Rate waiteRate(25);
     while(ros::ok() && !((callBacksCalled+1) >> 10 ==1) )
     {
         ROS_WARN("ROS is waiting for Startposition!");
@@ -61,32 +61,33 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
         ros::spinOnce();
         if(state == MOVE_TO_POSE)
         {
+           ROS_INFO("MOVE_TO_POSE");
            loop();
         }
-        waiteRate.sleep();
+        ROS_INFO("NOT_MOVE_TO_POSE");
     }
 }
 
 void NumericKinematicCommander::statemachineThread(const ros::TimerEvent& event)
 {
     masterslave::OpenIGTLStateService stateStringMsg;
-    if(newState!=state)
+    //ROS_WARN_STREAM(state);
+    switch(state)
     {
-        switch(newState)
-        {
-            case IDLE:
-                if(stateService.exists()) stateStringMsg.request.state = "Idle;";
-                state = newState;
-                break;
-            case FREE:
-                if(stateService.exists())  stateStringMsg.request.state = "Free;";
-                state = newState;
-                break;
-            case MOVE_TO_POSE:
-                if(stateService.exists()) stateStringMsg.request.state = "MoveToPose;rob;";
-                state = newState;
-                break;
-        }
+        case IDLE:
+            if(stateService.exists()) stateStringMsg.request.state = "IDLE;";
+            //ROS_INFO("IDLE");
+            break;
+        case FREE:
+            if(stateService.exists())  stateStringMsg.request.state = "GravComp;";
+            //ROS_INFO("FREE");
+            break;
+        case MOVE_TO_POSE:
+            if(stateService.exists()) stateStringMsg.request.state = "MoveToPose;rob;";
+            //ROS_INFO("MOVE_TO");
+            break;
+        default:
+            ROS_ERROR("No valid state");
     }
     if(stateService.exists())
     {

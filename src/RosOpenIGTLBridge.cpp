@@ -10,11 +10,13 @@
 
 RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
 {
+    jointAngles = Eigen::VectorXd::Zero(7);
+    jointAngles_new = Eigen::VectorXd::Zero(7);
     flangeTargetSub = nh_.subscribe("/flangeTarget",1,&RosOpenIgtlBridge::transformCallback,this);
 
     flangePub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeLBR",1);
 
-    for(int i=0; i < 7; i++)
+    for(int i=0; i < lbrJointAngleSub.size(); i++)
     {
        std::stringstream sstream;
        sstream << "/LBR/des/joint" << i+1;
@@ -25,7 +27,6 @@ RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
        lbrJointAnglePub[i] = nh_.advertise<sensor_msgs::JointState>(sstream.str().c_str(),1);
        sstream.str(std::string());
     }
-
     stateServiceServer = nh_.advertiseService("/openIGTLState",&RosOpenIgtlBridge::stateService,this);
     boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkTransformThread,this));
     openIGTLinkThread();
@@ -94,7 +95,7 @@ void RosOpenIgtlBridge::openIGTLinkThread()
     ROS_DEBUG_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
 
     this->sendCommand(commandSocket_,"Idle;");
-    ros::Rate rate(1/sampleTime_);
+    ros::Rate rate(0.02);
     while(rCommand!=-1 && ros::ok())
     {
         ros::spinOnce();
@@ -106,22 +107,21 @@ void RosOpenIgtlBridge::openIGTLinkThread()
             positionReached_ = this->positionReached(commandSocket_,messageHeaderCommand);
         }
         // Get pose of flange
-        this->transformUpdateMutex_.lock();
+        transformUpdateMutex_.lock();
             geometry_msgs::PoseStamped poseFLmsg;
             poseFLmsg.header.stamp = ros::Time::now();
             poseFLmsg.pose = poseFL;
             this->flangePub.publish(poseFLmsg);
-        this->transformUpdateMutex_.unlock();
+        transformUpdateMutex_.unlock();
         if(transformReceived_)
         {
             this->sendCommand(commandSocket_,openIGTLCommandString);
             transformReceived_ = false;
         }
         rCommand = commandSocket_->GetConnected();
-        rate.sleep();
+        //rate.sleep();
     }
     commandSocket_->CloseSocket();
-    stop_ = true;
     ros::shutdown();
 
 }
@@ -146,6 +146,8 @@ int RosOpenIgtlBridge::positionReached(igtl::ClientSocket::Pointer &socket, igtl
 
 int RosOpenIgtlBridge::receiveTransform(igtl::ClientSocket::Pointer &socket, igtl::MessageBase::Pointer &msgHeader)
 {
+    igtl::Matrix4x4 T_FL;
+    igtl::Matrix4x4 jointAnglesIGTL;
     igtl::TransformMessage::Pointer transformMsg;
     msgHeader->InitPack();
     rTransform = socket->Receive(msgHeader->GetPackPointer(),msgHeader->GetPackSize());
@@ -155,12 +157,36 @@ int RosOpenIgtlBridge::receiveTransform(igtl::ClientSocket::Pointer &socket, igt
     transformMsg->AllocatePack();
     socket->Receive(transformMsg->GetPackBodyPointer(), transformMsg->GetPackBodySize());
     transformMsg->Unpack();
+    if(strcmp(transformMsg->GetDeviceName(),"JointData")==0)
+    {
+        ROS_DEBUG("Gelenkwinkelempfangen!");
+        int cnt=0;
+        jointAngleUpdateMutex_.lock();
+        transformMsg->GetMatrix(jointAnglesIGTL);
+        for(int i=0;i<4;i++)
+        {
+            for(int j=0;j<3;j++)
+            {
+                sensor_msgs::JointState temp;
+                jointAngles[cnt] = jointAnglesIGTL[j][i];
+
+                temp.position.push_back(jointAngles[cnt]);
+                lbrJointAnglePub[cnt].publish(temp);
+                cnt++;
+                if(cnt==7) break;
+            }
+            if(cnt==7) break;
+        }
+        jointAngleUpdateMutex_.unlock();
+        ROS_DEBUG_STREAM(jointAngles);
+    }
     if(strcmp(transformMsg->GetDeviceName(),"T_EE")==0)
     {
-        this->transformUpdateMutex_.lock();
+        ROS_DEBUG("T_EE empfangen");
+        transformUpdateMutex_.lock();
         transformMsg->GetMatrix(T_FL);
         poseFL = this->igtlMatrixToRosPose(T_FL);
-        this->transformUpdateMutex_.unlock();
+        transformUpdateMutex_.unlock();
         return 1;
     }
     return 0;
@@ -180,6 +206,7 @@ int RosOpenIgtlBridge::sendCommand(igtl::ClientSocket::Pointer &socket, std::str
     transformStream.str(std::string());
     transformStringMsg->SetString(command);
     transformStringMsg->Pack();
+    ROS_DEBUG_STREAM("Send: \n" << command);
     return socket->Send(transformStringMsg->GetPackPointer(),transformStringMsg->GetPackSize());
 }
 
@@ -235,6 +262,7 @@ bool RosOpenIgtlBridge::stateService(masterslave::OpenIGTLStateService::Request 
     {
         res.alive = true;
     }
+    //ROS_WARN_STREAM(req.state);
     stateString = req.state;
     sstream << stateString;
     if(rosTransformReceived_ && stateString == "MoveToPose;rob;")
@@ -242,22 +270,29 @@ bool RosOpenIgtlBridge::stateService(masterslave::OpenIGTLStateService::Request 
         sstream << rosPoseToIGTL(poseFL_new);
         rosTransformReceived_ = false;
     }
-    else if(stateString == "MoveToJointAngles;")
+    else if(stateString == "MoveToPose;rob;" && (jointAnglesCalled + 1 >> 7)==1)
     {
         for(int i=0;i<jointAngles_new.rows();i++)
         {
             sstream << jointAngles_new(i) << ";";
         }
+        jointAnglesCalled = 0;
     }
     openIGTLCommandString = sstream.str();
-    ROS_INFO_STREAM("Commandstring: " << openIGTLCommandString);
+    ROS_DEBUG_STREAM("Commandstring: " << openIGTLCommandString);
+    transformReceived_ = true;
     sstream.str(std::string());
+    stateServiceCalled_ = true;
     return true;
 }
 
 void RosOpenIgtlBridge::lbrJointAngleCallback(const std_msgs::Float64ConstPtr &jointAngle, int number)
 {
     jointAngles_new(number) = jointAngle->data;
+    if(jointAnglesCalled+1 < 1 << 7)
+    {
+        jointAnglesCalled += 1 << number;
+    }
 }
 
 int main(int argc, char** argv)

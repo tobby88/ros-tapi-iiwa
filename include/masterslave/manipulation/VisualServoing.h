@@ -119,6 +119,7 @@ private:
     /**
      * @var ids
      * @brief IDs, die für das MarkerTracking relevant sind
+     */
     std::array<int,2> ids = {{0,1}};
     bool initialRun = true;
 

@@ -27,6 +27,7 @@
 #include "igtlStringMessage.h"
 #include "igtl_transform.h"
 
+#include <array>
 #include <sstream>
 #include "Eigen/Eigen"
 #include "Eigen/Dense"
@@ -195,12 +196,6 @@ private:
     boost::mutex transformUpdateMutex_;
 
     /**
-     * \var T_FL
-     * \brief Solllage des Endeffektors des LBR
-     */
-    igtl::Matrix4x4 T_FL;
-
-    /**
      * \var T_FL_new
      * @brief aktuell empfangene Lage des Endeffektors des LBR
      */
@@ -219,6 +214,8 @@ private:
      * \see T_FL_new
      */
     geometry_msgs::Pose poseFL_new;
+
+    boost::mutex jointAngleUpdateMutex_;
 
     /**
      * \var jointAngles
@@ -271,14 +268,15 @@ private:
     std::string openIGTLCommandString;
     std::string stateString;
 
-    double sampleTime_;
+    double sampleTime_{1000};
 
-    bool stop_;
-    bool start_;
     bool transformReceived_{false};
     bool rosTransformReceived_{false};
+    bool stateServiceCalled_{false};
 
     const unsigned int CONNECTION_TIMEOUT{30};
+
+    int jointAnglesCalled{0};
 
 };
 

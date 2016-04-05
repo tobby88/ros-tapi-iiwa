@@ -61,29 +61,28 @@ GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ro
 void GeometricKinematicCommander::statemachineThread(const ros::TimerEvent& event)
 {
     masterslave::OpenIGTLStateService stateStringMsg;
-    if(newState!=state)
+    switch(state)
     {
-        switch(newState)
-        {
-            case IDLE:
-                if(stateService.exists()) stateStringMsg.request.state = "Idle;";
-                state = newState;
-                break;
-            case FREE:
-                if(stateService.exists())  stateStringMsg.request.state = "Free;";
-                state = newState;
-                break;
-            case MOVE_TO_POSE:
-                if(stateService.exists()) stateStringMsg.request.state = "MoveToPose;rob;";
-                state = newState;
-                break;
-        }
+        case IDLE:
+            stateStringMsg.request.state.append("IDLE;");
+            ROS_INFO("IDLE");
+            break;
+        case FREE:
+            stateStringMsg.request.state.append("GravComp;");
+            ROS_INFO("FREE");
+            break;
+        case MOVE_TO_POSE:
+            stateStringMsg.request.state.append("MoveToPose;rob;");
+            ROS_INFO("MOVE_TO");
+            break;
+        default:
+            ROS_ERROR("No Valid state");
     }
     if(stateService.exists())
     {
         stateService.call(stateStringMsg);
         statemachineIsRunning = stateStringMsg.response.alive;
-        ROS_DEBUG_STREAM("Service Call: alive: " << statemachineIsRunning);
+        ROS_INFO_STREAM("Service Call: alive: " << statemachineIsRunning);
     }
 }
 

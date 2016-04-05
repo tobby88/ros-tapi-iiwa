@@ -1,0 +1,48 @@
+#ifndef MASTERSLAVEMANIPULATIONABSOLUT_H
+#define MASTERSLAVEMANIPULATIONABSOLUT_H
+
+#include <algorithm>
+
+#include "ros/ros.h"
+#include "ar_track_alvar_msgs/AlvarMarkers.h"
+#include "masterslave/Manipulation.h"
+
+#include "geometry_msgs/PoseStamped.h"
+#include "std_msgs/Float64.h"
+#include "Eigen/Dense"
+
+#include <tf/tf.h>
+#include <tf_conversions/tf_eigen.h>
+#include <eigen_conversions/eigen_msg.h>
+#include <tf/transform_listener.h>
+
+/**
+ * @file MasterSlaveManipulationAbsolute.h
+ *
+ * @class MasterSlaveManipulationAbsolute
+ * @brief Klasse, die sich um die Manipulation des TCP mittels des Markertrackings kümmert
+ *
+ * @author Fabian Baier
+ * @date 04.04.2016
+ */
+
+class MasterSlaveManipulationAbsolute
+{
+public:
+    MasterSlaveManipulationAbsolute(ros::NodeHandle &nh);
+private:
+    void markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr& controlMarker);
+    void cycleTimeCallback(const std_msgs::Float64ConstPtr& val);
+    bool masterSlaveCallback(masterslave::Manipulation::Request& req, masterslave::Manipulation::Response& resp);
+    ros::NodeHandle nh_;
+    ros::Subscriber markerSub;
+    ros::Subscriber cycleTimeSub;
+    ros::ServiceServer masterSlaveServer;
+    double cycleTime;
+    Eigen::Affine3d poseAct;
+    Eigen::Affine3d poseOld;
+    Eigen::Affine3d difference;
+    bool initialRun{true};
+};
+
+#endif // MASTERSLAVEMANIPULATIONABSOLUT_H
