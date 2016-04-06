@@ -18,6 +18,9 @@
 #include <boost/thread.hpp>
 #include "boost/thread/mutex.hpp"
 
+#include <thread>
+#include <mutex>
+
 // for own OpenIGTLink
 #include "igtlOSUtil.h"
 #include "igtlMessageHeader.h"
@@ -93,6 +96,13 @@ private:
      */
     void openIGTLinkTransformThread();
 
+    /**
+     * @fn loop
+     * @brief Kommunikation mit ROS damit sich OpenIGTL und ROS sich nicht gegenseitig blocken, gibt es insgesamt drei Threads
+     * @param event
+     */
+
+    void loop(const ros::TimerEvent& event);
     /**
      * \fn int sendCommand(igtl::ClientSocket::Pointer&, std::string)
      * \brief Methode zum Versenden von std::strings über den OpenIGTLink-Socket
@@ -178,7 +188,7 @@ private:
 
 
     ros::NodeHandle nh_;
-    boost::mutex update_mutex_;
+
     boost::thread openIGTLThread;
 
     /**
@@ -265,18 +275,33 @@ private:
      */
     int rTransform;
 
+    /**
+     * @var openIGTLCommandString
+     * @brief Kommandierungsstring
+     */
     std::string openIGTLCommandString;
     std::string stateString;
 
-    double sampleTime_{1000};
+    /**
+     * @var sampleTime_
+     * @brief Zykluszeit in [Hz]
+     *
+     */
+    double sampleTime_{25};
 
     bool transformReceived_{false};
     bool rosTransformReceived_{false};
     bool stateServiceCalled_{false};
 
+    /**
+     * @var CONNECTION_TIMEOUT
+     * @brief Verbindungstimeoutzeit
+     */
     const unsigned int CONNECTION_TIMEOUT{30};
 
     int jointAnglesCalled{0};
+
+    boost::mutex stateUpdateMutex_;
 
 };
 
