@@ -1,37 +1,49 @@
 #include "masterslave/manipulation/MasterSlaveManipulationAbsolut.h"
 
-MasterSlaveManipulationAbsolute::MasterSlaveManipulationAbsolute(ros::NodeHandle &nh): nh_(nh)
+MasterSlaveManipulationAbsolute::MasterSlaveManipulationAbsolute(ros::NodeHandle &nh): nh_(nh), markerSub(nh_,"hand/ar_pose_marker",1), markerSubRef(nh_,"reference/ar_pose_marker",1)
 {
-    markerSub = nh_.subscribe("/ar_pose_marker",1,&MasterSlaveManipulationAbsolute::markerCallback,this);
+    message_filters::TimeSynchronizer<ar_track_alvar_msgs::AlvarMarkers,ar_track_alvar_msgs::AlvarMarkers> sync(markerSub,markerSubRef, 10);
+    sync.registerCallback(boost::bind(&MasterSlaveManipulationAbsolute::markerCallback,this,_1,_2));
     masterSlaveServer = nh_.advertiseService("/Manipulation",&MasterSlaveManipulationAbsolute::masterSlaveCallback,this);
     cycleTimeSub = nh_.subscribe("/cycleTime",1,&MasterSlaveManipulationAbsolute::cycleTimeCallback,this);
     poseAct = Eigen::Affine3d::Identity();
     poseOld = Eigen::Affine3d::Identity();
     difference = Eigen::Affine3d::Identity();
     ros::spin();
-
+    lastTime = ros::Time::now().toSec();
 }
 
-void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr &controlMarker)
+void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr &handMarker, const ar_track_alvar_msgs::AlvarMarkersConstPtr &referenceMarker)
 {
+    frameTime = ros::Time::now().toSec() - lastTime;
+    lastTime = ros::Time::now().toSec();
+    Eigen::Affine3d referencePose = Eigen::Affine3d::Identity();
     difference = Eigen::Affine3d::Identity();
     Eigen::Quaterniond differenceRot;
-    for(int i=0; i<controlMarker->markers.size();i++)
+    for(int i=0; i<referenceMarker->markers.size();i++)
     {
-        if(controlMarker->markers[i].id == 0)
+        if(referenceMarker->markers[i].id == 4)
         {
-            tf::poseMsgToEigen(controlMarker->markers[i].pose.pose,poseAct);
+            tf::poseMsgToEigen(referenceMarker->markers[i].pose.pose,referencePose);
+            break;
+        }
+    }
+    for(int i=0; i<handMarker->markers.size();i++)
+    {
+        if(handMarker->markers[i].id == 0)
+        {
+            poseOld = poseAct;
+            tf::poseMsgToEigen(handMarker->markers[i].pose.pose,poseAct);
             if(initialRun)
             {
                 poseOld = poseAct;
                 initialRun = false;
                 return;
             }
-            difference.translation() = (poseOld.inverse()*poseAct).translation()*30*cycleTime*0.01;
-            differenceRot = Eigen::Quaterniond((poseOld.inverse()*poseAct).rotation());
-            differenceRot = Eigen::Quaterniond::Identity().slerp(1/60,differenceRot);
+            //difference.translation() = referencePose.rotation()*(poseOld.inverse()*poseAct).translation()*cycleTime/frameTime;
+            differenceRot = Eigen::Quaterniond::Identity().slerp(cycleTime/frameTime,Eigen::Quaterniond((poseOld.inverse()*poseAct).rotation()));
             difference.rotate(differenceRot.toRotationMatrix());
-
+            break;
         }
     }
 }
@@ -39,13 +51,14 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
 bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulation::Request &req, masterslave::Manipulation::Response &resp)
 {
     Eigen::Affine3d T_0_EE_old;
-    Eigen::Affine3d T_0_EE_new;
+    Eigen::Affine3d T_0_EE_new = Eigen::Affine3d::Identity();
 
     tf::poseMsgToEigen(req.T_0_EE_old,T_0_EE_old);
-    T_0_EE_new = T_0_EE_old*difference;
+    T_0_EE_new.translate((T_0_EE_old*difference).translation());
+    T_0_EE_new.rotate(difference.rotation());
+    T_0_EE_new.rotate(T_0_EE_old.rotation());
     tf::poseEigenToMsg(T_0_EE_new,resp.T_0_EE_new);
-    poseOld = poseAct;
-    ROS_WARN_STREAM(difference.matrix());
+    ROS_DEBUG_STREAM(difference.matrix());
     return true;
 }
 
