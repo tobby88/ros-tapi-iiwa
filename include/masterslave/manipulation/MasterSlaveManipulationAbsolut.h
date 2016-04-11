@@ -34,24 +34,128 @@
 class MasterSlaveManipulationAbsolute
 {
 public:
+
+    /**
+     * @fn MasterSlaveManipulationAbsolute
+     * @brief Standardkonstruktor
+     * @param nh ROS-Node Handle
+     */
     MasterSlaveManipulationAbsolute(ros::NodeHandle &nh);
 private:
+    /**
+     * @fn markerCallback
+     * @brief gemeinsamer Callback der beiden MarkerTrackingInstanzen für das Tracking der Referenz- und der Steuerungsmarker
+     * @param handMarker Steuerungsmarkervektor
+     * @param referenceMarker Referenzmarkervektor
+     */
     void markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr &handMarker, const ar_track_alvar_msgs::AlvarMarkersConstPtr &referenceMarker);
-    void cycleTimeCallback(const std_msgs::Float64ConstPtr& val);
-    bool masterSlaveCallback(masterslave::Manipulation::Request& req, masterslave::Manipulation::Response& resp);
-    ros::NodeHandle nh_;
-    message_filters::Subscriber<ar_track_alvar_msgs::AlvarMarkers> markerSub;
-    message_filters::Subscriber<ar_track_alvar_msgs::AlvarMarkers> markerSubRef;
-    ros::Subscriber cycleTimeSub;
-    ros::ServiceServer masterSlaveServer;
-    double cycleTime;
-    Eigen::Affine3d poseAct;
-    Eigen::Affine3d poseOld;
-    Eigen::Affine3d difference;
-    bool initialRun{true};
 
+    /**
+     * @fn cycleTimeCallback
+     * @brief Zykluszeit der Interpolation bzw. der inversen Kinematik
+     * @param val Zykluszeit
+     */
+    void cycleTimeCallback(const std_msgs::Float64ConstPtr& val);
+
+    /**
+     * @fn masterSlaveCallback
+     * @brief Implementierung des MasterSlaveServices zur Steuerung des Roboters
+     * @param req Request des Clients: alte Transformation vor der Manipulation
+     * @param resp Response des Servers: neue Transformation nach der Manipulation
+     * @return Status, ob die Manipulation erfolgreich war
+     */
+    bool masterSlaveCallback(masterslave::Manipulation::Request& req, masterslave::Manipulation::Response& resp);
+
+    /**
+     * @var nh_
+     * @brief ROS-NodeHandle
+     */
+    ros::NodeHandle nh_;
+
+    /**
+     * @var markerSub
+     * @brief Empfänger für die Steuerungsmarker
+     */
+    message_filters::Subscriber<ar_track_alvar_msgs::AlvarMarkers> markerSub;
+
+    /**
+     * @var markerSubRef
+     * @brief Empfänger für die Referenzmarker
+     */
+    message_filters::Subscriber<ar_track_alvar_msgs::AlvarMarkers> markerSubRef;
+
+    /**
+     * @var cycleTimeSub
+     * @brief Empfänger für die Zykluszeit
+     */
+    ros::Subscriber cycleTimeSub;
+
+    /**
+     * @var masterSlaveServer
+     * @brief Serverinstanz für die MasterSlaveSchnittstelle
+     */
+    ros::ServiceServer masterSlaveServer;
+
+    /**
+     * @var cycleTime
+     * @brief Zykluszeit
+     */
+    double cycleTime;
+
+    /**
+     * @var poseAct
+     * @brief aktuelle Lage des TCP
+     */
+    Eigen::Affine3d poseAct;
+
+    /**
+     * @var poseOld
+     * @brief Lage des TCP im vorherigen Frame
+     */
+    Eigen::Affine3d poseOld;
+
+    /**
+     * @var difference
+     * @brief Differenztransformation zwuischen der alten und aktuellen TCP-Lage
+     */
+    Eigen::Affine3d difference;
+
+    /**
+     * @var initialRun
+     * @brief Initialer Durchlauf (ja oder nein)
+     */
+    bool initialRun{true};
+    /**
+     * @var frameTime
+     * @brief Zeit zwischen zwei Frames der Kamera
+     */
     double frameTime;
+
+    /**
+     * @var lastTime
+     * @brief Zeitpunkt des letzten Frames in Sekunden
+     */
     double lastTime;
+
+    /**
+     * @var slerpParameter
+     * @brief Parameter [0;1] für die Rotationsinterpolation
+     */
+    double slerpParameter{0};
+
+    /**
+     * @var handMarkerFound
+     * @brief Wurden die Steuerungsmarker gefunden?!
+     * @see masterSlaveCallback
+     */
+    bool handMarkerFound{false};
+
+    /**
+     * @var referenceMarkerFound
+     * @brief Wurdne die Referenzmarker gefunden?!
+     * @see masterSlaveCallback
+     */
+    bool referenceMarkerFound{false};
 };
 
 #endif // MASTERSLAVEMANIPULATIONABSOLUT_H
