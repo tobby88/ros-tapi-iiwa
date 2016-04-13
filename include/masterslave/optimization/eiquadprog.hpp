@@ -417,7 +417,9 @@ l2a:/* Step 2a: determine step direction */
 			for (i = 0; i < iq; i++)
 			{
 				A(i) = A_old(i);
-				iai(A(i)) = -1;
+                std::cout <<"index: " << A(i) << " i: " << i;
+                iai(A(i)) = -1;
+
 				u(i) = u_old(i);
 			}
 			x = x_old;

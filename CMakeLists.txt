@@ -118,7 +118,7 @@ add_executable(RosOpenIGTLBridge src/RosOpenIGTLBridge.cpp include/masterslave/R
 add_dependencies(RosOpenIGTLBridge RosOpenITGLBridge_gencfg)
 add_dependencies(RosOpenIGTLBridge masterslave_gencfg)
 
-add_executable(NumericKinematic src/kinematic/NumericKinematic.cpp include/masterslave/kinematic/NumericKinematic.h include/masterslave/kinematic/IKinematic.h src/kinematic/IKinematic.cpp)
+add_executable(NumericKinematic src/kinematic/NumericKinematic.cpp include/masterslave/kinematic/NumericKinematic.h include/masterslave/kinematic/IKinematic.h src/kinematic/IKinematic.cpp include/masterslave/optimization/eiquadprog.hpp)
 add_dependencies(NumericKinematic masterslave_gencfg)
 add_dependencies(NumericKinematic NumericKinematic_gencfg)
 

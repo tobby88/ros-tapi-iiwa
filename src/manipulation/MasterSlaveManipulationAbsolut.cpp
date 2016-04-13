@@ -20,10 +20,10 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
     lastTime = ros::Time::now().toSec();
     Eigen::Affine3d referencePose = Eigen::Affine3d::Identity();
     difference = Eigen::Affine3d::Identity();
-
+    referenceMarkerFound = false;
     for(int i=0; i<referenceMarker->markers.size();i++)
     {
-        referenceMarkerFound = false;
+
         if(referenceMarker->markers[i].id == 4)
         {
             tf::poseMsgToEigen(referenceMarker->markers[i].pose.pose,referencePose);
@@ -31,9 +31,10 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
             break;
         }
     }
+    handMarkerFound = false;
     for(int i=0; i<handMarker->markers.size();i++)
     {
-        handMarkerFound = false;
+
         if(handMarker->markers[i].id == 0)
         {
             handMarkerFound = true;
@@ -53,10 +54,12 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
             break;
         }
     }
+    markerCallbackCalled  = true;
 }
 
 bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulation::Request &req, masterslave::Manipulation::Response &resp)
 {
+    if(!markerCallbackCalled && !handMarkerFound && !referenceMarkerFound) return false;
     //Inkrement, da ceil(frameTime/cycleTime) Zyklen gebraucht werden, um die Interpolation durchzuführen
     slerpParameter += cycleTime/frameTime;
     /*
@@ -75,8 +78,10 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
 
     tf::poseMsgToEigen(req.T_0_EE_old,T_0_EE_old);
     ROS_DEBUG_STREAM(T_0_EE_old.matrix());
+
     T_0_EE_new.translate((T_0_EE_old*difference).translation());
     ROS_DEBUG_STREAM(T_0_EE_new.matrix());
+
     T_0_EE_new.rotate(oldRotation.slerp(slerpParameter,oldRotation*differenceRot));
 
     tf::poseEigenToMsg(T_0_EE_new,resp.T_0_EE_new);

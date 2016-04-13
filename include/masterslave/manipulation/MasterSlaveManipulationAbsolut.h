@@ -152,10 +152,18 @@ private:
 
     /**
      * @var referenceMarkerFound
-     * @brief Wurdne die Referenzmarker gefunden?!
+     * @brief Wurden die Referenzmarker gefunden?!
      * @see masterSlaveCallback
      */
     bool referenceMarkerFound{false};
+
+    /**
+     * @var markerCallbackCalled
+     * @brief Wurde der MarkerCallback bereits einmal ausgelöst?
+     * @see masterSlaveCallback
+     */
+    bool markerCallbackCalled{false};
+
 };
 
 #endif // MASTERSLAVEMANIPULATIONABSOLUT_H

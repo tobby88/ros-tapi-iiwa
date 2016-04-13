@@ -119,11 +119,6 @@ Eigen::VectorXd NumericKinematic::calcDirKin(Eigen::VectorXd jointAngles)
 
 bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
 {
-    /*if(!checkTCP(T_0_EE))
-    {
-        ROS_ERROR("BOUNDARY REACHED!");
-        return false;
-    }*/
     int iterations=0;
     double residual = std::numeric_limits<double>::infinity();
     double residualNorm = std::numeric_limits<double>::infinity();
@@ -163,10 +158,12 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
         Eigen::MatrixXd C_trokar = Eigen::MatrixXd::Zero(2,10);
         Eigen::VectorXd d_trokar = trocarMonitoring(jointAnglesIterationPrevious,deltaQ,C_trokar);
 
-        Eigen::MatrixXd Aeq(C_trokar.cols(),Akin.rows()+C_trokar.rows());
-        Aeq <<trocarGain*C_trokar.transpose(), tcpGain*Akin.transpose();
-        Eigen::VectorXd beq(bkin.rows()+d_trokar.rows());
-        beq << trocarGain*d_trokar, tcpGain*bkin;
+        Eigen::MatrixXd Aeq(C_trokar.cols(),Akin.bottomRows(4).rows()+C_trokar.rows());
+        Aeq <<trocarGain*C_trokar.transpose(), tcpGain*Akin.bottomRows(4).transpose();
+        Eigen::VectorXd beq(bkin.bottomRows(4).rows()+d_trokar.rows());
+        beq << trocarGain*d_trokar, tcpGain*bkin.bottomRows(4);
+
+
 
 
         // Monitoring if angles are in there boundaries
@@ -188,13 +185,13 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
         double d_sing = 0;
         Eigen::VectorXd C_sing = avoidSingularities(singularityAngles,Eigen::VectorXd::Zero(10),5,d_sing);
 
-        Eigen::MatrixXd C(C_acc.rows()+C_vel.rows()+2,Akin.cols());
-        Eigen::VectorXd d(d_acc.rows()+d_vel.rows()+2);
+        Eigen::MatrixXd C(C_acc.rows()+C_vel.rows()+2+2,Akin.cols());
+        Eigen::VectorXd d(d_acc.rows()+d_vel.rows()+2+2);
 
 
 
-        C << cycleTime*accelerationGain*C_acc, cycleTime*velocityGain*C_vel,cycleTime*singularityGain*C_sing.transpose(),cycleTime*angleMonitoringGain*C_ang.transpose();
-        d <<-cycleTime*accelerationGain*d_acc,-cycleTime*velocityGain*d_vel, -cycleTime*singularityGain*d_sing, -cycleTime*angleMonitoringGain*d_ang;
+        C <<cycleTime*Akin.topRows(2), cycleTime*accelerationGain*C_acc, cycleTime*velocityGain*C_vel,cycleTime*singularityGain*C_sing.transpose(),cycleTime*angleMonitoringGain*C_ang.transpose();
+        d <<-cycleTime*bkin.topRows(2), -cycleTime*accelerationGain*d_acc,-cycleTime*velocityGain*d_vel, -cycleTime*singularityGain*d_sing, -cycleTime*angleMonitoringGain*d_ang;
         ROS_DEBUG_STREAM("C: " << C << "\n d: " << d);
 
         // https://forum.kde.org/viewtopic.php?f=74&t=102468 Normal equation form (transcript robotics 2)
@@ -209,7 +206,7 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
         {
             residual = Eigen::solve_quadprog(copyCTC,copyCTD,Eigen::MatrixXd(Aeq),Eigen::VectorXd(beq),Eigen::MatrixXd(Aieq),Eigen::VectorXd(bieq),dQIteration,1);
         }
-        catch(std::exception e)
+        catch(std::exception &e)
         {
             ROS_ERROR_STREAM(e.what());
         }
