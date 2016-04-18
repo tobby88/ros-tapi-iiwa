@@ -303,6 +303,10 @@ private:
 
     boost::mutex stateUpdateMutex_;
 
+    bool commandReceivedFromROS{false};
+
+    boost::mutex commandStringMutex_;
+
 };
 
 #endif // ROSOPENIGTLBRIDGE_H

@@ -125,10 +125,13 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
     double residualOld = std::numeric_limits<double>::infinity();
     Eigen::VectorXd jointAnglesIterationPrevious = Eigen::VectorXd::Zero(10);
 
+    //Wichtungsmatrix zur Minimalisierung der Gelenkwinkelgeschwindigkeiten und -beschleunigungen
     Eigen::VectorXd weightVector(10);
     weightVector << 1,1,1,1,1,1,1,1,1,1;
     Eigen::MatrixXd weightMatrix(10,10);
     weightMatrix = weightVector.asDiagonal();
+
+    // Durch die Optimierung berechnete Gelenkwinkelabweichung
     Eigen::VectorXd dQIteration = Eigen::VectorXd::Zero(10);
 
     Eigen::VectorXd desiredEEPosition = rotation2RPY(T_0_EE);
@@ -137,8 +140,8 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
     Eigen::MatrixXd Aieq = Eigen::MatrixXd::Identity(10,20);
     Aieq.rightCols(10) = -Eigen::MatrixXd::Identity(10,10);
     Eigen::VectorXd bieq = Eigen::VectorXd(20);
-    bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed);
-    bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed);
+    bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed)*10;
+    bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed)*10;
 
     jointAnglesIterationPrevious = jointAnglesAct;
 
@@ -149,36 +152,41 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
         residualOld = residualNorm;
         ROS_DEBUG_STREAM("jointAnglesItPrev: \n" << jointAnglesIterationPrevious);
         Eigen::VectorXd deltaQ = jointAnglesAct-jointAnglesIterationPrevious;
-        //equality constraints
+
+        //Einhaltung der differentiellen Kinematik
         Eigen::MatrixXd Akin = calcAnalyticalJacobian(jointAnglesIterationPrevious);
         Eigen::VectorXd bkin = -calcDirKin(jointAnglesIterationPrevious) - calcAnalyticalJacobian(jointAnglesIterationPrevious)*deltaQ + desiredEEPosition;
 
         // potential for max angles H(0,:) = H; H(1,:)= dH/dq
 
+        //Einhaltung des Trokarpunktes über die differentielle Kinematik
         Eigen::MatrixXd C_trokar = Eigen::MatrixXd::Zero(2,10);
         Eigen::VectorXd d_trokar = trocarMonitoring(jointAnglesIterationPrevious,deltaQ,C_trokar);
 
+
+        /*
+         * Gleichungsnebenbedingungen
+         * Es werden die z-Position und die drei Rotationen am TCP, sowie die X-Y-Position am Trokarpunkt EXAKT eingehalten
+         */
         Eigen::MatrixXd Aeq(C_trokar.cols(),Akin.bottomRows(4).rows()+C_trokar.rows());
         Aeq <<trocarGain*C_trokar.transpose(), tcpGain*Akin.bottomRows(4).transpose();
         Eigen::VectorXd beq(bkin.bottomRows(4).rows()+d_trokar.rows());
         beq << trocarGain*d_trokar, tcpGain*bkin.bottomRows(4);
 
-
-
-
-        // Monitoring if angles are in there boundaries
+        //Überwachung der Gelenkwinkel auf maximal geometrisch mögliche Werte des LBR iiwa R820
         double d_ang = 0;
         Eigen::MatrixXd C_ang = angleMonitoring(deltaQ, jointAnglesIterationPrevious,5,d_ang);
 
+        //Minimalisierung und gewichtete Verteilung der Gelenkwinkelgeschwindigkeiten
         Eigen::MatrixXd C_vel = minimizeVelocities(cycleTime, weightMatrix);
         Eigen::VectorXd d_vel = Eigen::VectorXd::Zero(10);
 
+        //Minimalisierung und gewichtete Verteilung der Gelenkwinkelbeschleunigungen
         Eigen::MatrixXd d_acc = Eigen::VectorXd::Zero(10,1);
-
         Eigen::MatrixXd C_acc = minimizeAcceleration(cycleTime, weightMatrix,deltaQ,d_acc);
         ROS_DEBUG_STREAM("d_acc" << d_acc);
 
-
+        //Vermeidung von Singularitäten
         Eigen::VectorXd singularityAngles = Eigen::VectorXd::Zero(10);
         singularityAngles << jointAnglesIterationPrevious;
 
@@ -189,9 +197,18 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
         Eigen::VectorXd d(d_acc.rows()+d_vel.rows()+2+2);
 
 
-
-        C <<cycleTime*Akin.topRows(2), cycleTime*accelerationGain*C_acc, cycleTime*velocityGain*C_vel,cycleTime*singularityGain*C_sing.transpose(),cycleTime*angleMonitoringGain*C_ang.transpose();
-        d <<-cycleTime*bkin.topRows(2), -cycleTime*accelerationGain*d_acc,-cycleTime*velocityGain*d_vel, -cycleTime*singularityGain*d_sing, -cycleTime*angleMonitoringGain*d_ang;
+        /*
+         *  Optimierungsparameter
+         *  min |C*q + d|
+         *  Hier werden die verschiedenen Potentiale zusammengefasst:
+         * - APPROXIMIERTE (soweit möglich) Einhaltung X und Y am TCP; keine exakte Einhaltung, da die Gleichungsnebenbedingungen sonst linear abhängig sein können/sind
+         * - Gleichmäßige und minimale Beschleunigung im Gelenkraum
+         * - Gleichmäßige und minimale Geschwindigkeit im Gelenkraum
+         * - Vermeidung von Streck- und anderen Singularitäten
+         * - Überwachung der maximalen Gelenkwinkel
+         */
+        C <<cycleTime*tcpGain*Akin.topRows(2), cycleTime*accelerationGain*C_acc, cycleTime*velocityGain*C_vel,cycleTime*singularityGain*C_sing.transpose(),cycleTime*angleMonitoringGain*C_ang.transpose();
+        d <<-cycleTime*tcpGain*bkin.topRows(2), -cycleTime*accelerationGain*d_acc,-cycleTime*velocityGain*d_vel, -cycleTime*singularityGain*d_sing, -cycleTime*angleMonitoringGain*d_ang;
         ROS_DEBUG_STREAM("C: " << C << "\n d: " << d);
 
         // https://forum.kde.org/viewtopic.php?f=74&t=102468 Normal equation form (transcript robotics 2)
@@ -226,6 +243,7 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
     }
     if(residualNorm == std::numeric_limits<double>::infinity())
     {
+        jointAnglesTar = jointAnglesAct;
         return false;
     }
     jointAnglesTar = jointAnglesIterationPrevious;
@@ -391,7 +409,7 @@ Eigen::VectorXd NumericKinematic::trocarMonitoring(Eigen::VectorXd qAct, Eigen::
     Eigen::Affine3d trocar = Eigen::Affine3d::Identity();
     // Vermeidung Rotationsfehler, da sich das Trokar-KS mit dem Schaft mitdreht
     trocar.rotate(T_0_SCH.rotation());
-    ROS_INFO_STREAM(RCM.translation());
+    ROS_DEBUG_STREAM(RCM.translation());
     trocar.translation() = RCM.translation();
 
     Eigen::Affine3d shaft(T_0_SCH);
@@ -406,7 +424,7 @@ Eigen::VectorXd NumericKinematic::trocarMonitoring(Eigen::VectorXd qAct, Eigen::
      * 4. Auf x_Schaft addieren
      */
     double beta = (RCM.translation().z()-shaft.translation().z())/T_0_SCH.matrix()(2,2);
-    ROS_INFO_STREAM("Distance: " << Eigen::Vector3d(beta*T_0_SCH.matrix().col(2).head(3)));
+    ROS_DEBUG_STREAM("Distance: " << Eigen::Vector3d(beta*T_0_SCH.matrix().col(2).head(3)));
     shaft.translation() = shaft.translation() + Eigen::Vector3d(beta*T_0_SCH.matrix().col(2).head(3));
 
 

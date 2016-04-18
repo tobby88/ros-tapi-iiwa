@@ -135,7 +135,21 @@ private:
      * @var lastTime
      * @brief Zeitpunkt des letzten Frames in Sekunden
      */
-    double lastTime;
+    double lastFrameTime;
+
+    /**
+     * @var masterSlaveTime
+     * @brief Zeit zwischen zwei MasterSlaveCallbacks
+     */
+
+    double masterSlaveTime;
+
+    /**
+     * @var lastMasterSlaveTime
+     * @brief Letzter Aufruf des MasterSlaveCallbacks
+     */
+
+    double lastMasterSlaveTime;
 
     /**
      * @var slerpParameter

@@ -42,14 +42,14 @@ class GeometricKinematicCommander : public ICommander
          * @see ICommander
          *
          */
-        void calcQ6();
+        //void calcQ6();
 
         /**
          * @fn commandVelocities
          * @brief Schickt die Gelenkwinkelgeschwindigkeiten an die Nodes der Antriebe des Werkzeuges
          * @see ICommander
          */
-        void commandVelocities();
+        //void commandVelocities();
 
         /**
          * @fn buttonCheck

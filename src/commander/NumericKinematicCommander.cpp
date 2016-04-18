@@ -10,6 +10,7 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
 
     server.setCallback(f);
 
+    RCM = Eigen::Affine3d::Identity();
     motorAngles = Eigen::VectorXd::Zero(2);
     jointAnglesAct = Eigen::VectorXd::Zero(10);
     jointAnglesTar = Eigen::VectorXd::Zero(10);
@@ -49,22 +50,15 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
 
     ros::Rate waiteRate(25);
-    while(ros::ok() && !((callBacksCalled+1) >> 10 ==1) )
-    {
-        ROS_WARN("ROS is waiting for Startposition!");
-        ros::spinOnce();
-        waiteRate.sleep();
-    }
-
     while(ros::ok())
     {
         ros::spinOnce();
         if(state == MOVE_TO_POSE)
         {
-           ROS_INFO("MOVE_TO_POSE");
+           ROS_DEBUG("MOVE_TO_POSE");
            loop();
         }
-        ROS_INFO("NOT_MOVE_TO_POSE");
+        ROS_DEBUG("NOT_MOVE_TO_POSE");
     }
 }
 
@@ -102,20 +96,29 @@ void NumericKinematicCommander::configurationCallback(masterslave::MasterSlaveCo
 {
     state = static_cast<OPENIGTL_STATE>(config.cur_state);
     rosRate = config.rosRate;
+    setTrocar = config.set_Trocar;
     ROS_INFO("STATE CHANGED");
 }
 
 void NumericKinematicCommander::loop()
 {
     ros::spinOnce();
+    if(!((callBacksCalled+1) >> 10 >=1))
+    {
+        return;
+    }
+
     double lastTime = ros::Time::now().toSec();
 
     ROS_INFO_STREAM(jointAnglesAct);
     masterslave::NumericKinematicRCM rcmService;
-    std::vector<double> trocarAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
-    rcmService.request.trocarAngles = trocarAngles;
-    rcmClient.call(rcmService);
-    tf::poseMsgToEigen(rcmService.response.trocar,RCM);
+    if(setTrocar || RCM.isApprox(Eigen::Affine3d::Identity()))
+    {
+        std::vector<double> trocarAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
+        rcmService.request.trocarAngles = trocarAngles;
+        rcmClient.call(rcmService);
+        tf::poseMsgToEigen(rcmService.response.trocar,RCM);
+    }
 
     masterslave::NumericKinematicDirectKinematics directKinematicsService;
     std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
@@ -125,7 +128,7 @@ void NumericKinematicCommander::loop()
     tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);
     jointAnglesTar = jointAnglesAct;
 
-    boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(nh_,TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
+    //boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(nh_,TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
 
     ros::Rate rate(rosRate);
 
@@ -144,7 +147,7 @@ void NumericKinematicCommander::loop()
 
         tcpClient.call(manipulationService);
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
-        if(!TCP.isApprox(TCP_old) && boundingBox->checkBoundingBoxTCP(TCP))
+        if(!TCP.isApprox(TCP_old) /*&& boundingBox->checkBoundingBoxTCP(TCP)*/)
         {
             masterslave::NumericKinematicInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
@@ -153,6 +156,15 @@ void NumericKinematicCommander::loop()
             if(inverseKinematicsClient.call(inverseKinematicsService))
             {
                 jointAnglesTar = Eigen::VectorXd::Map(inverseKinematicsService.response.jointAnglesTarget.data(),inverseKinematicsService.response.jointAnglesTarget.size());
+            }
+            else
+            {
+                masterslave::NumericKinematicDirectKinematics directKinematicsService;
+                std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
+                directKinematicsService.request.jointAngles = jointAnglesActual;
+                directKinematicsClient.call(directKinematicsService);
+                directKinematicsService.request.jointAngles.clear();
+                TCP = TCP_old;
             }
         }
         else
@@ -167,6 +179,12 @@ void NumericKinematicCommander::loop()
         }
 
         commandVelocities();
+        for(int i=0;i<7;i++)
+        {
+            std_msgs::Float64 jointAngleTemp;
+            jointAngleTemp.data = jointAnglesTar(i);
+            lbrJointAnglePub[i].publish(jointAngleTemp);
+        }
         rate.sleep();
     }
 }
@@ -179,17 +197,22 @@ void NumericKinematicCommander::lbrJointAngleCallback(const sensor_msgs::JointSt
 
 }
 
-void NumericKinematicCommander::calcQ6()
+/*void NumericKinematicCommander::calcQ6()
 {
-    jointAnglesAct.tail(3)(2) = (motorAngles(0) + motorAngles(1)) / 2;
-    if(fabs(motorAngles(0) + motorAngles(1))<0)
+    if(motorAngles(0) - motorAngles(1)<0.0 && gripper_close)
+    {
         gripper_stop = true;
+    }
     else
+    {
         gripper_stop = false;
-    // reset the callback counter
+        // reset the callback counter
+    }
     Q6CallbacksCalled = 0;
+    jointAnglesAct.tail(3)(2) = (motorAngles(0) + motorAngles(1)) / 2;
     callBacksCalled += 1 << 9;
-}
+    ROS_WARN_STREAM("gripper_stop: \n" << gripper_stop);
+}*/
 
 void NumericKinematicCommander::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
@@ -213,6 +236,7 @@ void NumericKinematicCommander::Q6nStateCallback(const sensor_msgs::JointStateCo
     if(1 == Q6CallbacksCalled+1 >> 2)
     {
         calcQ6();
+        callBacksCalled += 1 << 9;
     }
 
 }
@@ -226,6 +250,7 @@ void NumericKinematicCommander::Q6pStateCallback(const sensor_msgs::JointStateCo
     if(1 == Q6CallbacksCalled+1 >> 2)
     {
         calcQ6();
+        callBacksCalled += 1 << 9;
     }
 }
 
@@ -277,53 +302,6 @@ void NumericKinematicCommander::getControlDevice()
         buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&NumericKinematicCommander::buttonCallback, this);
         device_sstream.str(std::string());
     }
-}
-
-void NumericKinematicCommander::commandVelocities()
-{
-    double gripperVelocity;
-    std_msgs::Float64 Q4Vel, Q5Vel, Q6nVel, Q6pVel;
-    Q4Vel.data = (jointAnglesTar(7) - jointAnglesAct(7));
-    Q5Vel.data = (jointAnglesTar(8) - jointAnglesAct(8));
-    if(gripper_close && !gripper_open && !gripper_stop)
-    {
-        gripperVelocity = gripperVelocityValue;
-    }
-    else if(gripper_open && !gripper_close && !gripper_stop)
-    {
-        gripperVelocity = -gripperVelocityValue;
-    }
-    else
-    {
-        gripperVelocity = 0;
-    }
-
-    Q6nVel.data = (jointAnglesTar(9)-jointAnglesAct(9));
-    Q6pVel.data = (jointAnglesTar(9)-jointAnglesAct(9));
-    // Stoppen der Greiferbacken, wenn eine der beiden am Anschlag ist, um Greiferöffnungswinkel nicht zu ändern
-    if(motorAngles(1)>=0.95*M_PI && (jointAnglesTar(9)-jointAnglesAct(9))>0)
-    {
-        Q6nVel.data = 0;
-    }
-    if(motorAngles(0)<=-0.95*M_PI && (jointAnglesTar(9)-jointAnglesAct(9))<0)
-    {
-        Q6pVel.data = 0;
-    }
-    Q6nVel.data += gripperVelocity;
-    Q6pVel.data -= gripperVelocity;
-
-    Q4Pub.publish(Q4Vel);
-    Q5Pub.publish(Q5Vel);
-    Q6nPub.publish(Q6nVel);
-    Q6pPub.publish(Q6pVel);
-
-    for(int i=0;i<7;i++)
-    {
-        std_msgs::Float64 jointAngleTemp;
-        jointAngleTemp.data = jointAnglesTar(i);
-        lbrJointAnglePub[i].publish(jointAngleTemp);
-    }
-
 }
 
 int main(int argc, char** argv)

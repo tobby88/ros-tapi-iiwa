@@ -102,13 +102,13 @@ class ICommander
          * @brief Die abstrakte Methode berechnet aus dem Gelenkwinkel Q6 die Gelenkwinkel Q6n und Q6p des Zangengreifers
          *
          */
-        virtual void calcQ6()=0;
+        void calcQ6();
 
         /**
          * @fn commandVelocities
          * @brief Die abstrakte Methode übernimmt die Kommandierung der Gelenkwinkel
          */
-        virtual void commandVelocities()=0;
+        void commandVelocities();
 
         /**
          * @fn loop
@@ -324,6 +324,10 @@ class ICommander
          * @brief Sender zur Bereitstellung der Zykluszeit für verschiedene ROS-Nodes
          */
         ros::Publisher cycleTimePub;
+
+        bool setTrocar{false};
+
+        double CRITICAL_PLIERS_ANGLE{0.95*M_PI};
 
 
 };

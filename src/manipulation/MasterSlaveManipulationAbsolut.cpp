@@ -10,14 +10,17 @@ MasterSlaveManipulationAbsolute::MasterSlaveManipulationAbsolute(ros::NodeHandle
     poseAct = Eigen::Affine3d::Identity();
     poseOld = Eigen::Affine3d::Identity();
     difference = Eigen::Affine3d::Identity();
-    lastTime = ros::Time::now().toSec();
+    //markerCallback
+    lastFrameTime = ros::Time::now().toSec();
+    //masterSlaveCallback
+    lastMasterSlaveTime = ros::Time::now().toSec();
     ros::spin();
 }
 
 void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr &handMarker, const ar_track_alvar_msgs::AlvarMarkersConstPtr &referenceMarker)
 {
-    frameTime = ros::Time::now().toSec() - lastTime;
-    lastTime = ros::Time::now().toSec();
+    frameTime = ros::Time::now().toSec() - lastFrameTime;
+    lastFrameTime = ros::Time::now().toSec();
     Eigen::Affine3d referencePose = Eigen::Affine3d::Identity();
     difference = Eigen::Affine3d::Identity();
     referenceMarkerFound = false;
@@ -40,16 +43,16 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
             handMarkerFound = true;
             poseOld = poseAct;
             tf::poseMsgToEigen(handMarker->markers[i].pose.pose,poseAct);
-            ROS_INFO_STREAM("poseAct: \n" << poseAct.matrix());
+            ROS_DEBUG_STREAM("poseAct: \n" << poseAct.matrix());
             if(initialRun)
             {
                 poseOld = poseAct;
                 initialRun = false;
                 return;
             }
-            ROS_WARN_STREAM("poseOld: \n" << poseOld.matrix());
-            difference.translate((poseOld.inverse()*poseAct).translation()*cycleTime/frameTime);
-            ROS_INFO_STREAM("difference: \n" << difference.translation());
+            ROS_DEBUG_STREAM("poseOld: \n" << poseOld.matrix());
+            difference.translate((poseOld.inverse()*poseAct).translation()*masterSlaveTime/frameTime);
+            ROS_DEBUG_STREAM("difference: \n" << difference.translation());
             slerpParameter = 0;
             break;
         }
@@ -59,9 +62,12 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
 
 bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulation::Request &req, masterslave::Manipulation::Response &resp)
 {
+    masterSlaveTime = ros::Time::now().toSec() - lastMasterSlaveTime;
+    lastMasterSlaveTime = ros::Time::now().toSec();
     if(!markerCallbackCalled && !handMarkerFound && !referenceMarkerFound) return false;
-    //Inkrement, da ceil(frameTime/cycleTime) Zyklen gebraucht werden, um die Interpolation durchzuführen
-    slerpParameter += cycleTime/frameTime;
+    //Inkrement, da ceil(frameTime/masterSlaveTime) Zyklen gebraucht werden, um die Interpolation durchzuführen
+    slerpParameter += masterSlaveTime/frameTime;
+    ROS_DEBUG_STREAM("slerp: \n " << slerpParameter);
     /*
      * slerpParameter hat einen Wertebereich von 0 bis 1
      * für die Rotationsinterpolation

@@ -31,5 +31,5 @@
         <node ns="hand" name="ar_track_alvar" pkg="ar_track_alvar" type="findMarkerBundlesNoKinect" respawn="false" output="screen" args="$(arg marker_size_hand) $(arg max_new_marker_error_hand) $(arg max_track_error_hand) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame) $(arg bundle_files_hand)" />
 	<node ns="reference" name="ar_track_alvar" pkg="ar_track_alvar" type="findMarkerBundlesNoKinect" respawn="false" output="screen" args="$(arg marker_size_reference) $(arg max_new_marker_error_reference) $(arg max_track_error_reference) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame) $(arg bundle_files_reference)" />
 
-	<node pkg="masterslave" name="MasterSlaveManipulationAbsolute" type="MasterSlaveManipulationAbsolute" respawn="false"/>	
+	<node pkg="masterslave" name="MasterSlaveManipulationAbsolute" type="MasterSlaveManipulationAbsolute" respawn="false" output="screen"/>	
 </launch>

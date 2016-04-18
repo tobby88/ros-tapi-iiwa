@@ -11,6 +11,8 @@ GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ro
 
     f = boost::bind(&ICommander::configurationCallback,this,_1,_2);
 
+    RCM = Eigen::Affine3d::Identity();
+
     server.setCallback(f);
 
     getControlDevice();
@@ -19,6 +21,7 @@ GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ro
     Q6nStateSub = nh_.subscribe("/Q6N/joint_states",1,&GeometricKinematicCommander::Q6nStateCallback, this);
     Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&GeometricKinematicCommander::Q6pStateCallback, this);
     lbrPositionSub = nh_.subscribe("/flangeLBR",1,&GeometricKinematicCommander::flangeCallback, this);
+
 
     rcmClient = nh_.serviceClient<masterslave::GeometricKinematicRCM>("/RCM");
     directKinematicsClient = nh_.serviceClient<masterslave::GeometricKinematicDirectKinematics>("/directKinematics");
@@ -30,19 +33,15 @@ GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ro
     Q5Pub = nh_.advertise<std_msgs::Float64>("/Q5/setPointVelocity",1);
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
+
     lbrTargetPositionPub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeTarget",1);
+
     cycleTimePub = nh_.advertise<std_msgs::Float64>("/cycleTime",1);
 
     statemachineIsRunning = true;
     ros::Timer timer = nh_.createTimer(ros::Duration(0.02), &GeometricKinematicCommander::statemachineThread, this);
 
     ros::Rate waiteRate(0.5);
-    while(ros::ok() && !(callBacksCalled+1 >> 4 == 1))
-    {
-        ROS_INFO_STREAM(nh_.getNamespace() <<" is waiting for a start position of the robot");
-        ros::spinOnce();
-        waiteRate.sleep();
-    }
     ROS_INFO_STREAM(nh_.getNamespace() << " has found the start position of the robot!");
     while(ros::ok())
     {
@@ -117,18 +116,28 @@ void GeometricKinematicCommander::getControlDevice()
 void GeometricKinematicCommander::flangeCallback(const geometry_msgs::PoseStampedConstPtr& flangePose)
 {
     tf::poseMsgToEigen(flangePose->pose,startPositionLBR);
-    callBacksCalled += 1 << 3;
-    lbrPositionSub.shutdown();
+    if(state == MOVE_TO_POSE)
+    {
+        callBacksCalled += 1 << 3;
+    }
+    else
+    {
+        callBacksCalled = 0;
+    }
 }
 
 void GeometricKinematicCommander::loop()
 {
+    if(callBacksCalled != 8) return;
     double lastTime = ros::Time::now().toSec();
     masterslave::GeometricKinematicRCM rcmService;
     geometry_msgs::PoseStamped stampedPose;
-    ROS_INFO_STREAM(startPositionLBR.matrix());
-    tf::poseEigenToMsg(startPositionLBR,rcmService.request.T_0_FL);
-    rcmClient.call(rcmService);
+    if(setTrocar || RCM.isApprox(Eigen::Affine3d::Identity()))
+    {
+        ROS_INFO_STREAM(startPositionLBR.matrix());
+        tf::poseEigenToMsg(startPositionLBR,rcmService.request.T_0_FL);
+        rcmClient.call(rcmService);
+    }
 
     masterslave::GeometricKinematicDirectKinematics directKinematicsService;
     std::vector<double> jointAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
@@ -158,7 +167,7 @@ void GeometricKinematicCommander::loop()
         tcpClient.call(manipulationService);
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
 
-        ROS_INFO_STREAM(TCP.matrix());
+        ROS_DEBUG_STREAM(TCP.matrix());
         if(!TCP.isApprox(TCP_old))
         {
             masterslave::GeometricKinematicInverseKinematics inverseKinematicsService;
@@ -166,10 +175,12 @@ void GeometricKinematicCommander::loop()
             inverseKinematicsClient.call(inverseKinematicsService);
             tf::poseMsgToEigen(inverseKinematicsService.response.T_0_FL,T_0_FL);
             stampedPose.pose = inverseKinematicsService.response.T_0_FL;
-            lbrTargetPositionPub.publish(stampedPose);
+
             jointAnglesTar = Eigen::VectorXd::Map(inverseKinematicsService.response.jointAnglesTarget.data(),inverseKinematicsService.response.jointAnglesTarget.size());
-            ROS_INFO_STREAM("jointAnglesTar: \n" << jointAnglesTar);
+            ROS_DEBUG_STREAM("jointAnglesTar: \n" << jointAnglesTar);
+            lbrTargetPositionPub.publish(stampedPose);
         }
+
         commandVelocities();
         rate.sleep();
     }
@@ -179,19 +190,19 @@ void GeometricKinematicCommander::loop()
 void GeometricKinematicCommander::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct(0) = state->position.at(0);
-    callBacksCalled += 1 << 0;
+    //callBacksCalled += 1 << 0;
 }
 
 
 void GeometricKinematicCommander::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct(1) = state->position.at(0);
-    callBacksCalled += 1 << 1;
+    //callBacksCalled += 1 << 1;
 }
 
 void GeometricKinematicCommander::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
-    motorAngles(1) = state->position.at(0);
+    motorAngles(0) = state->position.at(0);
     // set  signal that callback Q6n was called
     Q6CallbacksCalled += 1 << 1;
     // check if both Q6 callbacks were called
@@ -203,7 +214,7 @@ void GeometricKinematicCommander::Q6nStateCallback(const sensor_msgs::JointState
 
 void GeometricKinematicCommander::Q6pStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
-    motorAngles(0)= state->position.at(0);
+    motorAngles(1)= state->position.at(0);
     // set  signal that callback Q6n was called
     Q6CallbacksCalled += 1;
     // check if both Q6 callbacks were called
@@ -240,57 +251,8 @@ void GeometricKinematicCommander::velocityCallback(const geometry_msgs::TwistSta
     velocity_ = *velocity;
 }
 
-void GeometricKinematicCommander::calcQ6()
-{
-    jointAnglesAct(2) = (motorAngles(0) + motorAngles(1)) / 2;
-    if(fabs(motorAngles(0) + motorAngles(1))<0)
-        gripper_stop = true;
-    else
-        gripper_stop = false;
-    // reset the callback counter
-    Q6CallbacksCalled = 0;
-    callBacksCalled += 1 << 2;
-}
 
-void GeometricKinematicCommander::commandVelocities()
-{
-    double gripperVelocity;
-    std_msgs::Float64 Q4Vel, Q5Vel, Q6nVel, Q6pVel;
-    Q4Vel.data = (jointAnglesTar(0) - jointAnglesAct(0));
-    Q5Vel.data = (jointAnglesTar(1) - jointAnglesAct(1));
-    if(gripper_close && !gripper_open && !gripper_stop)
-    {
-        gripperVelocity = gripperVelocityValue;
-    }
-    else if(gripper_open && !gripper_close && !gripper_stop)
-    {
-        gripperVelocity = -gripperVelocityValue;
-    }
-    else
-    {
-        gripperVelocity = 0;
-    }
 
-    Q6nVel.data = (jointAnglesTar(2)-jointAnglesAct(2));
-    Q6pVel.data = (jointAnglesTar(2)-jointAnglesAct(2));
-    // Stoppen der Greiferbacken, wenn eine der beiden am Anschlag ist, um Greiferöffnungswinkel nicht zu ändern
-    if(motorAngles(1)>=0.95*M_PI && (jointAnglesTar(2)-jointAnglesAct(2))>0)
-    {
-        Q6nVel.data = 0;
-    }
-    if(motorAngles(0)<=-0.95*M_PI && (jointAnglesTar(2)-jointAnglesAct(2))<0)
-    {
-        Q6pVel.data = 0;
-    }
-
-    Q6nVel.data += gripperVelocity/cycleTime;
-    Q6pVel.data -= gripperVelocity/cycleTime;
-
-    Q4Pub.publish(Q4Vel);
-    Q5Pub.publish(Q5Vel);
-    Q6nPub.publish(Q6nVel);
-    Q6pPub.publish(Q6pVel);
-}
 
 int main(int argc, char** argv)
 {

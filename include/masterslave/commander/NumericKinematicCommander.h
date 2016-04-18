@@ -72,14 +72,14 @@ class NumericKinematicCommander: public ICommander
          * @brief Berechnet aus dem Gelenkwinkel Q6 die Gelenkwinkel Q6n und Q6p des Zangengreifers
          * @see ICommander
          */
-        void calcQ6();
+        //void calcQ6();
 
         /**
          * @fn commandVelocities
          * @brief Schickt die Gelenkwinkelgeschwindigkeiten an die Nodes der Antriebe des Werkzeuges
          * @see ICommander
          */
-        void commandVelocities();
+        //void commandVelocities();
 
         /**
          * @var lbrJointAnglePub
