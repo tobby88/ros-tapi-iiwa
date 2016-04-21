@@ -2,8 +2,8 @@
 <launch>
 	<arg name="TestDevice" value="Spacenav"/>
 	<include file="$(find masterslave)/launch/MarkerTrackingManipulation.launch" />
-	<node pkg="masterslave" type="NumericKinematic" name="NumericKinematic" output="log"/>
-	<node pkg="masterslave" type="NumericKinematicCommander" name="NumericKinematicCommander" args="$(arg TestDevice)" output="log"/>
+	<node pkg="masterslave" type="GeometricKinematic" name="NumericKinematic" output="log"/>
+	<node pkg="masterslave" type="GeometricKinematicCommander" name="NumericKinematicCommander" args="$(arg TestDevice)" output="log"/>
 	<remap from="vrep/flangeLBR" to="/flangeLBR"/>
 	<remap from="/flangeTarget" to="/vrep/flangeTarget"/> 
 

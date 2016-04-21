@@ -19,9 +19,6 @@ CircleTrajectory::CircleTrajectory(Eigen::Affine3d startPoint, Eigen::Vector3d R
 
 Eigen::Affine3d CircleTrajectory::calculateNextPoint()
 {
-    ROS_INFO_STREAM("startPosition: " << startPosition_.translation());
-    ROS_INFO_STREAM("startTrajectory: " << startPositionTrajectory_.translation());
-    ROS_INFO_STREAM("circleCentr: " << circleCenter.translation());
     // Start movement to the start position from the current position
     if(pathParameterStart_<=1)
     {

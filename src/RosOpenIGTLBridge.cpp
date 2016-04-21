@@ -33,7 +33,7 @@ RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
     boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkTransformThread,this));
     boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkThread,this));
 
-    ros::Timer timer = nh_.createTimer(ros::Duration(0.02), &RosOpenIgtlBridge::loop, this);
+    ros::Timer timer = nh_.createTimer(ros::Duration(0.001), &RosOpenIgtlBridge::loop, this);
     ros::spin();
 }
 
@@ -115,8 +115,8 @@ void RosOpenIgtlBridge::openIGTLinkThread()
 
     ROS_DEBUG_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
 
-    ROS_INFO_STREAM(this->sendCommand(commandSocket_,"Idle;"));
-    ros::Rate rate(20);
+    this->sendCommand(commandSocket_,"Idle;");
+    ros::Rate rate(50);
     while(rCommand!=-1 && ros::ok())
     {
         if(sendTransformFlag)
@@ -197,7 +197,7 @@ int RosOpenIgtlBridge::receiveTransform(igtl::ClientSocket::Pointer &socket, igt
     }
     if(strcmp(transformMsg->GetDeviceName(),"T_EE")==0)
     {
-        ROS_DEBUG("T_EE empfangen");
+        //ROS_DEBUG("T_EE empfangen");
 
         transformMsg->GetMatrix(T_FL);
         transformUpdateMutex_.lock();
@@ -223,7 +223,7 @@ int RosOpenIgtlBridge::sendCommand(igtl::ClientSocket::Pointer &socket, std::str
     transformStream.str(std::string());
     transformStringMsg->SetString(command);
     transformStringMsg->Pack();
-    ROS_WARN_STREAM("Send: \n" << command);
+    ROS_INFO_STREAM("Send: \n" << command);
 
     return socket->Send(transformStringMsg->GetPackPointer(),transformStringMsg->GetPackSize());
 }
@@ -316,7 +316,7 @@ bool RosOpenIgtlBridge::stateService(masterslave::OpenIGTLStateService::Request 
     commandStringMutex_.lock();
         openIGTLCommandString = sstream.str();
    commandStringMutex_.unlock();
-    ROS_WARN_STREAM("Commandstring: " << openIGTLCommandString);
+    //ROS_WARN_STREAM("Commandstring: " << openIGTLCommandString);
     transformReceived_ = true;
     sstream.str(std::string());
     stateServiceCalled_ = true;

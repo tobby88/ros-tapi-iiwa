@@ -169,9 +169,9 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
          * Es werden die z-Position und die drei Rotationen am TCP, sowie die X-Y-Position am Trokarpunkt EXAKT eingehalten
          */
         Eigen::MatrixXd Aeq(C_trokar.cols(),Akin.bottomRows(4).rows()+C_trokar.rows());
-        Aeq <<trocarGain*C_trokar.transpose(), tcpGain*Akin.bottomRows(4).transpose();
+        Aeq <<trocarGain*cycleTime*C_trokar.transpose(), tcpGain*cycleTime*Akin.bottomRows(4).transpose();
         Eigen::VectorXd beq(bkin.bottomRows(4).rows()+d_trokar.rows());
-        beq << trocarGain*d_trokar, tcpGain*bkin.bottomRows(4);
+        beq << trocarGain*cycleTime*d_trokar, tcpGain*cycleTime*bkin.bottomRows(4);
 
         //Überwachung der Gelenkwinkel auf maximal geometrisch mögliche Werte des LBR iiwa R820
         double d_ang = 0;
@@ -207,8 +207,8 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
          * - Vermeidung von Streck- und anderen Singularitäten
          * - Überwachung der maximalen Gelenkwinkel
          */
-        C <<cycleTime*tcpGain*Akin.topRows(2), cycleTime*accelerationGain*C_acc, cycleTime*velocityGain*C_vel,cycleTime*singularityGain*C_sing.transpose(),cycleTime*angleMonitoringGain*C_ang.transpose();
-        d <<-cycleTime*tcpGain*bkin.topRows(2), -cycleTime*accelerationGain*d_acc,-cycleTime*velocityGain*d_vel, -cycleTime*singularityGain*d_sing, -cycleTime*angleMonitoringGain*d_ang;
+        C <<tcpGain*cycleTime*cycleTime*Akin.topRows(2), cycleTime*cycleTime*accelerationGain*C_acc, cycleTime*cycleTime*velocityGain*C_vel,cycleTime*cycleTime*singularityGain*C_sing.transpose(),cycleTime*cycleTime*angleMonitoringGain*C_ang.transpose();
+        d <<-tcpGain*cycleTime*cycleTime*bkin.topRows(2), -cycleTime*cycleTime*accelerationGain*d_acc,-cycleTime*cycleTime*velocityGain*d_vel, -cycleTime*cycleTime*singularityGain*d_sing, -cycleTime*cycleTime*angleMonitoringGain*d_ang;
         ROS_DEBUG_STREAM("C: " << C << "\n d: " << d);
 
         // https://forum.kde.org/viewtopic.php?f=74&t=102468 Normal equation form (transcript robotics 2)
@@ -228,7 +228,8 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
             ROS_ERROR_STREAM(e.what());
         }
 
-        ROS_WARN_STREAM("deltaQ: \n" << dQIteration);
+        ROS_INFO_STREAM("deltaQ: \n" << dQIteration);
+        ROS_DEBUG_STREAM("Residual: \n" << residual);
         residualNorm = std::abs(residual);
         for(int i=0;i<dQIteration.rows();i++)
         {
@@ -249,7 +250,7 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
     jointAnglesTar = jointAnglesIterationPrevious;
     jointAnglesAct = jointAnglesTar;
     return true;
-   // ROS_INFO_STREAM("jointAnglesTar: \n" << jointAnglesTar);
+    ROS_DEBUG_STREAM("JointAngles: \n" << jointAnglesTar);
 }
 
 Eigen::MatrixXd NumericKinematic::calcAnalyticalJacobian(Eigen::VectorXd jointAngles)

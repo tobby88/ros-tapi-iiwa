@@ -125,6 +125,9 @@ private:
      * @brief Initialer Durchlauf (ja oder nein)
      */
     bool initialRun{true};
+
+    bool initialRunMasterSlave{true};
+
     /**
      * @var frameTime
      * @brief Zeit zwischen zwei Frames der Kamera
@@ -177,6 +180,10 @@ private:
      * @see masterSlaveCallback
      */
     bool markerCallbackCalled{false};
+
+    Eigen::Quaterniond initialRotationMarker;
+
+    Eigen::Quaterniond initialRotationRobot;
 
 };
 

@@ -6,7 +6,7 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     dynamic_reconfigure::Server<masterslave::MasterSlaveConfig> server(drNH);
     dynamic_reconfigure::Server<masterslave::MasterSlaveConfig>::CallbackType f;
 
-    f = boost::bind(&NumericKinematicCommander::configurationCallback,this,_1,_2);
+    f = boost::bind(&ICommander::configurationCallback,this,_1,_2);
 
     server.setCallback(f);
 
@@ -14,8 +14,6 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     motorAngles = Eigen::VectorXd::Zero(2);
     jointAnglesAct = Eigen::VectorXd::Zero(10);
     jointAnglesTar = Eigen::VectorXd::Zero(10);
-
-    heightSafety = 0.05;
 
     cycleTimePub = nh_.advertise<std_msgs::Float64>("/cycleTime",1);
     getControlDevice();
@@ -30,8 +28,11 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     tcpClient = nh_.serviceClient<masterslave::Manipulation>("/Manipulation");
     stateService = nh_.serviceClient<masterslave::OpenIGTLStateService>("/openIGTLState");
 
+
+    // Zyklischer Aufruf um den Stateservice regelmäßig neuzusetzen bzw. abzusenden
     ros::Timer timer = nh_.createTimer(ros::Duration(0.02), &NumericKinematicCommander::statemachineThread, this);
 
+    // Verbinden der einzelnen Gelenkpublisher und -subscriber
     for(int i=0; i < 7; i++)
     {
        std::stringstream sstream;
@@ -40,6 +41,7 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
        sstream.str(std::string());
 
        sstream << "/LBR/act/joint" << i+1;
+       //Mit boost wird dem Callback die Nummer des Gelenks für den Callback mitgegeben. Damit man einfach erkennen kann, welches Gelenk den Callback auslöst
        lbrJointAngleSub[i] = nh_.subscribe<sensor_msgs::JointState>(sstream.str().c_str(),1,boost::bind(&NumericKinematicCommander::lbrJointAngleCallback,this,_1,i));
        sstream.str(std::string());
     }
@@ -48,6 +50,8 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     Q5Pub = nh_.advertise<std_msgs::Float64>("/Q5/setPointVelocity",1);
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
+
+    setZero();
 
     ros::Rate waiteRate(25);
     while(ros::ok())
@@ -91,15 +95,6 @@ void NumericKinematicCommander::statemachineThread(const ros::TimerEvent& event)
     }
 }
 
-
-void NumericKinematicCommander::configurationCallback(masterslave::MasterSlaveConfig &config, uint32_t level)
-{
-    state = static_cast<OPENIGTL_STATE>(config.cur_state);
-    rosRate = config.rosRate;
-    setTrocar = config.set_Trocar;
-    ROS_INFO("STATE CHANGED");
-}
-
 void NumericKinematicCommander::loop()
 {
     ros::spinOnce();
@@ -112,6 +107,7 @@ void NumericKinematicCommander::loop()
 
     ROS_INFO_STREAM(jointAnglesAct);
     masterslave::NumericKinematicRCM rcmService;
+    //Testen, ob der Trokar schon gesetzt ist oder ob sich das System im Trokarsetzmodus befindet
     if(setTrocar || RCM.isApprox(Eigen::Affine3d::Identity()))
     {
         std::vector<double> trocarAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
@@ -128,9 +124,9 @@ void NumericKinematicCommander::loop()
     tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);
     jointAnglesTar = jointAnglesAct;
 
-    //boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(nh_,TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
+    //BoundingBox zur Arbeitsraumbegrenzung
 
-    ros::Rate rate(rosRate);
+    //boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(nh_,TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
 
     while(ros::ok() && state == MOVE_TO_POSE)
     {
@@ -152,32 +148,37 @@ void NumericKinematicCommander::loop()
             masterslave::NumericKinematicInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
             ROS_DEBUG_STREAM(inverseKinematicsService.request.T_0_EE.position);
-
+            /* Check, ob der Servicecall funktioniert hat
+             * RECOVERY_MOVEMENT: Wenn nicht wird der TCP über die aktuellen Gelenkwinkel neu gesetzt
+             */
             if(inverseKinematicsClient.call(inverseKinematicsService))
             {
                 jointAnglesTar = Eigen::VectorXd::Map(inverseKinematicsService.response.jointAnglesTarget.data(),inverseKinematicsService.response.jointAnglesTarget.size());
             }
             else
             {
-                masterslave::NumericKinematicDirectKinematics directKinematicsService;
+                /*masterslave::NumericKinematicDirectKinematics directKinematicsService;
                 std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
                 directKinematicsService.request.jointAngles = jointAnglesActual;
                 directKinematicsClient.call(directKinematicsService);
-                directKinematicsService.request.jointAngles.clear();
+                directKinematicsService.request.jointAngles.clear();*/
                 TCP = TCP_old;
             }
         }
         else
         {       
-            masterslave::NumericKinematicDirectKinematics directKinematicsService;
+           //RESCUE MOVEMENT für den ARSCH!!
+
+
+           /* masterslave::NumericKinematicDirectKinematics directKinematicsService;
             std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
             directKinematicsService.request.jointAngles = jointAnglesActual;
             directKinematicsClient.call(directKinematicsService);
             directKinematicsService.request.jointAngles.clear();
-            tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);
+            tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);*/
 
         }
-
+        // ist in ICommander implementiert
         commandVelocities();
         for(int i=0;i<7;i++)
         {
@@ -185,38 +186,21 @@ void NumericKinematicCommander::loop()
             jointAngleTemp.data = jointAnglesTar(i);
             lbrJointAnglePub[i].publish(jointAngleTemp);
         }
-        rate.sleep();
     }
 }
 
 void NumericKinematicCommander::lbrJointAngleCallback(const sensor_msgs::JointStateConstPtr &state, int number)
 {
     jointAnglesAct(number) = state->position[0];
-    //check if all LBR callbacks are called once
+    // Bitweises überprüfen, ob alle Callbacks ausgeführt wurden
     callBacksCalled += 1 << number;
 
 }
 
-/*void NumericKinematicCommander::calcQ6()
-{
-    if(motorAngles(0) - motorAngles(1)<0.0 && gripper_close)
-    {
-        gripper_stop = true;
-    }
-    else
-    {
-        gripper_stop = false;
-        // reset the callback counter
-    }
-    Q6CallbacksCalled = 0;
-    jointAnglesAct.tail(3)(2) = (motorAngles(0) + motorAngles(1)) / 2;
-    callBacksCalled += 1 << 9;
-    ROS_WARN_STREAM("gripper_stop: \n" << gripper_stop);
-}*/
-
 void NumericKinematicCommander::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(0) = state->position.at(0);
+    // Bitweises überprüfen, ob alle Callbacks ausgeführt wurden
     callBacksCalled += 1 << 7;
 }
 
@@ -224,13 +208,14 @@ void NumericKinematicCommander::Q4StateCallback(const sensor_msgs::JointStateCon
 void NumericKinematicCommander::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct.tail(3)(1) = state->position.at(0);
+    // Bitweises überprüfen, ob alle Callbacks ausgeführt wurden
     callBacksCalled += 1 << 8;
 }
 
 void NumericKinematicCommander::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     motorAngles(0)= state->position.at(0);
-    // set  signal that callback Q6n was called
+    // Bitweises überprüfen, ob alle Callbacks für Q6 ausgeführt wurden
     Q6CallbacksCalled += 1;
     // check if both Q6 callbacks were called
     if(1 == Q6CallbacksCalled+1 >> 2)

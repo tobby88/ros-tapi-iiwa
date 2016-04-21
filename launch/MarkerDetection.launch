@@ -1,7 +1,8 @@
 <launch>
-	<node ns="camera" pkg="libuvc_camera" type="camera_node" name="camera" output="screen">
+	<node pkg="usb_cam" type="usb_cam_node" name="camera" output="screen">
 		<param name="camera_frame_id" type="string" value="/camera" />
 		<param name="framerate" value="60" />
+		<param name="brightness" value="20" />
 	</node>
 	<node ns="camera" pkg="image_proc" type="image_proc" name="image_proc_node" output="screen"/>
 	

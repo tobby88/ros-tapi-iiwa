@@ -63,6 +63,13 @@ class ICommander
 
     protected:
         /**
+         * @fn setZero
+         * @brief Stellt die Gelenkwinkelstellung des Werkzeuges auf 0
+         */
+
+        void setZero();
+
+        /**
          * @fn statemachineThread
          * @brief abstrakte Methode um den Zustand des OpenIGTLinkInterfaces wechseln
          */
@@ -261,7 +268,18 @@ class ICommander
          */
         bool gripper_close;
 
-        double cycleTime;
+        /**
+         * @var cycleTime
+         * @brief Zykluszeit
+         */
+        double cycleTime{1};
+
+        /**
+         * @var cycleTimeScaleFactor
+         * @brief Faktor für die Gelenkwinkelansteuerung des Tools. Wenn es in der Realität verwendet wird, muss cycleTimeScaleFactor = cycleTime gelten. Ansonsten gilt cycleTimeScaleFactor = 1
+         * @see configurationCallback
+         */
+        double cycleTimeScaleFactor{1};
 
         /**
          * @var gripperVelocityValue

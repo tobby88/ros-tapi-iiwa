@@ -43,6 +43,7 @@ GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ro
 
     ros::Rate waiteRate(0.5);
     ROS_INFO_STREAM(nh_.getNamespace() << " has found the start position of the robot!");
+    setZero();
     while(ros::ok())
     {
         ros::spinOnce();
@@ -108,6 +109,7 @@ void GeometricKinematicCommander::getControlDevice()
     for(XmlRpc::XmlRpcValue::iterator it = deviceList.begin(); it!=deviceList.end();it++)
     {
         device_sstream << it->first << "/Buttons";
+        // Keine Möglichkeit das in ICommander zu schieben, da hier ein Callback definiert wird
         buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&GeometricKinematicCommander::buttonCallback, this);
         device_sstream.str(std::string());
     }
@@ -132,6 +134,8 @@ void GeometricKinematicCommander::loop()
     double lastTime = ros::Time::now().toSec();
     masterslave::GeometricKinematicRCM rcmService;
     geometry_msgs::PoseStamped stampedPose;
+    
+    //Testen, ob der Trokar schon gesetzt ist oder ob sich das System im Trokarsetzmodus befindet
     if(setTrocar || RCM.isApprox(Eigen::Affine3d::Identity()))
     {
         ROS_INFO_STREAM(startPositionLBR.matrix());
@@ -168,14 +172,16 @@ void GeometricKinematicCommander::loop()
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
 
         ROS_DEBUG_STREAM(TCP.matrix());
+        //Nur Änderung der Gelenkwinkel, wenn sich der TCP geändert hat
         if(!TCP.isApprox(TCP_old))
         {
+            // Inverser Kinematik-Service call
             masterslave::GeometricKinematicInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP, inverseKinematicsService.request.T_0_EE);
             inverseKinematicsClient.call(inverseKinematicsService);
             tf::poseMsgToEigen(inverseKinematicsService.response.T_0_FL,T_0_FL);
             stampedPose.pose = inverseKinematicsService.response.T_0_FL;
-
+            //Einlesen der Gelenkwinkel von std::vector auf Eigen::VectorXd
             jointAnglesTar = Eigen::VectorXd::Map(inverseKinematicsService.response.jointAnglesTarget.data(),inverseKinematicsService.response.jointAnglesTarget.size());
             ROS_DEBUG_STREAM("jointAnglesTar: \n" << jointAnglesTar);
             lbrTargetPositionPub.publish(stampedPose);

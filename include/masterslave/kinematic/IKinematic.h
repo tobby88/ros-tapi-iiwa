@@ -6,6 +6,7 @@
 #include "masterslave/DescriptionParameters.h"
 
 #include <dynamic_reconfigure/server.h>
+#include <boost/log/sources/logger.hpp>
 
 
 /**

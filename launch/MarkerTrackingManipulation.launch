@@ -5,8 +5,8 @@
 		<param name="image_width" value="1280" />
 		<param name="camera_frame_id" type="string" value="/camera" />
 		<param name="framerate" value="60" />
-		
-		<param name="fous" value="51" />
+		<param name="brightness" value="33" />
+		<param name="focus" value="10" />
 		<param name="sharpness" value="64"/>
 	</node>
 	<node ns="camera" pkg="image_proc" type="image_proc" name="image_proc_node" output="screen"/>
@@ -20,7 +20,7 @@
         <arg name="max_track_error_reference" default="0.2" />
 
 
-        <arg name="cam_image_topic" default="/camera/image_color" />
+        <arg name="cam_image_topic" default="/camera/image_mono" />
         <arg name="cam_info_topic" default="/camera/camera_info" />   
         <arg name="output_frame" default="/camera" />
 	<arg name="med_filt_size" default="10" />
