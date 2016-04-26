@@ -5,11 +5,16 @@ PTPTrajectory::PTPTrajectory(Eigen::Affine3d startPoint, Eigen::Vector3d RCM, Ei
     cycleTime_ = cycleTime;
 
     startPositionTrajectory_ = Eigen::Affine3d::Identity();
-    startPositionTrajectory_.translate(RCM);
-    startPositionTrajectory_.translate(firstPoint);
+    startPositionTrajectory_.rotate(startPoint.rotation());
+    startPositionTrajectory_.pretranslate(RCM);
+    startPositionTrajectory_.pretranslate(firstPoint);
+
+
     endPositionTrajectory_ = Eigen::Affine3d::Identity();
-    endPositionTrajectory_.translate(RCM);
-    endPositionTrajectory_.translate(secondPoint);
+    endPositionTrajectory_.rotate(startPoint.rotation());
+    endPositionTrajectory_.pretranslate(RCM);
+    endPositionTrajectory_.pretranslate(secondPoint);
+
 
     speed_ = speed;
     currentPosition = startPoint;

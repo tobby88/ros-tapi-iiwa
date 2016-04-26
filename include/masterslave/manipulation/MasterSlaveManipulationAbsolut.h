@@ -185,6 +185,12 @@ private:
 
     Eigen::Quaterniond initialRotationRobot;
 
+    Eigen::Quaterniond oldRotation;
+
+    Eigen::Vector3d initialPoseRobot;
+
+
+
 };
 
 #endif // MASTERSLAVEMANIPULATIONABSOLUT_H

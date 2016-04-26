@@ -51,7 +51,7 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
 
-    setZero();
+    //setZero();
 
     ros::Rate waiteRate(25);
     while(ros::ok())
@@ -168,15 +168,6 @@ void NumericKinematicCommander::loop()
         else
         {       
            //RESCUE MOVEMENT für den ARSCH!!
-
-
-           /* masterslave::NumericKinematicDirectKinematics directKinematicsService;
-            std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
-            directKinematicsService.request.jointAngles = jointAnglesActual;
-            directKinematicsClient.call(directKinematicsService);
-            directKinematicsService.request.jointAngles.clear();
-            tf::poseMsgToEigen(directKinematicsService.response.T_0_EE,TCP);*/
-
         }
         // ist in ICommander implementiert
         commandVelocities();

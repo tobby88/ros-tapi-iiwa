@@ -83,10 +83,10 @@ void ICommander::commandVelocities()
     {
         Q6nVel.data = 0;
     }
-    Q6nVel.data -= gripperVelocity;
-    Q6pVel.data += gripperVelocity;
+    //Q6nVel.data -= gripperVelocity;
+    //Q6pVel.data += gripperVelocity;
 
-    //ROS_INFO_STREAM(Q6pVel.data);
+    //ROS_INFO_STREAM("Q6p" <<Q6pVel.data);
 
     Q4Pub.publish(Q4Vel);
     Q5Pub.publish(Q5Vel);

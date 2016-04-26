@@ -16,8 +16,8 @@
 	<arg name="max_new_marker_error_hand" default="0.04" />
         <arg name="max_track_error_hand" default="0.1" />
 
-        <arg name="max_new_marker_error_reference" default="0.08" />
-        <arg name="max_track_error_reference" default="0.2" />
+        <arg name="max_new_marker_error_reference" default="0.02" />
+        <arg name="max_track_error_reference" default="0.05" />
 
 
         <arg name="cam_image_topic" default="/camera/image_mono" />
@@ -32,4 +32,6 @@
 	<node ns="reference" name="ar_track_alvar" pkg="ar_track_alvar" type="findMarkerBundlesNoKinect" respawn="false" output="screen" args="$(arg marker_size_reference) $(arg max_new_marker_error_reference) $(arg max_track_error_reference) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame) $(arg bundle_files_reference)" />
 
 	<node pkg="masterslave" name="MasterSlaveManipulationAbsolute" type="MasterSlaveManipulationAbsolute" respawn="false" output="screen"/>	
+	
+	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find masterslave)/rviz/UrsulaRviz.rviz" />
 </launch>

@@ -37,11 +37,9 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
     handMarkerFound = false;
     for(int i=0; i<handMarker->markers.size();i++)
     {
-        ROS_INFO_STREAM(handMarker->markers[i].id);
         if(handMarker->markers[i].id == 0)
         {
             handMarkerFound = true;
-            poseOld = poseAct;
             tf::poseMsgToEigen(handMarker->markers[i].pose.pose,poseAct);
             ROS_DEBUG_STREAM("poseAct: \n" << poseAct.matrix());
             if(initialRun)
@@ -52,7 +50,11 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
                 return;
             }
             ROS_DEBUG_STREAM("poseOld: \n" << poseOld.matrix());
-            difference.translate(referencePose.inverse().rotation()*(poseOld.inverse()*poseAct).translation()*masterSlaveTime/frameTime);
+            if((referencePose.inverse()*poseAct.translation()-referencePose.inverse()*poseOld.translation()).norm() >= 3e-03)
+            {
+                difference.translate((referencePose.inverse()*poseAct.translation()-referencePose.inverse()*poseOld.translation()));
+            }
+
             ROS_DEBUG_STREAM("difference: \n" << difference.translation());
             slerpParameter = 0;
             break;
@@ -61,7 +63,7 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
     if(!handMarkerFound && handMarker->markers.size()==0)
     {
         ROS_INFO("Marker unsichtbar!");
-        poseAct = poseOld;
+        //poseAct = poseOld;
     }
     markerCallbackCalled  = true;
 }
@@ -70,14 +72,17 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
 {
 
     Eigen::Affine3d T_0_EE_old = Eigen::Affine3d::Identity();
-    Eigen::Affine3d T_0_EE_new = Eigen::Affine3d::Identity();
+
     tf::poseMsgToEigen(req.T_0_EE_old,T_0_EE_old);
     if(initialRunMasterSlave)
     {
+        initialPoseRobot = T_0_EE_old.translation();
         initialRotationRobot = Eigen::Quaterniond(T_0_EE_old.rotation());
         initialRunMasterSlave = false;
 
     }
+    oldRotation = Eigen::Quaterniond(T_0_EE_old.rotation());
+    Eigen::Affine3d T_0_EE_new = Eigen::Affine3d::Identity();
     masterSlaveTime = ros::Time::now().toSec() - lastMasterSlaveTime;
     lastMasterSlaveTime = ros::Time::now().toSec();
     if(!markerCallbackCalled || !handMarkerFound || !referenceMarkerFound)
@@ -88,7 +93,6 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
 
     //Inkrement, da ceil(frameTime/masterSlaveTime) Zyklen gebraucht werden, um die Interpolation durchzuführen
     slerpParameter += masterSlaveTime/frameTime;
-    ROS_DEBUG_STREAM("slerp: \n " << slerpParameter);
 
     /*
      * slerpParameter hat einen Wertebereich von 0 bis 1
@@ -99,20 +103,21 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
 
 
     Eigen::Quaterniond differenceRot = Eigen::Quaterniond(poseAct.rotation());
-    ROS_INFO_STREAM("rotation Difference: \n" << differenceRot.toRotationMatrix());
+    ROS_DEBUG_STREAM("rotation Difference: \n" << differenceRot.toRotationMatrix());
 
 
-    ROS_INFO_STREAM(T_0_EE_old.matrix());
+    //<ROS_INFO_STREAM(T_0_EE_old.matrix());
 
-    T_0_EE_new.translate(T_0_EE_old.translation()+difference.translation());
-    ROS_DEBUG_STREAM(T_0_EE_new.matrix());
+    T_0_EE_new.translate(T_0_EE_old.translation());
+    T_0_EE_new.translate((initialPoseRobot+difference.translation()-T_0_EE_old.translation())*masterSlaveTime/frameTime);
+
 
     //T_0_EE_new.rotate(oldRotation.slerp(slerpParameter,oldRotation*differenceRot));
-    Eigen::Quaterniond newRotation = initialRotationRobot.slerp(slerpParameter,initialRotationRobot*initialRotationMarker.inverse()*differenceRot);
-    T_0_EE_new.rotate(newRotation);
 
+    Eigen::Quaterniond newRotation = initialRotationRobot*initialRotationMarker.inverse()*differenceRot;
+    T_0_EE_new.rotate(oldRotation.slerp(slerpParameter,newRotation));
 
-    ROS_INFO_STREAM("Rotation T_0_EE_new: \n" << T_0_EE_new.rotation());
+    ROS_DEBUG_STREAM("Rotation T_0_EE_new: \n" << T_0_EE_new.rotation());
     tf::poseEigenToMsg(T_0_EE_new,resp.T_0_EE_new);
     ROS_DEBUG_STREAM(difference.matrix());
     return true;

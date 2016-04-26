@@ -10,6 +10,12 @@
 
 RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
 {
+
+    dynamic_reconfigure::Server<masterslave::RosOpenIGTLBridgeConfig> server;
+    dynamic_reconfigure::Server<masterslave::RosOpenIGTLBridgeConfig>::CallbackType f;
+    f = boost::bind(&RosOpenIgtlBridge::configurationIGTLCallback,this ,_1,_2);
+    server.setCallback(f);
+
     jointAngles = Eigen::VectorXd::Zero(7);
     jointAngles_new = Eigen::VectorXd::Zero(7);
     flangeTargetSub = nh_.subscribe("/flangeTarget",1,&RosOpenIgtlBridge::transformCallback,this);
@@ -29,9 +35,7 @@ RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
     }
     stateServiceServer = nh_.advertiseService("/openIGTLState",&RosOpenIgtlBridge::stateService,this);
 
-    //Insgesamt 3 Threads um ROS von OpenIGTL zu entkoppeln
-    boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkTransformThread,this));
-    boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkThread,this));
+
 
     ros::Timer timer = nh_.createTimer(ros::Duration(0.001), &RosOpenIgtlBridge::loop, this);
     ros::spin();
@@ -116,7 +120,7 @@ void RosOpenIgtlBridge::openIGTLinkThread()
     ROS_DEBUG_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
 
     this->sendCommand(commandSocket_,"Idle;");
-    ros::Rate rate(50);
+    ros::Rate rate(30);
     while(rCommand!=-1 && ros::ok())
     {
         if(sendTransformFlag)
@@ -332,6 +336,16 @@ void RosOpenIgtlBridge::lbrJointAngleCallback(const std_msgs::Float64ConstPtr &j
     {
         // Binäre Operation (Bits der Gelenknummern zu 1 gesetzt)
         jointAnglesCalled += 1 << number;
+    }
+}
+
+void RosOpenIgtlBridge::configurationIGTLCallback(masterslave::RosOpenIGTLBridgeConfig &config, uint32_t level)
+{
+    if(config.StartOpenIGTL)
+    {
+        //Insgesamt 3 Threads um ROS von OpenIGTL zu entkoppeln
+        boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkTransformThread,this));
+        boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkThread,this));
     }
 }
 

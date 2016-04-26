@@ -130,7 +130,7 @@ void GeometricKinematicCommander::flangeCallback(const geometry_msgs::PoseStampe
 
 void GeometricKinematicCommander::loop()
 {
-    if(callBacksCalled != 8) return;
+    if(callBacksCalled < 8) return;
     double lastTime = ros::Time::now().toSec();
     masterslave::GeometricKinematicRCM rcmService;
     geometry_msgs::PoseStamped stampedPose;
@@ -153,7 +153,7 @@ void GeometricKinematicCommander::loop()
 
     jointAnglesTar = jointAnglesAct;
 
-    boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(nh_,TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
+    //boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(nh_,TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
     ros::Rate rate(rosRate);
     while(ros::ok())
     {
