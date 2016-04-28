@@ -173,7 +173,7 @@ private:
      * @var MAX_ANGLES_SPEED
      * @brief Array der maximalen Gelenkwinkelgeschwindigkeiten in [rad/s]
      */
-    const double MAX_ANGLES_SPEED[10] = { 85*DEG_TO_RAD, 85*DEG_TO_RAD, 100*DEG_TO_RAD, 75*DEG_TO_RAD, 130*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD};
+    const double MAX_ANGLES_SPEED[10] = { 85*DEG_TO_RAD, 85*DEG_TO_RAD, 100*DEG_TO_RAD, 75*DEG_TO_RAD, 130*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 180*DEG_TO_RAD, 180*DEG_TO_RAD, 180*DEG_TO_RAD};
 
     /**
      * @var jointWeightMatrix

@@ -21,6 +21,9 @@
 #include <message_filters/time_synchronizer.h>
 #include <message_filters/subscriber.h>
 
+#include <dynamic_reconfigure/server.h>
+#include "masterslave/MasterSlaveManipulationAbsoluteConfig.h"
+
 /**
  * @file MasterSlaveManipulationAbsolute.h
  *
@@ -65,6 +68,9 @@ private:
      * @return Status, ob die Manipulation erfolgreich war
      */
     bool masterSlaveCallback(masterslave::Manipulation::Request& req, masterslave::Manipulation::Response& resp);
+
+
+    void configurationCallback(masterslave::MasterSlaveManipulationAbsoluteConfig &config, uint32_t level);
 
     /**
      * @var nh_
@@ -118,7 +124,7 @@ private:
      * @var difference
      * @brief Differenztransformation zwuischen der alten und aktuellen TCP-Lage
      */
-    Eigen::Affine3d difference;
+    Eigen::Vector3d difference;
 
     /**
      * @var initialRun
@@ -188,6 +194,8 @@ private:
     Eigen::Quaterniond oldRotation;
 
     Eigen::Vector3d initialPoseRobot;
+
+    double transMotionScaling{1};
 
 
 

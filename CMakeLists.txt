@@ -79,6 +79,7 @@ generate_dynamic_reconfigure_options(
   cfg/NumericKinematic.cfg
   cfg/RosOpenIGTLBridge.cfg
   cfg/TrajectoryGenerator.cfg
+  cfg/MasterSlaveManipulationAbsolute.cfg
 )
 
 ###################################

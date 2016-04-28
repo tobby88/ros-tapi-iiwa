@@ -143,6 +143,8 @@ void GeometricKinematicCommander::loop()
         rcmClient.call(rcmService);
     }
 
+    boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(nh_,TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
+
     masterslave::GeometricKinematicDirectKinematics directKinematicsService;
     std::vector<double> jointAngles(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
     directKinematicsService.request.jointAngles = jointAngles;
@@ -186,7 +188,10 @@ void GeometricKinematicCommander::loop()
             ROS_DEBUG_STREAM("jointAnglesTar: \n" << jointAnglesTar);
             lbrTargetPositionPub.publish(stampedPose);
         }
-
+        else if(!boundingBox->checkBoundingBoxTCP(TCP))
+        {
+            TCP = TCP_old;
+        }
         commandVelocities();
         rate.sleep();
     }

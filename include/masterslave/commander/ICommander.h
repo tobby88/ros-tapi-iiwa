@@ -305,7 +305,7 @@ class ICommander
          */
         std::unique_ptr<BoundingBox> boundingBox;
 
-        Eigen::Vector3d boundingBoxSize{0.18,0.18,0.23};
+        Eigen::Vector3d boundingBoxSize{0.33,0.33,0.2};
         double rcmDistance{0.05};
 
         int Q6CallbacksCalled{0};

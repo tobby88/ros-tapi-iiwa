@@ -126,7 +126,7 @@ void NumericKinematicCommander::loop()
 
     //BoundingBox zur Arbeitsraumbegrenzung
 
-    //boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(nh_,TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
+    boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(nh_,TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
 
     while(ros::ok() && state == MOVE_TO_POSE)
     {
@@ -143,7 +143,7 @@ void NumericKinematicCommander::loop()
 
         tcpClient.call(manipulationService);
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
-        if(!TCP.isApprox(TCP_old) /*&& boundingBox->checkBoundingBoxTCP(TCP)*/)
+        if(!TCP.isApprox(TCP_old) && boundingBox->checkBoundingBoxTCP(TCP))
         {
             masterslave::NumericKinematicInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
@@ -157,17 +157,8 @@ void NumericKinematicCommander::loop()
             }
             else
             {
-                /*masterslave::NumericKinematicDirectKinematics directKinematicsService;
-                std::vector<double> jointAnglesActual(jointAnglesAct.data(),jointAnglesAct.data()+jointAnglesAct.rows());
-                directKinematicsService.request.jointAngles = jointAnglesActual;
-                directKinematicsClient.call(directKinematicsService);
-                directKinematicsService.request.jointAngles.clear();*/
                 TCP = TCP_old;
             }
-        }
-        else
-        {       
-           //RESCUE MOVEMENT für den ARSCH!!
         }
         // ist in ICommander implementiert
         commandVelocities();
