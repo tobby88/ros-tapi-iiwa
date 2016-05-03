@@ -6,7 +6,6 @@
 #include "masterslave/DescriptionParameters.h"
 
 #include <dynamic_reconfigure/server.h>
-#include <boost/log/sources/logger.hpp>
 
 
 /**
@@ -25,16 +24,7 @@ class IKinematic
 
 
     protected:
-        /**
-         * @fn checkTCP
-         * @brief Arbeitsraumüberwachung
-         * @deprecated wird in der neuen Version entfernt, da es eigene Überwachungsklassen gibt
-         * @param TCP Aktueller TCP
-         * @return Flag, ob der definierte Arbeitsraum eingehalten wurde
-         * @see BoundingBox
-         */
-        bool checkTCP(Eigen::Affine3d TCP);
-
+    
         /**
          * @fn calcInvKin
          * @brief Abstrakte Methode zur Berechnung der inversen Kinematik
@@ -111,23 +101,6 @@ class IKinematic
 
         const double DEG_TO_RAD{M_PI/180};
         const double MM_TO_M{1/1000};
-        /**
-         * @var apertureMax
-         * @deprecated
-         */
-        int apertureMax{60};
-
-        /**
-         * @var penetrationMax
-         * @deprecated
-         */
-        double penetrationMax{0.3};
-
-        /**
-         * @var penetrationMin
-         * @deprecated
-         */
-        double penetrationMin{0.1};
 
         /**
          * @var rcmServiceCalled

@@ -5,7 +5,7 @@
 		<param name="image_width" value="1280" />
 		<param name="camera_frame_id" type="string" value="/camera" />
 		<param name="framerate" value="60" />
-		<param name="brightness" value="33" />
+		<param name="brightness" value="20" />
 		<param name="focus" value="10" />
 		<param name="sharpness" value="64"/>
 	</node>

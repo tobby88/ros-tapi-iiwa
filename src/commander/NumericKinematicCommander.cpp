@@ -51,7 +51,7 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
 
-    //setZero();
+    setZero();
 
     ros::Rate waiteRate(25);
     while(ros::ok())
@@ -74,10 +74,11 @@ void NumericKinematicCommander::statemachineThread(const ros::TimerEvent& event)
     {
         case IDLE:
             if(stateService.exists()) stateStringMsg.request.state = "IDLE;";
-            //ROS_INFO("IDLE");
+            callBacksCalled = 0;
             break;
         case FREE:
             if(stateService.exists())  stateStringMsg.request.state = "GravComp;";
+            callBacksCalled = 0;
             //ROS_INFO("FREE");
             break;
         case MOVE_TO_POSE:
@@ -98,7 +99,7 @@ void NumericKinematicCommander::statemachineThread(const ros::TimerEvent& event)
 void NumericKinematicCommander::loop()
 {
     ros::spinOnce();
-    if(!((callBacksCalled+1) >> 10 >=1))
+    if(((callBacksCalled+1) >> 10 <=1))
     {
         return;
     }
@@ -143,7 +144,7 @@ void NumericKinematicCommander::loop()
 
         tcpClient.call(manipulationService);
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
-        if(!TCP.isApprox(TCP_old) && boundingBox->checkBoundingBoxTCP(TCP))
+        if(!TCP.isApprox(TCP_old))
         {
             masterslave::NumericKinematicInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);

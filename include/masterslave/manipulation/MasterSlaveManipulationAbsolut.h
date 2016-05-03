@@ -118,7 +118,7 @@ private:
      * @var poseOld
      * @brief Lage des TCP im vorherigen Frame
      */
-    Eigen::Affine3d poseOld;
+    Eigen::Affine3d initialPoseMarker;
 
     /**
      * @var difference
@@ -196,6 +196,12 @@ private:
     Eigen::Vector3d initialPoseRobot;
 
     double transMotionScaling{1};
+
+    double rotationScaling{1};
+
+    const double MINIMAL_DISTANCE{2e-03};
+
+    const double MINIMAL_STEP_DISTANCE{1e-03};
 
 
 

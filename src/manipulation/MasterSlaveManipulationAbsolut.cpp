@@ -16,7 +16,7 @@ MasterSlaveManipulationAbsolute::MasterSlaveManipulationAbsolute(ros::NodeHandle
 
 
     poseAct = Eigen::Affine3d::Identity();
-    poseOld = Eigen::Affine3d::Identity();
+    initialPoseMarker = Eigen::Affine3d::Identity();
     difference = Eigen::Vector3d::Zero();
     //markerCallback
     lastFrameTime = ros::Time::now().toSec();
@@ -56,15 +56,20 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
             ROS_DEBUG_STREAM("poseAct: \n" << poseAct.matrix());
             if(initialRun)
             {
-                poseOld = poseAct;
+                initialPoseMarker = poseAct;
                 initialRotationMarker = Eigen::Quaterniond(poseAct.rotation());
                 initialRun = false;
                 return;
             }
-            // Überwachung
-            if((referencePose.inverse()*poseAct.translation()-referencePose.inverse()*poseOld.translation()).norm() >= 3e-03)
+            // Überwachung, ob Bewegungsanforderung oder Rauschen
+            double distance = (referencePose.inverse()*poseAct.translation()-referencePose.inverse()*initialPoseMarker.translation()).norm();
+
+
+            if(distance >= MINIMAL_DISTANCE)
             {
-                difference = transMotionScaling*((referencePose.inverse()*poseAct.translation()-referencePose.inverse()*poseOld.translation()));
+                double minimalDistanceFactor = (distance - MINIMAL_DISTANCE)/(MINIMAL_DISTANCE+MINIMAL_STEP_DISTANCE-distance);
+                if(minimalDistanceFactor > 1) minimalDistanceFactor = 1;
+                difference = minimalDistanceFactor*transMotionScaling*((referencePose.inverse()*poseAct.translation()-referencePose.inverse()*initialPoseMarker.translation()));
             }
 
             ROS_DEBUG_STREAM("difference: \n" << difference);
@@ -74,8 +79,7 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
     }
     if(!handMarkerFound && handMarker->markers.size()==0)
     {
-        ROS_INFO("Marker unsichtbar!");
-        //poseAct = poseOld;
+        ROS_ERROR_THROTTLE(1,"Marker unsichtbar!");
     }
     markerCallbackCalled  = true;
 }
@@ -112,23 +116,22 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
      */
     if(slerpParameter >= 1) slerpParameter =0;
 
-
-
-    Eigen::Quaterniond differenceRot = Eigen::Quaterniond(poseAct.rotation());
-    ROS_DEBUG_STREAM("rotation Difference: \n" << differenceRot.toRotationMatrix());
-
     T_0_EE_new.translate(T_0_EE_old.translation());
-    Eigen::Vector3d newTranslation = (initialPoseRobot+difference-T_0_EE_old.translation())*slerpParameter;
+    Eigen::Vector3d newTranslation = (initialPoseRobot-difference-T_0_EE_old.translation())*slerpParameter;
 
     // Geschwindigkeitsüberwachung
-    if(newTranslation.norm()>0.01*slerpParameter)
+    if(newTranslation.norm()>0.1*frameTime*slerpParameter)
     {
-        newTranslation /=(newTranslation.norm()/(0.01*slerpParameter));
+        newTranslation /=(newTranslation.norm()/(0.1*frameTime*slerpParameter));
     }
     T_0_EE_new.translate(newTranslation);
 
+    //Rotationsskalierung
+    Eigen::Quaterniond differenceRot = Eigen::Quaterniond(poseAct.rotation());
+    ROS_DEBUG_STREAM(differenceRot.vec() << " \n " << differenceRot.toRotationMatrix());
+    Eigen::Quaterniond differenceRotScale = Eigen::Quaterniond::Identity().slerp(rotationScaling,differenceRot);
 
-    Eigen::Quaterniond newRotation = initialRotationRobot*initialRotationMarker.inverse()*differenceRot;
+    Eigen::Quaterniond newRotation = initialRotationRobot*initialRotationMarker.inverse()*differenceRotScale;
 
 
     Eigen::AngleAxisd differenceAngle = Eigen::AngleAxisd(newRotation*initialRotationRobot.inverse());
@@ -158,6 +161,7 @@ void MasterSlaveManipulationAbsolute::cycleTimeCallback(const std_msgs::Float64C
 void MasterSlaveManipulationAbsolute::configurationCallback(masterslave::MasterSlaveManipulationAbsoluteConfig &config, uint32_t level)
 {
     transMotionScaling = config.motionScaling;
+    rotationScaling = config.rotationScaling;
 }
 
 int main(int argc, char** argv)

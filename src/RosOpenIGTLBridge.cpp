@@ -35,7 +35,8 @@ RosOpenIgtlBridge::RosOpenIgtlBridge(ros::NodeHandle nh): nh_(nh)
     }
     stateServiceServer = nh_.advertiseService("/openIGTLState",&RosOpenIgtlBridge::stateService,this);
 
-
+    boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkTransformThread,this));
+    boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkThread,this));
 
     ros::Timer timer = nh_.createTimer(ros::Duration(0.001), &RosOpenIgtlBridge::loop, this);
     ros::spin();
@@ -344,8 +345,7 @@ void RosOpenIgtlBridge::configurationIGTLCallback(masterslave::RosOpenIGTLBridge
     if(config.StartOpenIGTL)
     {
         //Insgesamt 3 Threads um ROS von OpenIGTL zu entkoppeln
-        boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkTransformThread,this));
-        boost::thread(boost::bind(&RosOpenIgtlBridge::openIGTLinkThread,this));
+
     }
 }
 

@@ -140,8 +140,9 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
     Eigen::MatrixXd Aieq = Eigen::MatrixXd::Identity(10,20);
     Aieq.rightCols(10) = -Eigen::MatrixXd::Identity(10,10);
     Eigen::VectorXd bieq = Eigen::VectorXd(20);
-    bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed);
-    bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed);
+
+    bieq.head(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed)*1.5;
+    bieq.tail(10) = URSULA_MAX_ANGLES_SPEED*cycleTime*(maxSpeed)*1.5;
 
     jointAnglesIterationPrevious = jointAnglesAct;
 
@@ -524,10 +525,6 @@ void NumericKinematic::configurationCallback(masterslave::NumericKinematicConfig
     velocityGain = config.VelocityGain;
     maxSpeed = config.MaxSpeed;
     singularityGain = config.SingularityAvoidanceGain;
-
-    apertureMax = config.ApertureLimit;
-    penetrationMax = config.MaxPenetrationLimit;
-    penetrationMin = config.MinPenetrationLimit;
 }
 
 int main (int argc, char** argv)
