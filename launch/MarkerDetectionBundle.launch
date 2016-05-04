@@ -1,7 +1,7 @@
 <launch>
 	<node pkg="usb_cam" type="usb_cam_node" name="camera" output="screen">
-		<param name="image_height" value="480" />
-		<param name="image_width" value="640" />
+		<param name="image_height" value="720" />
+		<param name="image_width" value="1280" />
 		<param name="camera_frame_id" type="string" value="/camera" />
 		<!--<param name="framerate" value="60" />
 		<param name="sharpness" value="30" />
@@ -9,7 +9,7 @@
 	</node>
 	<node ns="camera" pkg="image_proc" type="image_proc" name="image_proc_node" output="screen"/>
 	
-	<arg name="marker_size" default="0.9" />
+	<arg name="marker_size" default="0.8" />
         <arg name="max_new_marker_error" default="0.08" />
         <arg name="max_track_error" default="0.2" />
 
@@ -17,7 +17,7 @@
         <arg name="cam_info_topic" default="/camera/camera_info" />   
         <arg name="output_frame" default="/camera" />
 	<arg name="med_filt_size" default="10" />
-	<arg name="bundle_files" default="$(find masterslave)/bundles/ControlMarker.xml"/>
+	<arg name="bundle_files" default="$(find masterslave)/bundles/Thumb.xml $(find masterslave)/bundles/IndexFinger.xml"/>
 
         <node name="ar_track_alvar" pkg="ar_track_alvar" type="findMarkerBundlesNoKinect" respawn="false" output="screen" args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame) $(arg bundle_files)" />
 
