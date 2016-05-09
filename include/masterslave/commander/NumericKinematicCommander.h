@@ -60,6 +60,8 @@ class NumericKinematicCommander: public ICommander
          */
         void buttonCheck();
 
+        void pliersDistanceCallback(const std_msgs::Float64ConstPtr &value);
+
         /**
          * @fn getControlDevice
          * @brief Die Methode findet den Typ des Eingabegerätes auf dem Parameterserver

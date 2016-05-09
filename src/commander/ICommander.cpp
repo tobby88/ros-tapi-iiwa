@@ -42,6 +42,7 @@ Eigen::Quaternion<double> ICommander::QuaternionFromEuler(const Eigen::Vector3d 
     return quat;
 }
 
+
 /*
  * Gemeinsame Implementierung der Kommandierung der Gelenkwinkel des Werkzeuges
  * CRITICAL_PLIERS_ANGLE: kritischer Zangenöffnungswinkel
@@ -68,8 +69,9 @@ void ICommander::commandVelocities()
     }
     if(motorAngles(1)<=CRITICAL_PLIERS_ANGLE && motorAngles(1)>=-CRITICAL_PLIERS_ANGLE && motorAngles(0)>=-CRITICAL_PLIERS_ANGLE && motorAngles(0)<=CRITICAL_PLIERS_ANGLE)
     {
-    Q6nVel.data = (jointAnglesTar.tail(3)(2)-jointAnglesAct.tail(3)(2))/cycleTimeScaleFactor;
-    Q6pVel.data = (jointAnglesTar.tail(3)(2)-jointAnglesAct.tail(3)(2))/cycleTimeScaleFactor;
+
+    Q6nVel.data = (jointAnglesTar.tail(3)(2)+pliersOpeningAngle-jointAnglesAct.tail(3)(2))/cycleTimeScaleFactor;
+    Q6pVel.data = (jointAnglesTar.tail(3)(2)-pliersOpeningAngle-jointAnglesAct.tail(3)(2))/cycleTimeScaleFactor;
     }
 
     //ROS_INFO_STREAM(Q6nVel.data << " " <<  Q6pVel.data);
@@ -83,8 +85,8 @@ void ICommander::commandVelocities()
     {
         Q6nVel.data = 0;
     }
-    //Q6nVel.data -= gripperVelocity;
-    //Q6pVel.data += gripperVelocity;
+    Q6nVel.data -= gripperVelocity;
+    Q6pVel.data += gripperVelocity;
 
     //ROS_INFO_STREAM("Q6p" <<Q6pVel.data);
 

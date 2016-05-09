@@ -92,17 +92,6 @@ class ICommander
          * @brief Trokarpunkt
          */
         Eigen::Affine3d RCM;
-        /**
-         * @var apertureLimit
-         * @todo löschen!
-         */
-        double apertureLimit;
-
-        /**
-         * @var heightSafety
-         * @todo löschen!
-         */
-        double heightSafety;
 
         /**
          * @fn calcQ6
@@ -130,6 +119,8 @@ class ICommander
          * @see buttonCheck
          */
         std::vector<std::string> buttons;
+
+        ros::Subscriber pliersDistanceSub;
 
         /**
          * @var velocitySub
@@ -346,6 +337,12 @@ class ICommander
         bool setTrocar{false};
 
         double CRITICAL_PLIERS_ANGLE{0.95*M_PI};
+
+        double PLIERS_DISTANCE_TOLERANCE{0.05};
+
+        double PLIERS_LENGTH{0.017};
+
+        double pliersOpeningAngle;
 
 
 };

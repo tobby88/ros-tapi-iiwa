@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0"?>
 <launch>
+	<node pkg="tf"  type="static_transform_publisher" name="camera_to_origin" args="0.2 0 0.43 0.6877 -0.6877 -0.1644 0.1644 origin camera 20" />
 	<node pkg="usb_cam" type="usb_cam_node" name="camera" output="screen">
 		<param name="image_height" value="720" />
 		<param name="image_width" value="1280" />
@@ -22,16 +23,15 @@
 
         <arg name="cam_image_topic" default="/camera/image_mono" />
         <arg name="cam_info_topic" default="/camera/camera_info" />   
-        <arg name="output_frame" default="/camera" />
+        <arg name="output_frame" default="/origin" />
 	<arg name="med_filt_size" default="10" />
-	<arg name="bundle_files_hand" default="$(find masterslave)/bundles/ControlMarker.xml"/>
-	<arg name="bundle_files_reference" default="$(find masterslave)/bundles/Test.xml"/>
+	<arg name="bundle_files_hand" default="$(find masterslave)/bundles/Thumb.xml $(find masterslave)/bundles/IndexFinger.xml"/>
+	
 
 
         <node ns="hand" name="ar_track_alvar" pkg="ar_track_alvar" type="findMarkerBundlesNoKinect" respawn="false" output="screen" args="$(arg marker_size_hand) $(arg max_new_marker_error_hand) $(arg max_track_error_hand) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame) $(arg bundle_files_hand)" />
-	<node ns="reference" name="ar_track_alvar" pkg="ar_track_alvar" type="findMarkerBundlesNoKinect" respawn="false" output="screen" args="$(arg marker_size_reference) $(arg max_new_marker_error_reference) $(arg max_track_error_reference) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame) $(arg bundle_files_reference)" />
-
+	
 	<node pkg="masterslave" name="MasterSlaveManipulationAbsolute" type="MasterSlaveManipulationAbsolute" respawn="false" output="screen"/>	
 	
-	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find masterslave)/rviz/UrsulaRviz.rviz" />
+	<node pkg="rviz" type="rviz" name="rviz" /><!-- args="-d $(find masterslave)/rviz/UrsulaRviz.rviz" -->
 </launch>

@@ -16,6 +16,8 @@
 #include <tf_conversions/tf_eigen.h>
 #include <eigen_conversions/eigen_msg.h>
 #include <tf/transform_listener.h>
+#include <tf/transform_broadcaster.h>
+#include <tf/tf.h>
 
 #include <message_filters/synchronizer.h>
 #include <message_filters/time_synchronizer.h>
@@ -51,8 +53,7 @@ private:
      * @param handMarker Steuerungsmarkervektor
      * @param referenceMarker Referenzmarkervektor
      */
-    void markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr &handMarker, const ar_track_alvar_msgs::AlvarMarkersConstPtr &referenceMarker);
-
+    void markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr &handMarker);
     /**
      * @fn cycleTimeCallback
      * @brief Zykluszeit der Interpolation bzw. der inversen Kinematik
@@ -78,17 +79,15 @@ private:
      */
     ros::NodeHandle nh_;
 
+    ros::Publisher pliersDistancePub;
+
     /**
      * @var markerSub
      * @brief Empfänger für die Steuerungsmarker
      */
-    message_filters::Subscriber<ar_track_alvar_msgs::AlvarMarkers> markerSub;
+    ros::Subscriber markerSub;
 
-    /**
-     * @var markerSubRef
-     * @brief Empfänger für die Referenzmarker
-     */
-    message_filters::Subscriber<ar_track_alvar_msgs::AlvarMarkers> markerSubRef;
+
 
     /**
      * @var cycleTimeSub
@@ -107,6 +106,10 @@ private:
      * @brief Zykluszeit
      */
     double cycleTime;
+
+    Eigen::Affine3d poseIndexFinger;
+
+    Eigen::Affine3d poseThumb;
 
     /**
      * @var poseAct
@@ -171,7 +174,9 @@ private:
      * @brief Wurden die Steuerungsmarker gefunden?!
      * @see masterSlaveCallback
      */
-    bool handMarkerFound{false};
+    bool indexFingerMarkerFound{false};
+
+    bool thumbMarkerFound{false};
 
     /**
      * @var referenceMarkerFound
@@ -199,9 +204,9 @@ private:
 
     double rotationScaling{1};
 
-    const double MINIMAL_DISTANCE{2e-03};
+    const double MINIMAL_DISTANCE{4e-03};
 
-    const double MINIMAL_STEP_DISTANCE{1e-03};
+    const double MINIMAL_STEP_DISTANCE{2e-03};
 
 
 

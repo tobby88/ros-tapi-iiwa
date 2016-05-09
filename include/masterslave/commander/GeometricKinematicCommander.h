@@ -51,6 +51,8 @@ class GeometricKinematicCommander : public ICommander
          */
         //void commandVelocities();
 
+        void pliersDistanceCallback(const std_msgs::Float64ConstPtr &value);
+
         /**
          * @fn buttonCheck
          * @brief Die Methode holt die Knopfkonfiguration vom Parameterserver

@@ -1,9 +1,10 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <launch>
 	<arg name="TestDevice" value="Spacenav"/>
 	<include file="$(find masterslave)/launch/MarkerTrackingManipulation.launch" />
 	<node pkg="masterslave" type="NumericKinematic" name="NumericKinematic" output="log"/>
 	<node pkg="masterslave" type="NumericKinematicCommander" name="NumericKinematicCommander" args="$(arg TestDevice)" output="screen"/>
+	<node pkg="rqt_reconfigure" type="rqt_reconfigure" name="dynamic_reconfigure"/>
 	<remap from="vrep/flangeLBR" to="/flangeLBR"/>
 	<remap from="/flangeTarget" to="/vrep/flangeTarget"/> 
 

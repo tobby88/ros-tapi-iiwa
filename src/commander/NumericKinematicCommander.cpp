@@ -21,6 +21,7 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     Q5StateSub = nh_.subscribe("/Q5/joint_states",1,&NumericKinematicCommander::Q5StateCallback, this);
     Q6nStateSub = nh_.subscribe("/Q6N/joint_states",1,&NumericKinematicCommander::Q6nStateCallback, this);
     Q6pStateSub = nh_.subscribe("/Q6P/joint_states",1,&NumericKinematicCommander::Q6pStateCallback, this);
+    pliersDistanceSub = nh_.subscribe("/pliersDistance",1,&NumericKinematicCommander::pliersDistanceCallback,this);
 
     rcmClient = nh_.serviceClient<masterslave::NumericKinematicRCM>("/RCM");
     directKinematicsClient = nh_.serviceClient<masterslave::NumericKinematicDirectKinematics>("/directKinematics");
@@ -270,6 +271,14 @@ void NumericKinematicCommander::getControlDevice()
         buttonSub = nh_.subscribe(device_sstream.str().c_str(),10,&NumericKinematicCommander::buttonCallback, this);
         device_sstream.str(std::string());
     }
+}
+
+
+void NumericKinematicCommander::pliersDistanceCallback(const std_msgs::Float64ConstPtr &value)
+{
+    // Öffnungswinkel berechnen mit Sinus von der halben Öffnungsdistanz durch die Zangenlänge
+    pliersOpeningAngle = sin((value->data-PLIERS_DISTANCE_TOLERANCE)/(2*PLIERS_LENGTH));
+    ROS_INFO_STREAM("openingAngle: " << pliersOpeningAngle);
 }
 
 int main(int argc, char** argv)

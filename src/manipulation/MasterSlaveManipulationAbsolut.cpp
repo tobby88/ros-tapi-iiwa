@@ -1,6 +1,6 @@
 #include "masterslave/manipulation/MasterSlaveManipulationAbsolut.h"
 
-MasterSlaveManipulationAbsolute::MasterSlaveManipulationAbsolute(ros::NodeHandle &nh): nh_(nh), markerSub(nh_,"hand/ar_pose_marker",1), markerSubRef(nh_,"reference/ar_pose_marker",1)
+MasterSlaveManipulationAbsolute::MasterSlaveManipulationAbsolute(ros::NodeHandle &nh): nh_(nh)
 {
     dynamic_reconfigure::Server<masterslave::MasterSlaveManipulationAbsoluteConfig> server;
     dynamic_reconfigure::Server<masterslave::MasterSlaveManipulationAbsoluteConfig>::CallbackType f;
@@ -8,8 +8,9 @@ MasterSlaveManipulationAbsolute::MasterSlaveManipulationAbsolute(ros::NodeHandle
     server.setCallback(f);
 
     // Nachrichtensynchronisation
-    message_filters::TimeSynchronizer<ar_track_alvar_msgs::AlvarMarkers,ar_track_alvar_msgs::AlvarMarkers> sync(markerSub,markerSubRef, 10);
-    sync.registerCallback(boost::bind(&MasterSlaveManipulationAbsolute::markerCallback,this,_1,_2));
+    markerSub = nh_.subscribe("/hand/ar_pose_marker",1,&MasterSlaveManipulationAbsolute::markerCallback, this);
+
+    pliersDistancePub = nh_.advertise<std_msgs::Float64>("/pliersDistance",1);
 
     masterSlaveServer = nh_.advertiseService("/Manipulation",&MasterSlaveManipulationAbsolute::masterSlaveCallback,this);
     cycleTimeSub = nh_.subscribe("/cycleTime",1,&MasterSlaveManipulationAbsolute::cycleTimeCallback,this);
@@ -22,71 +23,81 @@ MasterSlaveManipulationAbsolute::MasterSlaveManipulationAbsolute(ros::NodeHandle
     lastFrameTime = ros::Time::now().toSec();
     //masterSlaveCallback
     lastMasterSlaveTime = ros::Time::now().toSec();
+
     ros::spin();
 }
 
-void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr &handMarker, const ar_track_alvar_msgs::AlvarMarkersConstPtr &referenceMarker)
+void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr &handMarker)
 {
     frameTime = ros::Time::now().toSec() - lastFrameTime;
     lastFrameTime = ros::Time::now().toSec();
-    Eigen::Affine3d referencePose = Eigen::Affine3d::Identity();
+    poseAct = Eigen::Affine3d::Identity();
     difference = Eigen::Vector3d::Zero();
-    referenceMarkerFound = false;
 
-    // Suche des Referenzmarkers
-    for(int i=0; i<referenceMarker->markers.size();i++)
-    {
-
-        if(referenceMarker->markers[i].id == 4)
-        {
-            tf::poseMsgToEigen(referenceMarker->markers[i].pose.pose,referencePose);
-            referenceMarkerFound = true;
-            break;
-        }
-    }
-    handMarkerFound = false;
+    thumbMarkerFound = false;
+    indexFingerMarkerFound = false;
 
     // Suche der Steuerungsmarker
     for(int i=0; i<handMarker->markers.size();i++)
     {
-        if(handMarker->markers[i].id == 0)
+        switch(handMarker->markers[i].id)
         {
-            handMarkerFound = true;
-            tf::poseMsgToEigen(handMarker->markers[i].pose.pose,poseAct);
-            ROS_DEBUG_STREAM("poseAct: \n" << poseAct.matrix());
-            if(initialRun)
-            {
-                initialPoseMarker = poseAct;
-                initialRotationMarker = Eigen::Quaterniond(poseAct.rotation());
-                initialRun = false;
-                return;
-            }
-            // Überwachung, ob Bewegungsanforderung oder Rauschen
-            double distance = (referencePose.inverse()*poseAct.translation()-referencePose.inverse()*initialPoseMarker.translation()).norm();
-
-
-            if(distance >= MINIMAL_DISTANCE)
-            {
-                double minimalDistanceFactor = (distance - MINIMAL_DISTANCE)/(MINIMAL_DISTANCE+MINIMAL_STEP_DISTANCE-distance);
-                if(minimalDistanceFactor > 1) minimalDistanceFactor = 1;
-                difference = minimalDistanceFactor*transMotionScaling*((referencePose.inverse()*poseAct.translation()-referencePose.inverse()*initialPoseMarker.translation()));
-            }
-
-            ROS_DEBUG_STREAM("difference: \n" << difference);
-            slerpParameter = 0;
-            break;
+            case 0:
+                thumbMarkerFound = true;
+                tf::poseMsgToEigen(handMarker->markers[i].pose.pose,poseThumb);
+                ROS_INFO_STREAM("poseThumb: \n" << poseThumb.matrix());
+                break;
+            case 5:
+                indexFingerMarkerFound = true;
+                tf::poseMsgToEigen(handMarker->markers[i].pose.pose,poseIndexFinger);
+                ROS_INFO_STREAM("poseIndexFinger: \n" << poseIndexFinger.matrix());
+                break;
         }
-    }
-    if(!handMarkerFound && handMarker->markers.size()==0)
+     }
+
+    if(!thumbMarkerFound || !indexFingerMarkerFound || handMarker->markers.size()==0)
     {
         ROS_ERROR_THROTTLE(1,"Marker unsichtbar!");
+        return;
+
     }
+    std_msgs::Float64 pliersDistance;
+    pliersDistance.data = (poseThumb.inverse()*poseIndexFinger).translation().norm();
+    pliersDistancePub.publish(pliersDistance);
+
+    poseAct.translation() = (poseThumb.translation()+(poseIndexFinger.translation()-poseThumb.translation())/2);
+    Eigen::Quaterniond interpolatedRotation = Eigen::Quaterniond(poseThumb.rotation()).slerp(0.5,Eigen::Quaterniond(poseIndexFinger.rotation()));
+    poseAct.rotate(interpolatedRotation);
+    ROS_INFO_STREAM("poseAct: \n" << poseAct.matrix());
+
+    if(initialRun)
+    {
+        initialPoseMarker = poseAct;
+        initialRotationMarker = Eigen::Quaterniond(poseAct.rotation());
+        initialRun = false;
+        return;
+    }
+    // Überwachung, ob Bewegungsanforderung oder Rauschen
+    double distance = (poseAct.translation()-initialPoseMarker.translation()).norm();
+
+
+    if(distance >= MINIMAL_DISTANCE)
+    {
+        double minimalDistanceFactor = (distance - MINIMAL_DISTANCE)/(MINIMAL_DISTANCE+MINIMAL_STEP_DISTANCE-distance);
+        if(minimalDistanceFactor > 1) minimalDistanceFactor = 1;
+        difference = minimalDistanceFactor*transMotionScaling*((poseAct.translation()-initialPoseMarker.translation()));
+    }
+
+    ROS_INFO_STREAM("difference: \n" << difference);
+    slerpParameter = 0;
+
+
     markerCallbackCalled  = true;
+    return;
 }
 
 bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulation::Request &req, masterslave::Manipulation::Response &resp)
 {
-
     Eigen::Affine3d T_0_EE_old = Eigen::Affine3d::Identity();
 
     tf::poseMsgToEigen(req.T_0_EE_old,T_0_EE_old);
@@ -101,9 +112,10 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
     Eigen::Affine3d T_0_EE_new = Eigen::Affine3d::Identity();
     masterSlaveTime = ros::Time::now().toSec() - lastMasterSlaveTime;
     lastMasterSlaveTime = ros::Time::now().toSec();
-    if(!markerCallbackCalled || !handMarkerFound || !referenceMarkerFound)
+    if(!markerCallbackCalled || !thumbMarkerFound || !indexFingerMarkerFound)
     {
         resp.T_0_EE_new = req.T_0_EE_old;
+
         return true;
     }
 
@@ -117,7 +129,7 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
     if(slerpParameter >= 1) slerpParameter =0;
 
     T_0_EE_new.translate(T_0_EE_old.translation());
-    Eigen::Vector3d newTranslation = (initialPoseRobot-difference-T_0_EE_old.translation())*slerpParameter;
+    Eigen::Vector3d newTranslation = (initialPoseRobot+difference-T_0_EE_old.translation())*slerpParameter;
 
     // Geschwindigkeitsüberwachung
     if(newTranslation.norm()>0.1*frameTime*slerpParameter)
@@ -132,7 +144,6 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
     Eigen::Quaterniond differenceRotScale = Eigen::Quaterniond::Identity().slerp(rotationScaling,differenceRot);
 
     Eigen::Quaterniond newRotation = initialRotationRobot*initialRotationMarker.inverse()*differenceRotScale;
-
 
     Eigen::AngleAxisd differenceAngle = Eigen::AngleAxisd(newRotation*initialRotationRobot.inverse());
 
@@ -166,8 +177,11 @@ void MasterSlaveManipulationAbsolute::configurationCallback(masterslave::MasterS
 
 int main(int argc, char** argv)
 {
+
     ros::init(argc, argv, "MasterSlaveManipulationAbsolute");
     ros::NodeHandle MasterSlaveManipulationNH;
+
+
     MasterSlaveManipulationAbsolute* manipulation = new MasterSlaveManipulationAbsolute(MasterSlaveManipulationNH);
 
 }
