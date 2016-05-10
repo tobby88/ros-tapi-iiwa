@@ -243,21 +243,21 @@ class ICommander
          * @brief Flag, ob der Greifer gestoppt werden soll
          * @see setGripperStatus
          */
-        bool gripper_stop;
+        bool gripper_stop{false};
 
         /**
          * @var gripper_open
          * @brief Flag, ob der Greifer geöffnet werden soll
          * @see setGripperStatus
          */
-        bool gripper_open;
+        bool gripper_open{false};
 
         /**
          * @var gripper_close
          * @brief Flag, ob der Greifer geschlossen werden soll
          * @see setGripperStatus
          */
-        bool gripper_close;
+        bool gripper_close{false};
 
         /**
          * @var cycleTime
@@ -338,12 +338,13 @@ class ICommander
 
         double CRITICAL_PLIERS_ANGLE{0.95*M_PI};
 
-        double PLIERS_DISTANCE_TOLERANCE{0.05};
+        double PLIERS_DISTANCE_TOLERANCE{0.04};
 
         double PLIERS_LENGTH{0.017};
 
-        double pliersOpeningAngle;
+        double pliersOpeningAngle{0};
 
+        double pliersOpeningAngleOld{0};
 
 };
 

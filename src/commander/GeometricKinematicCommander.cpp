@@ -267,6 +267,14 @@ void GeometricKinematicCommander::pliersDistanceCallback(const std_msgs::Float64
 {
     // Öffnungswinkel berechnen mit Sinus von der halben Öffnungsdistanz durch die Zangenlänge
     pliersOpeningAngle = sin((value->data-PLIERS_DISTANCE_TOLERANCE)/(2*PLIERS_LENGTH));
+    if(pliersOpeningAngle>M_PI/4)
+    {
+        pliersOpeningAngle = M_PI/4;
+    }
+    else if(pliersOpeningAngle<0)
+    {
+        pliersOpeningAngle = 0;
+    }
 }
 
 

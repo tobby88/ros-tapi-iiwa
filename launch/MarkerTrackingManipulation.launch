@@ -7,7 +7,7 @@
 		<param name="camera_frame_id" type="string" value="/camera" />
 		<param name="framerate" value="60" />
 		<param name="brightness" value="20" />
-		<param name="focus" value="10" />
+		<param name="focus" value="9" />
 		<param name="sharpness" value="64"/>
 	</node>
 	<node ns="camera" pkg="image_proc" type="image_proc" name="image_proc_node" output="screen"/>
@@ -33,5 +33,5 @@
 	
 	<node pkg="masterslave" name="MasterSlaveManipulationAbsolute" type="MasterSlaveManipulationAbsolute" respawn="false" output="screen"/>	
 	
-	<node pkg="rviz" type="rviz" name="rviz" /><!-- args="-d $(find masterslave)/rviz/UrsulaRviz.rviz" -->
+	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find masterslave)/rviz/UrsulaRviz.rviz" />
 </launch>
