@@ -8,7 +8,7 @@ VisualServoing::VisualServoing(ros::NodeHandle &nh): nh_(nh)
     dynamic_reconfigure::Server<masterslave::VisualServoingConfig>::CallbackType f;
     f = boost::bind(&VisualServoing::configurationCallback,this ,_1,_2);
     server.setCallback(f);
-    markerSub = nh_.subscribe("/ar_pose_marker",1,&VisualServoing::markerCallback,this);
+    markerSub = nh_.subscribe("visualServoing/ar_pose_marker",1,&VisualServoing::markerCallback,this);
     visualServoingServer = nh_.advertiseService("/Manipulation",&VisualServoing::visualServoingCallback,this);
     ros::spin();
 }
@@ -16,8 +16,8 @@ VisualServoing::VisualServoing(ros::NodeHandle &nh): nh_(nh)
 Eigen::Vector3d VisualServoing::calculateTranslationalPID()
 {
     Eigen::Vector3d retValue = Eigen::Vector3d::Zero();
-    integralErrorTrans = iTrans*differenceTransform.translation()*cycleTime;
-    retValue = pTrans*differenceTransform.translation() + dTrans*(differenceTransform.translation()-differenceTransformOld.translation())/cycleTime + integralErrorTrans;
+
+    retValue = pTrans*differenceTransform.translation() + dTrans*(differenceTransform.translation()-differenceTransformOld.translation())/cycleTime;
     ROS_INFO_STREAM(retValue);
     return retValue;
 }
@@ -48,7 +48,8 @@ bool VisualServoing::visualServoingCallback(masterslave::Manipulation::Request &
 
 void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr& markerPtr)
 {
-    int markerFound = 0;
+    bool markerFoundTCP=false;
+    bool markerFoundObject=false;
     Eigen::Affine3d tcp;
     Eigen::Affine3d obj;
     differenceTransformOld = differenceTransform;
@@ -59,37 +60,38 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
         {
             case 0:
             tf::poseMsgToEigen(markerPtr->markers[i].pose.pose,tcp);
-            markerFound += 1;
+            markerFoundTCP = true;
             break;
             case 1:
             tf::poseMsgToEigen(markerPtr->markers[i].pose.pose,obj);
-            markerFound += 1 << 1;
+            markerFoundObject = true;
             break;
         }
     }
-    if(markerFound+1 >> 2 == 1)
+
+    if(!markerFoundObject || !markerFoundTCP)
     {
+        ROS_ERROR("Marker unsichtbar!");
+        return;
+    }
         actualTransform = obj*tcp.inverse();
         if(initialRun)
         {
             initialTransform = actualTransform;
             initialRun = false;
         }
-        differenceTransform = actualTransform*initialTransform.inverse();
+        differenceTransform = initialTransform.inverse()*actualTransform;
         ROS_WARN_STREAM(differenceTransform.matrix());
-    }
+
 }
 
 void VisualServoing::configurationCallback(masterslave::VisualServoingConfig &config, uint32_t level)
 {
     pRot = config.PRot;
     dRot = config.DRot;
-    iRot = config.IRot;
 
     pTrans = config.PTrans;
     dTrans = config.DTrans;
-    iTrans = config.ITrans;
-
 }
 
 int main(int argc, char** argv)

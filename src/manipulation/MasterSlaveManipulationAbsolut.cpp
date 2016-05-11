@@ -65,8 +65,9 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
     pliersDistance.data = (poseThumb.inverse()*poseIndexFinger).translation().norm();
     pliersDistancePub.publish(pliersDistance);
     Eigen::Quaterniond interpolatedRotation = Eigen::Quaterniond(poseThumb.rotation()).slerp(0.5,Eigen::Quaterniond(poseIndexFinger.rotation()));
-    poseAct.rotate(interpolatedRotation);
     poseAct.translate(poseThumb.translation()+(poseIndexFinger.translation()-poseThumb.translation())/2);
+    poseAct.rotate(interpolatedRotation);
+
 
 
     //ROS_INFO_STREAM("poseAct: \n" << poseAct.matrix());
@@ -89,7 +90,7 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
         difference = minimalDistanceFactor*transMotionScaling*((poseAct.translation()-initialPoseMarker.translation()));
     }
 
-    //ROS_INFO_STREAM("difference: \n" << difference);
+    ROS_INFO_STREAM("difference: \n" << difference);
     slerpParameter = 0;
 
 
@@ -116,12 +117,11 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
     if(!markerCallbackCalled || !thumbMarkerFound || !indexFingerMarkerFound)
     {
         resp.T_0_EE_new = req.T_0_EE_old;
-
         return true;
     }
 
     //Inkrement, da ceil(frameTime/masterSlaveTime) Zyklen gebraucht werden, um die Interpolation durchzuführen
-    slerpParameter += std::ceil(masterSlaveTime/frameTime*10 + 0.5)/10;
+    slerpParameter += std::ceil(masterSlaveTime/frameTime*100 + 0.5)/100;
 
     /*
      * slerpParameter hat einen Wertebereich von 0 bis 1
@@ -130,23 +130,24 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
     if(slerpParameter >= 1) slerpParameter =0;
 
     T_0_EE_new.translate(T_0_EE_old.translation());
-    Eigen::Vector3d newTranslation = (initialPoseRobot+difference-T_0_EE_old.translation())*slerpParameter;
+    Eigen::Vector3d newTranslation = (initialPoseRobot-difference-T_0_EE_old.translation())*slerpParameter;
 
+
+
+
+    // Geschwindigkeitsüberwachung
+    if(newTranslation.norm()>0.05*frameTime*slerpParameter)
+    {
+        newTranslation /=(newTranslation.norm()/(0.1*frameTime*slerpParameter));
+    }
+    T_0_EE_new.translate(newTranslation);
 
     //Rotationsskalierung
     Eigen::Quaterniond differenceRot = Eigen::Quaterniond(poseAct.rotation());
     ROS_DEBUG_STREAM(differenceRot.vec() << " \n " << differenceRot.toRotationMatrix());
     Eigen::Quaterniond differenceRotScale = Eigen::Quaterniond::Identity().slerp(rotationScaling,differenceRot);
 
-    // Geschwindigkeitsüberwachung
-    if(newTranslation.norm()>0.1*frameTime*slerpParameter)
-    {
-        newTranslation /=(newTranslation.norm()/(0.1*frameTime*slerpParameter));
-    }
-
-    T_0_EE_new.translate(newTranslation);
-
-    Eigen::Quaterniond newRotation = initialRotationRobot*initialRotationMarker.inverse()*differenceRotScale;
+    Eigen::Quaterniond newRotation = initialRotationRobot*initialRotationMarker.inverse()*differenceRot;
 
     Eigen::AngleAxisd differenceAngle = Eigen::AngleAxisd(newRotation*initialRotationRobot.inverse());
     if(std::abs(differenceAngle.angle())<M_PI/2)
@@ -165,7 +166,7 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
 
     ROS_DEBUG_STREAM("Rotation T_0_EE_new: \n" << T_0_EE_new.rotation());
     tf::poseEigenToMsg(T_0_EE_new,resp.T_0_EE_new);
-    ROS_DEBUG_STREAM(difference);
+    ROS_INFO_STREAM(difference);
     return true;
 
 }

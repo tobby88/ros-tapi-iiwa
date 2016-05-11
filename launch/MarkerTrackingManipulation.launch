@@ -8,7 +8,7 @@
 		<param name="framerate" value="60" />
 		<param name="brightness" value="20" />
 		<param name="focus" value="9" />
-		<param name="sharpness" value="64"/>
+		<param name="sharpness" value="180"/>
 	</node>
 	<node ns="camera" pkg="image_proc" type="image_proc" name="image_proc_node" output="screen"/>
 	
