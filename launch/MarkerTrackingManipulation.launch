@@ -25,7 +25,7 @@
         <arg name="cam_info_topic" default="/camera/camera_info" />   
         <arg name="output_frame" default="/origin" />
 	<arg name="med_filt_size" default="10" />
-	<arg name="bundle_files_hand" default="$(find masterslave)/bundles/Thumb.xml $(find masterslave)/bundles/IndexFinger.xml"/>
+	<arg name="bundle_files_hand" default="$(find masterslave)/bundles/Thumb16.xml $(find masterslave)/bundles/IndexFinger16.xml"/>
 	
 
 
