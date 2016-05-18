@@ -136,9 +136,9 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
 
 
     // Geschwindigkeitsüberwachung
-    if(newTranslation.norm()>0.05*frameTime*slerpParameter)
+    if(newTranslation.norm()>MAXIMUM_TRANSLATIONAL_VELOCITY*frameTime*slerpParameter)
     {
-        newTranslation /=(newTranslation.norm()/(0.1*frameTime*slerpParameter));
+        newTranslation /=(newTranslation.norm()/(MAXIMUM_TRANSLATIONAL_VELOCITY*frameTime*slerpParameter));
     }
     T_0_EE_new.translate(newTranslation);
 
@@ -147,17 +147,18 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
     ROS_DEBUG_STREAM(differenceRot.vec() << " \n " << differenceRot.toRotationMatrix());
     Eigen::Quaterniond differenceRotScale = Eigen::Quaterniond::Identity().slerp(rotationScaling,differenceRot);
 
-    Eigen::Quaterniond newRotation = initialRotationRobot*initialRotationMarker.inverse()*differenceRot;
+    Eigen::Quaterniond newRotation = initialRotationRobot*differenceRotScale*initialRotationMarker.inverse();
 
-    Eigen::AngleAxisd differenceAngle = Eigen::AngleAxisd(newRotation*initialRotationRobot.inverse());
-    if(std::abs(differenceAngle.angle())<M_PI/2)
+    Eigen::AngleAxisd differenceAngle = Eigen::AngleAxisd(differenceRotScale);
+    // Wenn der Winkel die maximale Winkeldifferenz überschreitet
+    if(std::abs(differenceAngle.angle())<MAXIMUM_DIFFERENCE_ANGLE_PER_STEP)
     {
         T_0_EE_new.rotate(oldRotation.slerp(slerpParameter,newRotation));
     }
     else
     {
         // Wenn nicht, dann wird die Rotation konstant auf dem alten Wert gehalten
-        T_0_EE_new.rotate(oldRotation);
+        T_0_EE_new.rotate(oldRotation.slerp(slerpParameter*MAXIMUM_DIFFERENCE_ANGLE_PER_STEP/std::abs(differenceAngle.angle()),newRotation));
     }
 
 

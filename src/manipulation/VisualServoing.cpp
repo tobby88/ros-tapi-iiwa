@@ -37,8 +37,8 @@ bool VisualServoing::visualServoingCallback(masterslave::Manipulation::Request &
     Eigen::Affine3d T_0_EE_old;
     Eigen::Affine3d T_0_EE_new = Eigen::Affine3d::Identity();
     tf::poseMsgToEigen(req.T_0_EE_old,T_0_EE_old);
-    T_0_EE_new.translate(T_0_EE_old.translation()-0.1*calculateTranslationalPID());
-    T_0_EE_new.rotate(T_0_EE_old.rotation());
+    T_0_EE_new.translate(T_0_EE_old.translation()-calculateTranslationalPID());
+    T_0_EE_new.rotate(T_0_EE_old.rotation()-calculateRotationalPID());
     ROS_WARN_STREAM(T_0_EE_old.matrix());
     ROS_WARN_STREAM(T_0_EE_new.matrix());
     tf::poseEigenToMsg(T_0_EE_new,resp.T_0_EE_new);
@@ -74,7 +74,7 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
         ROS_ERROR("Marker unsichtbar!");
         return;
     }
-        actualTransform = obj*tcp.inverse();
+        actualTransform = tcp.inverse()*obj;
         if(initialRun)
         {
             initialTransform = actualTransform;

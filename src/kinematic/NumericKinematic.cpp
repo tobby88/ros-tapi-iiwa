@@ -246,6 +246,7 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
     if(residualNorm == std::numeric_limits<double>::infinity())
     {
         jointAnglesTar = jointAnglesAct;
+        ROS_ERROR("deltaQ zu gross!");
         return false;
     }
     jointAnglesTar = jointAnglesIterationPrevious;

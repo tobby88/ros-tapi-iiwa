@@ -208,6 +208,10 @@ private:
 
     const double MINIMAL_STEP_DISTANCE{2e-03};
 
+    const double MAXIMUM_DIFFERENCE_ANGLE_PER_STEP{M_PI/4};
+
+    const double MAXIMUM_TRANSLATIONAL_VELOCITY{0.1};
+
 
 
 };

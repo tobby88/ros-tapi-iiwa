@@ -338,7 +338,7 @@ class ICommander
 
         double CRITICAL_PLIERS_ANGLE{0.95*M_PI};
 
-        double PLIERS_DISTANCE_TOLERANCE{0.04};
+        double PLIERS_DISTANCE_TOLERANCE{0.06};
 
         double PLIERS_LENGTH{0.017};
 
