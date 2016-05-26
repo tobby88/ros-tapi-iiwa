@@ -1,0 +1,17 @@
+﻿<?xml version="1.0"?>
+<launch>
+	<env name ="ROS_LOG_DIR" value="$(find masterslave)/logging"/>
+	<arg name="TestDevice" value="Spacenav"/>
+	<env name ="ROS_LOG_DIR" value="$(find masterslave)/logging"/>
+	<node pkg="masterslave" type="ControlDevice" name="$(arg TestDevice)" args="$(arg TestDevice)" output="screen">
+		<param name="button/0" type="string" value="close_gripper"/>
+		<param name="button/1" type="string" value="open_gripper"/>
+	</node>
+	<node respawn="true" pkg="spacenav_node" type="spacenav_node" name="$(arg TestDevice)_node">
+		<param name="dev" type="string" value="/dev/input/js1" />
+		<param name="deadzone" value="0.12"/>
+		<!--<param name="autorepeat_rate" value="60"/>-->
+	</node>
+	<node pkg="masterslave" type="MasterSlaveManipulation" name="MasterSlaveManipulation" args="$(arg TestDevice)" output="screen"/>
+	<node pkg="rqt_reconfigure" type="rqt_reconfigure" name="rqt_reconfigure" output="screen"/>
+</launch>

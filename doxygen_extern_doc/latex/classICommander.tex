@@ -1,0 +1,354 @@
+\hypertarget{classICommander}{\section{I\-Commander Klassenreferenz}
+\label{classICommander}\index{I\-Commander@{I\-Commander}}
+}
+
+
+Abstrakte Basisklasse zur Ansteuerung der beiden Kinematikmodelle über R\-O\-S.  
+
+
+
+
+{\ttfamily \#include $<$I\-Commander.\-h$>$}
+
+
+
+Klassendiagramm für I\-Commander\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classICommander__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Zusammengehörigkeiten von I\-Commander\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=204pt]{classICommander__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Öffentliche Methoden}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classICommander_a8a9f1636cbe5526d490266be84e6a57f}{set\-Gripper\-Status} (bool open, bool close)
+\item 
+void \hyperlink{classICommander_a9c55ba4a6c61efe9dc33ed76fd180a4e}{configuration\-Callback} (masterslave\-::\-Master\-Slave\-Config \&config, uint32\-\_\-t level)
+\begin{DoxyCompactList}\small\item\em dynamic reconfigure Callbackmethode \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Geschützte Methoden}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classICommander_abcacd07f49f646d08e1722a1df08b8ce}{virtual void \hyperlink{classICommander_abcacd07f49f646d08e1722a1df08b8ce}{statemachine\-Thread} (const ros\-::\-Timer\-Event \&)=0}\label{classICommander_abcacd07f49f646d08e1722a1df08b8ce}
+
+\begin{DoxyCompactList}\small\item\em abstrakte Methode um den Zustand des Open\-I\-G\-T\-Link\-Interfaces wechseln \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a1967688a309974862c4a81b5fe04c3eb}{virtual void \hyperlink{classICommander_a1967688a309974862c4a81b5fe04c3eb}{calc\-Q6} ()=0}\label{classICommander_a1967688a309974862c4a81b5fe04c3eb}
+
+\begin{DoxyCompactList}\small\item\em Die abstrakte Methode berechnet aus dem Gelenkwinkel Q6 die Gelenkwinkel Q6n und Q6p des Zangengreifers. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a43c10dd80f4815afd4058226450c7af3}{virtual void \hyperlink{classICommander_a43c10dd80f4815afd4058226450c7af3}{command\-Velocities} ()=0}\label{classICommander_a43c10dd80f4815afd4058226450c7af3}
+
+\begin{DoxyCompactList}\small\item\em Die abstrakte Methode übernimmt die Kommandierung der Gelenkwinkel. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_aa5f882f46d3629fa754162a9ee11984c}{virtual void \hyperlink{classICommander_aa5f882f46d3629fa754162a9ee11984c}{loop} ()=0}\label{classICommander_aa5f882f46d3629fa754162a9ee11984c}
+
+\begin{DoxyCompactList}\small\item\em Die abstrakte Methode übernimmt je nach Implementierung die Kommunikation mit dem Roboter bzw. der Simulation und der Kinematikklasse über R\-O\-S-\/\-Servies. \end{DoxyCompactList}\item 
+Eigen\-::\-Quaternion$<$ double $>$ \hyperlink{classICommander_a3f9e89737d7d924553d2ed6704eb8af7}{Quaternion\-From\-Euler} (const Eigen\-::\-Vector3d \&euler\-X\-Y\-Z, bool Z\-Y\-X)
+\begin{DoxyCompactList}\small\item\em Hilfsmethode um ein Quaternion aus Eulerwinkel zu erstellen. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Geschützte Attribute}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classICommander_af6a774cc1d571b4858ebae680d1f0939}{Eigen\-::\-Affine3d \hyperlink{classICommander_af6a774cc1d571b4858ebae680d1f0939}{start\-Position\-L\-B\-R}}\label{classICommander_af6a774cc1d571b4858ebae680d1f0939}
+
+\begin{DoxyCompactList}\small\item\em kartesische Startposition des Endeffektors des L\-B\-R \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a8762a3ea77233f9700166908ad4d1987}{Eigen\-::\-Affine3d \hyperlink{classICommander_a8762a3ea77233f9700166908ad4d1987}{T\-C\-P}}\label{classICommander_a8762a3ea77233f9700166908ad4d1987}
+
+\begin{DoxyCompactList}\small\item\em kartesische Startposition des T\-C\-P des Werkzeuges \end{DoxyCompactList}\item 
+\hypertarget{classICommander_aec4eecfaa992cfb2ede1f1d339548326}{Eigen\-::\-Affine3d \hyperlink{classICommander_aec4eecfaa992cfb2ede1f1d339548326}{R\-C\-M}}\label{classICommander_aec4eecfaa992cfb2ede1f1d339548326}
+
+\begin{DoxyCompactList}\small\item\em Trokarpunkt. \end{DoxyCompactList}\item 
+double \hyperlink{classICommander_a01ec4010dc037bfb600cee7f0be9311c}{aperture\-Limit}
+\item 
+double \hyperlink{classICommander_a166295c90210dae6c74e96d749c8ea1a}{height\-Safety}
+\item 
+std\-::vector$<$ std\-::string $>$ \hyperlink{classICommander_a038f78434eb525d73414c84624d3c3e4}{buttons}
+\begin{DoxyCompactList}\small\item\em Vektor, der die Knopfkonfiguration enthält. \end{DoxyCompactList}\item 
+ros\-::\-Subscriber \hyperlink{classICommander_a77d12525f98994352e2f2a450e04305b}{velocity\-Sub}
+\item 
+\hypertarget{classICommander_aaf7b291fe6f704d0a05ca9c51c00eee5}{ros\-::\-Subscriber \hyperlink{classICommander_aaf7b291fe6f704d0a05ca9c51c00eee5}{Q4\-State\-Sub}}\label{classICommander_aaf7b291fe6f704d0a05ca9c51c00eee5}
+
+\begin{DoxyCompactList}\small\item\em Empfänger in R\-O\-S für den Gelenkwinkel Q4. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a1a7a812f85d4e474a206e44028c3d16d}{ros\-::\-Subscriber \hyperlink{classICommander_a1a7a812f85d4e474a206e44028c3d16d}{Q5\-State\-Sub}}\label{classICommander_a1a7a812f85d4e474a206e44028c3d16d}
+
+\begin{DoxyCompactList}\small\item\em Empfänger in R\-O\-S für den Gelenkwinkel Q5. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a67354975e870a8d2d5f419be68c16150}{ros\-::\-Subscriber \hyperlink{classICommander_a67354975e870a8d2d5f419be68c16150}{Q6p\-State\-Sub}}\label{classICommander_a67354975e870a8d2d5f419be68c16150}
+
+\begin{DoxyCompactList}\small\item\em Empfänger in R\-O\-S für den Gelenkwinkel Q6p. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a407e8cf738a603b645cf4065f25fe961}{ros\-::\-Subscriber \hyperlink{classICommander_a407e8cf738a603b645cf4065f25fe961}{Q6n\-State\-Sub}}\label{classICommander_a407e8cf738a603b645cf4065f25fe961}
+
+\begin{DoxyCompactList}\small\item\em Empfänger in R\-O\-S für den Gelenkwinkel Q6n. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_aca2bb439e90e5197ac0a90c9b997cd35}{ros\-::\-Subscriber \hyperlink{classICommander_aca2bb439e90e5197ac0a90c9b997cd35}{lbr\-Position\-Sub}}\label{classICommander_aca2bb439e90e5197ac0a90c9b997cd35}
+
+\begin{DoxyCompactList}\small\item\em Empfänger in R\-O\-S für die kartesische Flanschpose. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a29cbc1faa4cb0346bdc26ca7bc4b5ba3}{ros\-::\-Subscriber \hyperlink{classICommander_a29cbc1faa4cb0346bdc26ca7bc4b5ba3}{button\-Sub}}\label{classICommander_a29cbc1faa4cb0346bdc26ca7bc4b5ba3}
+
+\begin{DoxyCompactList}\small\item\em Empfänger in R\-O\-S für die Knopfeingaben für das Eingabegerät. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a70e1238a1a2b14736c467ffc6d658648}{ros\-::\-Service\-Client \hyperlink{classICommander_a70e1238a1a2b14736c467ffc6d658648}{tcp\-Client}}\label{classICommander_a70e1238a1a2b14736c467ffc6d658648}
+
+\begin{DoxyCompactList}\small\item\em Service\-Client zur Ansteuerung der Manipulationsschnittstelle in R\-O\-S. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a441d8b0887e38b3e3856884f5a4e188d}{ros\-::\-Service\-Client \hyperlink{classICommander_a441d8b0887e38b3e3856884f5a4e188d}{rcm\-Client}}\label{classICommander_a441d8b0887e38b3e3856884f5a4e188d}
+
+\begin{DoxyCompactList}\small\item\em Service\-Client zur Bestimmung des Trokarpunktes. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a2e2cbc4750713bd9374e9d818d63745b}{ros\-::\-Service\-Client \hyperlink{classICommander_a2e2cbc4750713bd9374e9d818d63745b}{direct\-Kinematics\-Client}}\label{classICommander_a2e2cbc4750713bd9374e9d818d63745b}
+
+\begin{DoxyCompactList}\small\item\em Service\-Client zur Durchführung der direkten Kinematik in R\-O\-S mit der jeweiligen Kinematik. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a284d04230dd8431983c33eefcd2dc84b}{ros\-::\-Service\-Client \hyperlink{classICommander_a284d04230dd8431983c33eefcd2dc84b}{inverse\-Kinematics\-Client}}\label{classICommander_a284d04230dd8431983c33eefcd2dc84b}
+
+\begin{DoxyCompactList}\small\item\em Service\-Client zur Durchführung der inversen Kinematik in R\-O\-S mit der jeweiligen Kinematik. \end{DoxyCompactList}\item 
+ros\-::\-Service\-Client \hyperlink{classICommander_a2a10e7e0d95c6fe556879527ea18806e}{state\-Service}
+\begin{DoxyCompactList}\small\item\em Service\-Client zum Zustandswechsel des Open\-I\-G\-T\-Link-\/\-Interfaces in der R\-O\-S\-Open\-I\-G\-T\-Link\-Bridge. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_aa8b8c2d60e8a21ac1ce39041647465e6}{ros\-::\-Publisher \hyperlink{classICommander_aa8b8c2d60e8a21ac1ce39041647465e6}{Q4\-Pub}}\label{classICommander_aa8b8c2d60e8a21ac1ce39041647465e6}
+
+\begin{DoxyCompactList}\small\item\em Sender in R\-O\-S für den Gelenkwinkel Q4. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a7ccda2ae0d3445b0182d215511288d3b}{ros\-::\-Publisher \hyperlink{classICommander_a7ccda2ae0d3445b0182d215511288d3b}{Q5\-Pub}}\label{classICommander_a7ccda2ae0d3445b0182d215511288d3b}
+
+\begin{DoxyCompactList}\small\item\em Sender in R\-O\-S für den Gelenkwinkel Q5. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_ac970af125f62bb073bbfa1aed1d92459}{ros\-::\-Publisher \hyperlink{classICommander_ac970af125f62bb073bbfa1aed1d92459}{Q6p\-Pub}}\label{classICommander_ac970af125f62bb073bbfa1aed1d92459}
+
+\begin{DoxyCompactList}\small\item\em Sender in R\-O\-S für den Gelenkwinkel Q6p. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a01e435c9f23dadd81033b6482a042553}{ros\-::\-Publisher \hyperlink{classICommander_a01e435c9f23dadd81033b6482a042553}{Q6n\-Pub}}\label{classICommander_a01e435c9f23dadd81033b6482a042553}
+
+\begin{DoxyCompactList}\small\item\em Sender in R\-O\-S für den Gelenkwinkel Q6n. \end{DoxyCompactList}\item 
+Eigen\-::\-Vector\-Xd \hyperlink{classICommander_ab1ed71f514ce422461e6cae7fb6e3c04}{motor\-Angles}
+\begin{DoxyCompactList}\small\item\em Zwischenspeicher für die eingehenden Motorwinkel der Gelenke Q6n und Q6p. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a8d15c8d08f17b853ecb8437e4f68b4a6}{Eigen\-::\-Vector\-Xd \hyperlink{classICommander_a8d15c8d08f17b853ecb8437e4f68b4a6}{joint\-Angles\-Tar}}\label{classICommander_a8d15c8d08f17b853ecb8437e4f68b4a6}
+
+\begin{DoxyCompactList}\small\item\em Vektor der gewünschten Gelenkwinkel des Werkzeuges bzw. des Gesamtsystems. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a7f66c83e970a1d8543be3a6c553dcd06}{Eigen\-::\-Vector\-Xd \hyperlink{classICommander_a7f66c83e970a1d8543be3a6c553dcd06}{joint\-Angles\-Act}}\label{classICommander_a7f66c83e970a1d8543be3a6c553dcd06}
+
+\begin{DoxyCompactList}\small\item\em Vektor der aktuellen Gelenkwinkel des Werkzeuges bzw. des Gesamtsystems. \end{DoxyCompactList}\item 
+bool \hyperlink{classICommander_a1b8886169747ff21c2bab443e1e10eb2}{gripper\-\_\-stop}
+\begin{DoxyCompactList}\small\item\em Flag, ob der Greifer gestoppt werden soll. \end{DoxyCompactList}\item 
+bool \hyperlink{classICommander_aa9a42ff9cb09194140ae0da24399a41f}{gripper\-\_\-open}
+\begin{DoxyCompactList}\small\item\em Flag, ob der Greifer geöffnet werden soll. \end{DoxyCompactList}\item 
+bool \hyperlink{classICommander_abe4d559901acda2eb5ac159be812b85e}{gripper\-\_\-close}
+\begin{DoxyCompactList}\small\item\em Flag, ob der Greifer geschlossen werden soll. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_aaf214207db2edcd8f663ecbd9a593b86}{double {\bfseries cycle\-Time}}\label{classICommander_aaf214207db2edcd8f663ecbd9a593b86}
+
+\item 
+\hypertarget{classICommander_a7ed8870f46e2138a7cc4bf9f3709e9f8}{double \hyperlink{classICommander_a7ed8870f46e2138a7cc4bf9f3709e9f8}{gripper\-Velocity\-Value} \{0.\-1\}}\label{classICommander_a7ed8870f46e2138a7cc4bf9f3709e9f8}
+
+\begin{DoxyCompactList}\small\item\em Greifergeschwindigkeit in der Einheit \mbox{[}rad/s\mbox{]}. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a08933d01e147310671495c100a138704}{const double {\bfseries D\-E\-G\-\_\-\-T\-O\-\_\-\-R\-A\-D} \{M\-\_\-\-P\-I/180\}}\label{classICommander_a08933d01e147310671495c100a138704}
+
+\item 
+std\-::unique\-\_\-ptr$<$ \hyperlink{classBoundingBox}{Bounding\-Box} $>$ \hyperlink{classICommander_ab0d02021fcc73daaebcfe0a826e15f50}{bounding\-Box}
+\begin{DoxyCompactList}\small\item\em Zeiger auf ein Bounding\-Box-\/\-Objekt. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_ae6ca762d9b45d0887b1b9b3d5effb2f4}{Eigen\-::\-Vector3d {\bfseries bounding\-Box\-Size} \{0.\-18,0.\-18,0.\-23\}}\label{classICommander_ae6ca762d9b45d0887b1b9b3d5effb2f4}
+
+\item 
+\hypertarget{classICommander_a1a0a53e2fda9aaa4b1a655b68097d2d0}{double {\bfseries rcm\-Distance} \{0.\-05\}}\label{classICommander_a1a0a53e2fda9aaa4b1a655b68097d2d0}
+
+\item 
+\hypertarget{classICommander_a5a578cacc14d6c644d965a2ce604c71b}{int {\bfseries Q6\-Callbacks\-Called} \{0\}}\label{classICommander_a5a578cacc14d6c644d965a2ce604c71b}
+
+\item 
+\hypertarget{classICommander_af9c3f7cbbafbf647a9dbf19cd02e0d76}{int \hyperlink{classICommander_af9c3f7cbbafbf647a9dbf19cd02e0d76}{call\-Backs\-Called} \{0\}}\label{classICommander_af9c3f7cbbafbf647a9dbf19cd02e0d76}
+
+\begin{DoxyCompactList}\small\item\em Test, ob alle Gelenkwinkelcallbacks aufgerufen wurden. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a4f627b0b2345050f4bd3df6ee75ceb91}{int {\bfseries ros\-Rate} \{1000\}}\label{classICommander_a4f627b0b2345050f4bd3df6ee75ceb91}
+
+\item 
+\hypertarget{classICommander_a45a3e0a1ffb9f748fbda252a2d93ac2a}{bool {\bfseries start\-\_\-} \{false\}}\label{classICommander_a45a3e0a1ffb9f748fbda252a2d93ac2a}
+
+\item 
+\hypertarget{classICommander_a7996c54233c00c34a8858a0f64b40531}{bool \hyperlink{classICommander_a7996c54233c00c34a8858a0f64b40531}{statemachine\-Is\-Running}}\label{classICommander_a7996c54233c00c34a8858a0f64b40531}
+
+\begin{DoxyCompactList}\small\item\em Flag, ob das Open\-I\-G\-T\-Link-\/\-Interface noch läuft. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_a0a322fe21caa9419cea0c0f3656501a4}{O\-P\-E\-N\-I\-G\-T\-L\-\_\-\-S\-T\-A\-T\-E {\bfseries new\-State} \{N\-O\-\_\-\-S\-T\-A\-T\-E\}}\label{classICommander_a0a322fe21caa9419cea0c0f3656501a4}
+
+\item 
+O\-P\-E\-N\-I\-G\-T\-L\-\_\-\-S\-T\-A\-T\-E \hyperlink{classICommander_a72cb524deeb95b224db0242efc4728d4}{state} \{N\-O\-\_\-\-S\-T\-A\-T\-E\}
+\begin{DoxyCompactList}\small\item\em Open\-I\-G\-T\-Link-\/\-Zustand. \end{DoxyCompactList}\item 
+\hypertarget{classICommander_af2fc22c262d3abaf1ad1a07ae6412cbd}{geometry\-\_\-msgs\-::\-Twist\-Stamped {\bfseries velocity\-\_\-}}\label{classICommander_af2fc22c262d3abaf1ad1a07ae6412cbd}
+
+\item 
+\hypertarget{classICommander_aaad7e25cb857441c6ec7f3b9c5608ccc}{ros\-::\-Publisher \hyperlink{classICommander_aaad7e25cb857441c6ec7f3b9c5608ccc}{cycle\-Time\-Pub}}\label{classICommander_aaad7e25cb857441c6ec7f3b9c5608ccc}
+
+\begin{DoxyCompactList}\small\item\em Sender zur Bereitstellung der Zykluszeit für verschiedene R\-O\-S-\/\-Nodes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Ausführliche Beschreibung}
+Abstrakte Basisklasse zur Ansteuerung der beiden Kinematikmodelle über R\-O\-S. 
+
+\begin{DoxyAuthor}{Autor}
+Fabian Baier 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Datum}
+20.\-03.\-2016 
+\end{DoxyDate}
+
+
+\subsection{Dokumentation der Elementfunktionen}
+\hypertarget{classICommander_a9c55ba4a6c61efe9dc33ed76fd180a4e}{\index{I\-Commander@{I\-Commander}!configuration\-Callback@{configuration\-Callback}}
+\index{configuration\-Callback@{configuration\-Callback}!ICommander@{I\-Commander}}
+\subsubsection[{configuration\-Callback}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::configuration\-Callback (
+\begin{DoxyParamCaption}
+\item[{masterslave\-::\-Master\-Slave\-Config \&}]{config, }
+\item[{uint32\-\_\-t}]{level}
+\end{DoxyParamCaption}
+)}}\label{classICommander_a9c55ba4a6c61efe9dc33ed76fd180a4e}
+
+
+dynamic reconfigure Callbackmethode 
+
+
+\begin{DoxyParams}{Parameter}
+{\em config} & Konfiguration von dynamic reconfigure als Struktur \\
+\hline
+{\em level} & Bitmaske zur Maskierung einzelner Einstellungen \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{Siehe auch}
+Master\-Slave\-Config.\-h 
+\end{DoxySeeAlso}
+\hypertarget{classICommander_a3f9e89737d7d924553d2ed6704eb8af7}{\index{I\-Commander@{I\-Commander}!Quaternion\-From\-Euler@{Quaternion\-From\-Euler}}
+\index{Quaternion\-From\-Euler@{Quaternion\-From\-Euler}!ICommander@{I\-Commander}}
+\subsubsection[{Quaternion\-From\-Euler}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::\-Quaternion\-From\-Euler (
+\begin{DoxyParamCaption}
+\item[{const Eigen\-::\-Vector3d \&}]{euler\-X\-Y\-Z, }
+\item[{bool}]{Z\-Y\-X}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_a3f9e89737d7d924553d2ed6704eb8af7}
+
+
+Hilfsmethode um ein Quaternion aus Eulerwinkel zu erstellen. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em euler\-X\-Y\-Z} & Eulerwinkel (Reihenfolge im Vektor X-\/\-Y-\/\-Z) \\
+\hline
+{\em Z\-Y\-X} & Flag, ob die Rotationsreihenfolge X-\/\-Y'-\/\-Z'' oder Z-\/\-Y'-\/\-X'' ist \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Rückgabe}
+Das berechnete Quaternion 
+\end{DoxyReturn}
+\hypertarget{classICommander_a8a9f1636cbe5526d490266be84e6a57f}{\index{I\-Commander@{I\-Commander}!set\-Gripper\-Status@{set\-Gripper\-Status}}
+\index{set\-Gripper\-Status@{set\-Gripper\-Status}!ICommander@{I\-Commander}}
+\subsubsection[{set\-Gripper\-Status}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::set\-Gripper\-Status (
+\begin{DoxyParamCaption}
+\item[{bool}]{open, }
+\item[{bool}]{close}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classICommander_a8a9f1636cbe5526d490266be84e6a57f}
+
+\begin{DoxyParams}{Parameter}
+{\em open} & Flag, ob der Greifer geöffnet werden soll. Diese wird vom Knopfdruck getriggert. \\
+\hline
+{\em close} & Flag, ob der Greifer geschlossen werden soll. Diese vom Knopfdruck getriggert. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Dokumentation der Datenelemente}
+\hypertarget{classICommander_a01ec4010dc037bfb600cee7f0be9311c}{\index{I\-Commander@{I\-Commander}!aperture\-Limit@{aperture\-Limit}}
+\index{aperture\-Limit@{aperture\-Limit}!ICommander@{I\-Commander}}
+\subsubsection[{aperture\-Limit}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::aperture\-Limit\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_a01ec4010dc037bfb600cee7f0be9311c}
+\begin{DoxyRefDesc}{Noch zu erledigen}
+\item[\hyperlink{todo__todo000002}{Noch zu erledigen}]löschen! \end{DoxyRefDesc}
+\hypertarget{classICommander_ab0d02021fcc73daaebcfe0a826e15f50}{\index{I\-Commander@{I\-Commander}!bounding\-Box@{bounding\-Box}}
+\index{bounding\-Box@{bounding\-Box}!ICommander@{I\-Commander}}
+\subsubsection[{bounding\-Box}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::bounding\-Box\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_ab0d02021fcc73daaebcfe0a826e15f50}
+
+
+Zeiger auf ein Bounding\-Box-\/\-Objekt. 
+
+\begin{DoxyRefDesc}{Noch zu erledigen}
+\item[\hyperlink{todo__todo000006}{Noch zu erledigen}]Weitere Begrenzungsgeometrien einfügen und abstrakte Basisklasse einfügen \end{DoxyRefDesc}
+\hypertarget{classICommander_a038f78434eb525d73414c84624d3c3e4}{\index{I\-Commander@{I\-Commander}!buttons@{buttons}}
+\index{buttons@{buttons}!ICommander@{I\-Commander}}
+\subsubsection[{buttons}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::buttons\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_a038f78434eb525d73414c84624d3c3e4}
+
+
+Vektor, der die Knopfkonfiguration enthält. 
+
+\begin{DoxyRefDesc}{Noch zu erledigen}
+\item[\hyperlink{todo__todo000004}{Noch zu erledigen}]check ob noch benötigt \begin{DoxySeeAlso}{Siehe auch}
+button\-Check 
+\end{DoxySeeAlso}
+\end{DoxyRefDesc}
+\hypertarget{classICommander_abe4d559901acda2eb5ac159be812b85e}{\index{I\-Commander@{I\-Commander}!gripper\-\_\-close@{gripper\-\_\-close}}
+\index{gripper\-\_\-close@{gripper\-\_\-close}!ICommander@{I\-Commander}}
+\subsubsection[{gripper\-\_\-close}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::gripper\-\_\-close\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_abe4d559901acda2eb5ac159be812b85e}
+
+
+Flag, ob der Greifer geschlossen werden soll. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classICommander_a8a9f1636cbe5526d490266be84e6a57f}{set\-Gripper\-Status} 
+\end{DoxySeeAlso}
+\hypertarget{classICommander_aa9a42ff9cb09194140ae0da24399a41f}{\index{I\-Commander@{I\-Commander}!gripper\-\_\-open@{gripper\-\_\-open}}
+\index{gripper\-\_\-open@{gripper\-\_\-open}!ICommander@{I\-Commander}}
+\subsubsection[{gripper\-\_\-open}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::gripper\-\_\-open\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_aa9a42ff9cb09194140ae0da24399a41f}
+
+
+Flag, ob der Greifer geöffnet werden soll. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classICommander_a8a9f1636cbe5526d490266be84e6a57f}{set\-Gripper\-Status} 
+\end{DoxySeeAlso}
+\hypertarget{classICommander_a1b8886169747ff21c2bab443e1e10eb2}{\index{I\-Commander@{I\-Commander}!gripper\-\_\-stop@{gripper\-\_\-stop}}
+\index{gripper\-\_\-stop@{gripper\-\_\-stop}!ICommander@{I\-Commander}}
+\subsubsection[{gripper\-\_\-stop}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::gripper\-\_\-stop\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_a1b8886169747ff21c2bab443e1e10eb2}
+
+
+Flag, ob der Greifer gestoppt werden soll. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classICommander_a8a9f1636cbe5526d490266be84e6a57f}{set\-Gripper\-Status} 
+\end{DoxySeeAlso}
+\hypertarget{classICommander_a166295c90210dae6c74e96d749c8ea1a}{\index{I\-Commander@{I\-Commander}!height\-Safety@{height\-Safety}}
+\index{height\-Safety@{height\-Safety}!ICommander@{I\-Commander}}
+\subsubsection[{height\-Safety}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::height\-Safety\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_a166295c90210dae6c74e96d749c8ea1a}
+\begin{DoxyRefDesc}{Noch zu erledigen}
+\item[\hyperlink{todo__todo000003}{Noch zu erledigen}]löschen! \end{DoxyRefDesc}
+\hypertarget{classICommander_ab1ed71f514ce422461e6cae7fb6e3c04}{\index{I\-Commander@{I\-Commander}!motor\-Angles@{motor\-Angles}}
+\index{motor\-Angles@{motor\-Angles}!ICommander@{I\-Commander}}
+\subsubsection[{motor\-Angles}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::motor\-Angles\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_ab1ed71f514ce422461e6cae7fb6e3c04}
+
+
+Zwischenspeicher für die eingehenden Motorwinkel der Gelenke Q6n und Q6p. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classICommander_a1967688a309974862c4a81b5fe04c3eb}{calc\-Q6} 
+\end{DoxySeeAlso}
+\hypertarget{classICommander_a72cb524deeb95b224db0242efc4728d4}{\index{I\-Commander@{I\-Commander}!state@{state}}
+\index{state@{state}!ICommander@{I\-Commander}}
+\subsubsection[{state}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::state \{N\-O\-\_\-\-S\-T\-A\-T\-E\}\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_a72cb524deeb95b224db0242efc4728d4}
+
+
+Open\-I\-G\-T\-Link-\/\-Zustand. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+Open\-I\-G\-T\-L\-State.\-h 
+\end{DoxySeeAlso}
+\hypertarget{classICommander_a2a10e7e0d95c6fe556879527ea18806e}{\index{I\-Commander@{I\-Commander}!state\-Service@{state\-Service}}
+\index{state\-Service@{state\-Service}!ICommander@{I\-Commander}}
+\subsubsection[{state\-Service}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::state\-Service\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_a2a10e7e0d95c6fe556879527ea18806e}
+
+
+Service\-Client zum Zustandswechsel des Open\-I\-G\-T\-Link-\/\-Interfaces in der R\-O\-S\-Open\-I\-G\-T\-Link\-Bridge. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+Ros\-Open\-I\-G\-T\-L\-Bridge 
+\end{DoxySeeAlso}
+\hypertarget{classICommander_a77d12525f98994352e2f2a450e04305b}{\index{I\-Commander@{I\-Commander}!velocity\-Sub@{velocity\-Sub}}
+\index{velocity\-Sub@{velocity\-Sub}!ICommander@{I\-Commander}}
+\subsubsection[{velocity\-Sub}]{\setlength{\rightskip}{0pt plus 5cm}I\-Commander\-::velocity\-Sub\hspace{0.3cm}{\ttfamily [protected]}}}\label{classICommander_a77d12525f98994352e2f2a450e04305b}
+\begin{DoxyRefDesc}{Noch zu erledigen}
+\item[\hyperlink{todo__todo000005}{Noch zu erledigen}]check ob noch benötigt \end{DoxyRefDesc}
+
+
+Die Dokumentation für diese Klasse wurde erzeugt aufgrund der Datei\-:\begin{DoxyCompactItemize}
+\item 
+include/masterslave/commander/\hyperlink{ICommander_8h}{I\-Commander.\-h}\end{DoxyCompactItemize}

@@ -1,107 +1,90 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(masterslave)
 
+set(CMAKE_BUILD_TYPE Debug)
+
+
+add_definitions(-std=c++11)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  sensor_msgs
+  geometry_msgs
   message_generation
   eigen_conversions
   cmake_modules
+  tf
+  tf_conversions
+  dynamic_reconfigure
 )
+
+include_directories(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
+
+set(OpenIGTLink_DIR "/usr/local/lib/igtl/")
+find_package(OpenIGTLink REQUIRED)
+include(${OpenIGTLink_USE_FILE})
+
+
+
 find_package(Eigen REQUIRED)
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
+
 
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
+add_service_files(FILES
+    OpenIGTLStateService.srv
+    NumericKinematicRCM.srv
+    NumericKinematicInverseKinematics.srv
+    NumericKinematicDirectKinematics.srv
+    GeometricKinematicRCM.srv
+    GeometricKinematicInverseKinematics.srv
+    GeometricKinematicDirectKinematics.srv
+    Manipulation.srv
+  )
 
-## To declare and build messages, services or actions from within this
-## package, follow these steps:
-## * Let MSG_DEP_SET be the set of packages whose message types you use in
-##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
-## * In the file package.xml:
-##   * add a build_depend tag for "message_generation"
-##   * add a build_depend and a run_depend tag for each package in MSG_DEP_SET
-##   * If MSG_DEP_SET isn't empty the following dependency has been pulled in
-##     but can be declared for certainty nonetheless:
-##     * add a run_depend tag for "message_runtime"
-## * In this file (CMakeLists.txt):
-##   * add "message_generation" and every package in MSG_DEP_SET to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * add "message_runtime" and every package in MSG_DEP_SET to
-##     catkin_package(CATKIN_DEPENDS ...)
-##   * uncomment the add_*_files sections below as needed
-##     and list every .msg/.srv/.action file to be processed
-##   * uncomment the generate_messages entry below
-##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
 add_message_files(
    FILES
    Button.msg
-   state.msg
    #Message2.msg
 )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
    DEPENDENCIES
    std_msgs
+   sensor_msgs
+   geometry_msgs
 )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
 
-## To declare and build dynamic reconfigure parameters within this
-## package, follow these steps:
-## * In the file package.xml:
-##   * add a build_depend and a run_depend tag for "dynamic_reconfigure"
-## * In this file (CMakeLists.txt):
-##   * add "dynamic_reconfigure" to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * uncomment the "generaEigen REQUIREDte_dynamic_reconfigure_options" section below
-##     and list every .cfg file to be processed
-
-## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
+generate_dynamic_reconfigure_options(
+  cfg/BoundingBox.cfg
+  cfg/MasterSlave.cfg
+  cfg/ControlDevice.cfg
+  cfg/VisualServoing.cfg
+  cfg/NumericKinematic.cfg
+  cfg/RosOpenIGTLBridge.cfg
+  cfg/TrajectoryGenerator.cfg
+  cfg/MasterSlaveManipulationAbsolute.cfg
+)
 
 ###################################
 ## catkin specific configuration ##
 ###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES masterslave
@@ -109,6 +92,7 @@ catkin_package(
   DEPENDS Eigen
 #  DEPENDS system_lib
 )
+
 
 ###########
 ## Build ##
@@ -121,34 +105,117 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${Eigen_INCLUDE_DIRS}
   include
+  include/masterslave
+  include/masterslave/kinematic
+  include/masterslave/optimization
 )
 
-## Declare a C++ library
-# add_library(masterslave
-#   src/${PROJECT_NAME}/masterslave.cpp
-# )
-
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-# add_dependencies(masterslave ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(masterslave_node src/masterslave_node.cpp)
-add_executable(controldevice src/controldevice.cpp include/masterslave/controldevice.h)
-add_executable(masterslave src/masterslave.cpp include/masterslave/masterslave.h)
+add_executable(ControlDevice src/ControlDevice.cpp include/masterslave/ControlDevice.h)
+add_dependencies(ControlDevice ControlDevice_gencfg)
+
+add_executable(RosOpenIGTLBridge src/RosOpenIGTLBridge.cpp include/masterslave/RosOpenIGTLBridge.h)
+add_dependencies(RosOpenIGTLBridge RosOpenITGLBridge_gencfg)
+add_dependencies(RosOpenIGTLBridge masterslave_gencfg)
+
+add_executable(NumericKinematic src/kinematic/NumericKinematic.cpp include/masterslave/kinematic/NumericKinematic.h include/masterslave/kinematic/IKinematic.h src/kinematic/IKinematic.cpp include/masterslave/optimization/eiquadprog.hpp)
+add_dependencies(NumericKinematic masterslave_gencfg)
+add_dependencies(NumericKinematic NumericKinematic_gencfg)
+
+add_executable(GeometricKinematic src/kinematic/GeometricKinematic.cpp include/masterslave/kinematic/GeometricKinematic.h include/masterslave/kinematic/IKinematic.h src/kinematic/IKinematic.cpp)
+add_dependencies(GeometricKinematic GeometricKinematic_gencfg)
+
+add_executable(MasterSlaveManipulation src/manipulation/MasterSlaveManipulation.cpp include/masterslave/manipulation/MasterSlaveManipulation.h)
+add_dependencies(MasterSlaveManipulation MasterSlaveManipulation_gencfg)
+add_dependencies(MasterSlaveManipulation masterslave_gencfg)
+
+add_executable(MasterSlaveManipulationAbsolute include/masterslave/manipulation/MasterSlaveManipulationAbsolut.h src/manipulation/MasterSlaveManipulationAbsolut.cpp)
+add_dependencies(MasterSlaveManipulationAbsolute masterslave_gencfg)
+
+
+add_executable(TrajectoryGenerator src/manipulation/TrajectoryGenerator.cpp include/masterslave/manipulation/TrajectoryGenerator.h include/masterslave/manipulation/trajectory/PTPTrajectory.h src/manipulation/trajectory/PTPTrajectory.cpp include/masterslave/manipulation/trajectory/CircleTrajectory.h src/manipulation/trajectory/CircleTrajectory.cpp include/masterslave/manipulation/trajectory/ITrajectory.h include/masterslave/manipulation/trajectory/LineTrajectory.h src/manipulation/trajectory/LineTrajectory.cpp)
+add_dependencies(TrajectoryGenerator TrajectoryGenerator_gencfg)
+add_dependencies(TrajectoryGenerator masterslave_gencfg)
+
+add_executable(NumericKinematicCommander src/commander/NumericKinematicCommander.cpp include/masterslave/commander/NumericKinematicCommander.h src/commander/ICommander.cpp include/masterslave/commander/ICommander.h include/masterslave/commander/BoundingBox.h src/commander/BoundingBox.cpp)
+add_dependencies(NumericKinematicCommander masterslave_gencfg)
+
+add_executable(GeometricKinematicCommander src/commander/GeometricKinematicCommander.cpp include/masterslave/commander/GeometricKinematicCommander.h src/commander/ICommander.cpp include/masterslave/commander/ICommander.h include/masterslave/commander/BoundingBox.h src/commander/BoundingBox.cpp)
+add_dependencies(GeometricKinematicCommander masterslave_gencfg)
+
+add_executable(VisualServoing src/manipulation/VisualServoing.cpp include/masterslave/manipulation/VisualServoing.h)
+add_dependencies(VisualServoing masterslave_gencfg)
 
 ## Add cmake target dependencies of the executable
-## same as for the library above
-# add_dependencies(masterslave_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(ControlDevice ControlDevice_generate_messages_cpp)
+add_dependencies(ControlDevice masterslave_generate_messages_cpp)
+add_dependencies(RosOpenIGTLBridge rosopenigtlbridge_generate_messages_cpp)
+add_dependencies(RosOpenIGTLBridge masterslave_generate_messages_cpp)
+add_dependencies(GeometricKinematic GeometricKinematic_generate_messages_cpp)
+add_dependencies(GeometricKinematic masterslave_generate_messages_cpp)
+add_dependencies(MasterSlaveManipulation MasterSlaveManipulation_generate_messages_cpp)
+add_dependencies(MasterSlaveManipulation masterslave_generate_messages_cpp)
+add_dependencies(MasterSlaveManipulationAbsolute MasterSlaveManipulationAbsolut_generate_messages_cpp)
+add_dependencies(MasterSlaveManipulationAbsolute masterslave_generate_messages_cpp)
+add_dependencies(NumericKinematic NumericKinematic_generate_messages_cpp)
+add_dependencies(NumericKinematic masterslave_generate_messages_cpp)
+add_dependencies(TrajectoryGenerator TrajectoryGenerator_generate_messages_cpp)
+add_dependencies(TrajectoryGenerator masterslave_generate_messages_cpp)
+add_dependencies(NumericKinematicCommander NumericKinematicCommander_generate_messages_cpp)
+add_dependencies(NumericKinematicCommander masterslave_generate_messages_cpp)
+add_dependencies(GeometricKinematicCommander GeometricKinematicCommander_generate_messages_cpp)
+add_dependencies(GeometricKinematicCommander masterslave_generate_messages_cpp)
+add_dependencies(VisualServoing masterslave_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(controldevice
+target_link_libraries(ControlDevice
    ${catkin_LIBRARIES}
    ${Eigen_LIBRARIES}
 )
 
-target_link_libraries(masterslave
+target_link_libraries(RosOpenIGTLBridge
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+    OpenIGTLink
+)
+
+target_link_libraries(NumericKinematic
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(GeometricKinematic
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(MasterSlaveManipulation
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(MasterSlaveManipulationAbsolute
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(TrajectoryGenerator
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(NumericKinematicCommander
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(GeometricKinematicCommander
+    ${catkin_LIBRARIES}
+    ${Eigen_LIBRARIES}
+)
+
+target_link_libraries(VisualServoing
     ${catkin_LIBRARIES}
     ${Eigen_LIBRARIES}
 )

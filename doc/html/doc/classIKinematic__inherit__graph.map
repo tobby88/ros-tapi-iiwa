@@ -1,0 +1,4 @@
+<map id="IKinematic" name="IKinematic">
+<area shape="rect" id="node2" href="$classGeometricKinematic.html" title="Eine Klasse zur Berechnung der Kinematik des Werkzeuges und der Endeffektorlage des LBR iiwa..." alt="" coords="5,80,144,107"/>
+<area shape="rect" id="node3" href="$classNumericKinematic.html" title="Klasse zur Berechnung der Kinematiken des Gesamtsystems mit 10 Achsen. Die inverse Kinematik wird num..." alt="" coords="169,80,297,107"/>
+</map>

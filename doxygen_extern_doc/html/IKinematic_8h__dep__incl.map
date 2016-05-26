@@ -1,0 +1,7 @@
+<map id="include/masterslave/kinematic/IKinematic.h" name="include/masterslave/kinematic/IKinematic.h">
+<area shape="rect" id="node2" href="$ICommander_8h.html" title="include/masterslave\l/commander/ICommander.h" alt="" coords="245,97,429,138"/>
+<area shape="rect" id="node5" href="$GeometricKinematic_8h.html" title="include/masterslave\l/kinematic/GeometricKinematic.h" alt="" coords="6,97,220,138"/>
+<area shape="rect" id="node6" href="$NumericKinematic_8h.html" title="include/masterslave\l/kinematic/NumericKinematic.h" alt="" coords="454,97,657,138"/>
+<area shape="rect" id="node3" href="$GeometricKinematicCommander_8h.html" title="include/masterslave\l/commander/GeometricKinematic\lCommander.h" alt="" coords="5,187,221,243"/>
+<area shape="rect" id="node4" href="$NumericKinematicCommander_8h.html" title="include/masterslave\l/commander/NumericKinematic\lCommander.h" alt="" coords="245,187,451,243"/>
+</map>

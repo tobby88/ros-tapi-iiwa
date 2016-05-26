@@ -1,0 +1,6 @@
+- builder: doxygen
+  file_patterns: '*.cpp *.hpp *.h *.dox *.md'
+  name: Master-Slave Package
+  output_dir: doc
+  homepage: http://www.imes.uni-hannover.de
+  config: rosdoc.cfg

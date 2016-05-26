@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.6"/>
+<title>Master-Slave: include/masterslave/ControlDevice.h Quellcode</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">Master-Slave
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Erzeugt von Doxygen 1.8.6 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Suchen');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>Hauptseite</span></a></li>
+      <li><a href="pages.html"><span>Zusätzliche&#160;Informationen</span></a></li>
+      <li><a href="annotated.html"><span>Klassen</span></a></li>
+      <li class="current"><a href="files.html"><span>Dateien</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Suchen" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="files.html"><span>Auflistung&#160;der&#160;Dateien</span></a></li>
+      <li><a href="globals.html"><span>Datei-Elemente</span></a></li>
+    </ul>
+  </div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Alle</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Klassen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Dateien</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Funktionen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variablen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Aufzählungen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Seiten</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_6f4a0b2fc6f2ce09175717fe052f298d.html">include</a></li><li class="navelem"><a class="el" href="dir_35f06720d9aa0f1d8c18e27f703bb5d7.html">masterslave</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">ControlDevice.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="ControlDevice_8h.html">gehe zur Dokumentation dieser Datei</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef CONTROLDEVICE_H</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define CONTROLDEVICE_H</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;ros/ros.h&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;geometry_msgs/TwistStamped.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;masterslave/Button.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;sensor_msgs/Joy.h&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;algorithm&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;sstream&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;dynamic_reconfigure/server.h&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;masterslave/ControlDeviceConfig.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classControlDevice.html">   31</a></span>&#160;<span class="keyword">class </span><a class="code" href="classControlDevice.html">ControlDevice</a> {</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <a class="code" href="classControlDevice.html">ControlDevice</a>(ros::NodeHandle&amp; nh);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classControlDevice.html#afc4d912d844cd888f87414bca1b68aa6">configurationCallback</a>(masterslave::ControlDeviceConfig &amp;config, uint32_t level);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    ~<a class="code" href="classControlDevice.html">ControlDevice</a>();</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classControlDevice.html#a30fb0b63f5807af4c0c27b3e3dd837e8">controlDeviceCallback</a>(<span class="keyword">const</span> sensor_msgs::Joy::ConstPtr&amp; joy);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classControlDevice.html#a54555a7b2c3913f4401839d66d6434c4">registration</a>();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classControlDevice.html#a461ef41cef8de1e7c0a0877a260f8a1b">buttonCheck</a>();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="classControlDevice.html#af75949ecac8c9f77d8d972e17fab6fce">   70</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classControlDevice.html#af75949ecac8c9f77d8d972e17fab6fce">errorShown</a>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    ros::NodeHandle globalNH_;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    ros::NodeHandle nh_;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="classControlDevice.html#ae8f236385e5bc7d4286d40cf6d6c5049">   79</a></span>&#160;    ros::Subscriber <a class="code" href="classControlDevice.html#ae8f236385e5bc7d4286d40cf6d6c5049">deviceSub</a>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="classControlDevice.html#ac7336bd3dae7b371b118d04086ab1b4b">   85</a></span>&#160;    ros::Publisher  <a class="code" href="classControlDevice.html#ac7336bd3dae7b371b118d04086ab1b4b">axisPub</a>;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="classControlDevice.html#a9f35eb488a8e73d6a48a1d45f82c6979">   91</a></span>&#160;    ros::Publisher  <a class="code" href="classControlDevice.html#a9f35eb488a8e73d6a48a1d45f82c6979">buttonsPub</a>;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="classControlDevice.html#ae08a1b61bf2c58f3248ddbd0e57904c9">   97</a></span>&#160;    std::map&lt;int, std::string&gt; <a class="code" href="classControlDevice.html#ae08a1b61bf2c58f3248ddbd0e57904c9">buttons</a>;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">double</span> rotGain;</div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="classControlDevice.html#a51812d84ab5cce6233d296fc8e0d000e">  105</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classControlDevice.html#a51812d84ab5cce6233d296fc8e0d000e">transGain</a>;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="classControlDevice.html#a10e97555607f3140b31b14458dc23352">  111</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classControlDevice.html#a10e97555607f3140b31b14458dc23352">joyThresh</a>;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
+<div class="line"><a name="l00117"></a><span class="lineno"><a class="line" href="classControlDevice.html#af353f21c18ff47eb33f9331e8b7263c5">  117</a></span>&#160;    std::string <a class="code" href="classControlDevice.html#af353f21c18ff47eb33f9331e8b7263c5">curDeviceType</a>;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    std::string apiDevice;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="comment">//number of the device</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">int</span> curDeviceNum;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classControlDevice.html#a2198a9a7b72b39c65a6f025db61e2108">  128</a></span>&#160;    sensor_msgs::Joy <a class="code" href="classControlDevice.html#a2198a9a7b72b39c65a6f025db61e2108">joy_old</a>;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;};</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="preprocessor">#endif // CONTROLDEVICE_H</span></div>
+<div class="ttc" id="classControlDevice_html_a9f35eb488a8e73d6a48a1d45f82c6979"><div class="ttname"><a href="classControlDevice.html#a9f35eb488a8e73d6a48a1d45f82c6979">ControlDevice::buttonsPub</a></div><div class="ttdeci">ros::Publisher buttonsPub</div><div class="ttdoc">Sender in ROS, der die Knöpfe sendet. </div><div class="ttdef"><b>Definition:</b> ControlDevice.h:91</div></div>
+<div class="ttc" id="classControlDevice_html_a30fb0b63f5807af4c0c27b3e3dd837e8"><div class="ttname"><a href="classControlDevice.html#a30fb0b63f5807af4c0c27b3e3dd837e8">ControlDevice::controlDeviceCallback</a></div><div class="ttdeci">void controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &amp;joy)</div><div class="ttdoc">Callback-Methode für die Eigabegeräte bzw. deren Achsen und Knöpfe. </div></div>
+<div class="ttc" id="classControlDevice_html_a461ef41cef8de1e7c0a0877a260f8a1b"><div class="ttname"><a href="classControlDevice.html#a461ef41cef8de1e7c0a0877a260f8a1b">ControlDevice::buttonCheck</a></div><div class="ttdeci">void buttonCheck()</div><div class="ttdoc">Festlegung der Knopfbelegung. </div></div>
+<div class="ttc" id="classControlDevice_html_a51812d84ab5cce6233d296fc8e0d000e"><div class="ttname"><a href="classControlDevice.html#a51812d84ab5cce6233d296fc8e0d000e">ControlDevice::transGain</a></div><div class="ttdeci">double transGain</div><div class="ttdoc">Verstärkungen für die Rotations- und Translationsachsen. </div><div class="ttdef"><b>Definition:</b> ControlDevice.h:105</div></div>
+<div class="ttc" id="classControlDevice_html_ac7336bd3dae7b371b118d04086ab1b4b"><div class="ttname"><a href="classControlDevice.html#ac7336bd3dae7b371b118d04086ab1b4b">ControlDevice::axisPub</a></div><div class="ttdeci">ros::Publisher axisPub</div><div class="ttdoc">Sender in ROS, der die gefilterten und skalierten Achswerte weitersendet. </div><div class="ttdef"><b>Definition:</b> ControlDevice.h:85</div></div>
+<div class="ttc" id="classControlDevice_html_afc4d912d844cd888f87414bca1b68aa6"><div class="ttname"><a href="classControlDevice.html#afc4d912d844cd888f87414bca1b68aa6">ControlDevice::configurationCallback</a></div><div class="ttdeci">void configurationCallback(masterslave::ControlDeviceConfig &amp;config, uint32_t level)</div><div class="ttdoc">dynamic reconfigure Callback Methode </div></div>
+<div class="ttc" id="classControlDevice_html_ae08a1b61bf2c58f3248ddbd0e57904c9"><div class="ttname"><a href="classControlDevice.html#ae08a1b61bf2c58f3248ddbd0e57904c9">ControlDevice::buttons</a></div><div class="ttdeci">std::map&lt; int, std::string &gt; buttons</div><div class="ttdoc">Buttons und Funktionen sind in dieser Map verknüpft. </div><div class="ttdef"><b>Definition:</b> ControlDevice.h:97</div></div>
+<div class="ttc" id="classControlDevice_html"><div class="ttname"><a href="classControlDevice.html">ControlDevice</a></div><div class="ttdoc">Klasse zur Ansteuerung und Verwaltung verschiedener LowLevel-Eingabegeräte, wie GamePads oder dem Spa...</div><div class="ttdef"><b>Definition:</b> ControlDevice.h:31</div></div>
+<div class="ttc" id="classControlDevice_html_a2198a9a7b72b39c65a6f025db61e2108"><div class="ttname"><a href="classControlDevice.html#a2198a9a7b72b39c65a6f025db61e2108">ControlDevice::joy_old</a></div><div class="ttdeci">sensor_msgs::Joy joy_old</div><div class="ttdoc">Joystickachswerte des letzten Zyklus, um Änderungen detektieren zu können. </div><div class="ttdef"><b>Definition:</b> ControlDevice.h:128</div></div>
+<div class="ttc" id="classControlDevice_html_af353f21c18ff47eb33f9331e8b7263c5"><div class="ttname"><a href="classControlDevice.html#af353f21c18ff47eb33f9331e8b7263c5">ControlDevice::curDeviceType</a></div><div class="ttdeci">std::string curDeviceType</div><div class="ttdoc">aktueller Eingabegerätetyp (GAMEPAD, SPACENAV) </div><div class="ttdef"><b>Definition:</b> ControlDevice.h:117</div></div>
+<div class="ttc" id="classControlDevice_html_ae8f236385e5bc7d4286d40cf6d6c5049"><div class="ttname"><a href="classControlDevice.html#ae8f236385e5bc7d4286d40cf6d6c5049">ControlDevice::deviceSub</a></div><div class="ttdeci">ros::Subscriber deviceSub</div><div class="ttdoc">Empfänger in ROS, der die Daten der Eingabegeräte empfängt. </div><div class="ttdef"><b>Definition:</b> ControlDevice.h:79</div></div>
+<div class="ttc" id="classControlDevice_html_a54555a7b2c3913f4401839d66d6434c4"><div class="ttname"><a href="classControlDevice.html#a54555a7b2c3913f4401839d66d6434c4">ControlDevice::registration</a></div><div class="ttdeci">void registration()</div><div class="ttdoc">Registrierung des Eingabegerätes mit Informationen des Parameterserver. </div></div>
+<div class="ttc" id="classControlDevice_html_af75949ecac8c9f77d8d972e17fab6fce"><div class="ttname"><a href="classControlDevice.html#af75949ecac8c9f77d8d972e17fab6fce">ControlDevice::errorShown</a></div><div class="ttdeci">bool errorShown</div><div class="ttdoc">Flag, welches anzeigt, ob der &quot;Kein-Eingabegerät&quot;-Fehler bereits gezeigt wird. </div><div class="ttdef"><b>Definition:</b> ControlDevice.h:70</div></div>
+<div class="ttc" id="classControlDevice_html_a10e97555607f3140b31b14458dc23352"><div class="ttname"><a href="classControlDevice.html#a10e97555607f3140b31b14458dc23352">ControlDevice::joyThresh</a></div><div class="ttdeci">double joyThresh</div><div class="ttdoc">Schwellwert für die Joystickachsen. </div><div class="ttdef"><b>Definition:</b> ControlDevice.h:111</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Erzeugt am Don Mär 24 2016 18:39:32 für Master-Slave von &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.6
+</small></address>
+</body>
+</html>

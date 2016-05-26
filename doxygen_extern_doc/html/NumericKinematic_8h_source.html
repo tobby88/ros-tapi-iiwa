@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.6"/>
+<title>Master-Slave: include/masterslave/kinematic/NumericKinematic.h Quellcode</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">Master-Slave
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Erzeugt von Doxygen 1.8.6 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Suchen');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>Hauptseite</span></a></li>
+      <li><a href="pages.html"><span>Zusätzliche&#160;Informationen</span></a></li>
+      <li><a href="annotated.html"><span>Klassen</span></a></li>
+      <li class="current"><a href="files.html"><span>Dateien</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Suchen" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="files.html"><span>Auflistung&#160;der&#160;Dateien</span></a></li>
+      <li><a href="globals.html"><span>Datei-Elemente</span></a></li>
+    </ul>
+  </div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Alle</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Klassen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Dateien</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Funktionen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variablen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Aufzählungen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Seiten</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_6f4a0b2fc6f2ce09175717fe052f298d.html">include</a></li><li class="navelem"><a class="el" href="dir_35f06720d9aa0f1d8c18e27f703bb5d7.html">masterslave</a></li><li class="navelem"><a class="el" href="dir_ed8e3b52d8cd70180111d39cf5f3ff7d.html">kinematic</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">NumericKinematic.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="NumericKinematic_8h.html">gehe zur Dokumentation dieser Datei</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef NUMERICKINEMATIC_H</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define NUMERICKINEMATIC_H</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#include &quot;<a class="code" href="IKinematic_8h.html">IKinematic.h</a>&quot;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;eigen3/Eigen/Core&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;ros/ros.h&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">//service definitions</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;masterslave/NumericKinematicRCM.h&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;masterslave/NumericKinematicDirectKinematics.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;masterslave/NumericKinematicInverseKinematics.h&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;masterslave/NumericKinematicConfig.h&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;tf/tf.h&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;tf_conversions/tf_eigen.h&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;eigen_conversions/eigen_msg.h&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;tf/transform_listener.h&gt;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;std_msgs/Float64.h&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">//solver algorithm for quadratic programming problems (very nice perfomance)</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;eiquadprog.hpp&quot;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classNumericKinematic.html">   42</a></span>&#160;<span class="keyword">class </span><a class="code" href="classNumericKinematic.html">NumericKinematic</a>: <span class="keyword">public</span> <a class="code" href="classIKinematic.html">IKinematic</a></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;{</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="classNumericKinematic.html">NumericKinematic</a>(ros::NodeHandle&amp;);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    ros::NodeHandle nh_;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    Eigen::VectorXd <a class="code" href="classNumericKinematic.html#a48e3a4bce7cb5a0c410261cb110eb371">calcDirKin</a>(Eigen::VectorXd jointAngles);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    Eigen::MatrixXd <a class="code" href="classNumericKinematic.html#ac106c549b81876ea8310dd42e8530a56">calcAnalyticalJacobian</a>(Eigen::VectorXd jointAngles);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classNumericKinematic.html#a39d3e132f2d0786815cc9b5dc94f186a">calcInvKin</a>(Eigen::Affine3d <a class="code" href="classIKinematic.html#a1c0a95317992b7fcaf26ab2bf9aaf3de">T_0_EE</a>);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="comment">// Methoden, welche die Kriterien für die Optimierungsbedingungen definieren</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    Eigen::VectorXd <a class="code" href="classNumericKinematic.html#ad3306dc5d1753c1bc403e5274c725ada">angleMonitoring</a>(Eigen::VectorXd deltaQ, Eigen::VectorXd q, <span class="keywordtype">double</span> Hmax, <span class="keywordtype">double</span>&amp; a);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    Eigen::MatrixXd collisionControl(Eigen::VectorXd q);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    Eigen::VectorXd <a class="code" href="classNumericKinematic.html#ae480557185cc99b324bae2769afd9faf">trocarMonitoring</a>(Eigen::VectorXd qAct, Eigen::VectorXd deltaQ, Eigen::MatrixXd&amp; A); <span class="comment">// and RCM is needed</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    Eigen::MatrixXd <a class="code" href="classNumericKinematic.html#a2b570a6bd42d5ff63923b3779810d38c">minimizeVelocities</a>(<span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#aa96fd840d44735dcf5af2a6007cdd9a5">cycleTime</a>, Eigen::MatrixXd weightMatrix);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    Eigen::MatrixXd <a class="code" href="classNumericKinematic.html#ad6a2a0fc7fee25d1a536bdca40aad47c">minimizeAcceleration</a>(<span class="keywordtype">double</span> cycleTime, Eigen::MatrixXd weightMatrix, Eigen::VectorXd deltaQ, Eigen::MatrixXd&amp; a);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    Eigen::VectorXd <a class="code" href="classNumericKinematic.html#a6b467211611418e500d58d0d8d172698">avoidSingularities</a>(Eigen::VectorXd qAct, Eigen::VectorXd qOffset, <span class="keywordtype">double</span> weight, <span class="keywordtype">double</span>&amp; a);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    ros::Subscriber cycleTimeSub;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="comment">//Callbacks</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">bool</span> rcmCallback(masterslave::NumericKinematicRCM::Request&amp;, masterslave::NumericKinematicRCM::Response&amp;);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keywordtype">bool</span> directKinematicsCallback(masterslave::NumericKinematicDirectKinematics::Request&amp;, masterslave::NumericKinematicDirectKinematics::Response&amp;);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordtype">bool</span> inverseKinematicsCallback(masterslave::NumericKinematicInverseKinematics::Request&amp;, masterslave::NumericKinematicInverseKinematics::Response&amp;);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordtype">void</span> cycleTimeCallback(<span class="keyword">const</span> std_msgs::Float64ConstPtr&amp;);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordtype">void</span> configurationCallback(masterslave::NumericKinematicConfig&amp; config, uint32_t level);</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
+<div class="line"><a name="l00143"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a1dc6a0780af1ef87cd5f6e8c95f1f7a7">  143</a></span>&#160;    <span class="keyword">const</span> <a class="code" href="structlbrDescriptionParameters.html">lbrDescriptionParameters</a> <a class="code" href="classNumericKinematic.html#a1dc6a0780af1ef87cd5f6e8c95f1f7a7">LBR_PARAMETERS</a> = { 0.160, 0.200, 0.200, 0.220, 0.180, 0.220, 0.076, 0.050};</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
+<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#ae23ea272ef83d6d3285730fe33fa250b">  150</a></span>&#160;    <span class="keyword">const</span> <a class="code" href="structtoolDescriptionParameters.html">toolDescriptionParameters</a> <a class="code" href="classNumericKinematic.html#ae23ea272ef83d6d3285730fe33fa250b">TOOL_PARAMETERS</a> = {0.438, 0.0, 0.062, 0.0, 90.0, 0.0, 0.0088, 0.017, 0.305};</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
+<div class="line"><a name="l00157"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a562cfd1d8c6b0f0074fb2796e8fbff13">  157</a></span>&#160;    Eigen::Matrix&lt;double, 10, 1&gt; <a class="code" href="classNumericKinematic.html#a562cfd1d8c6b0f0074fb2796e8fbff13">URSULA_MAX_ANGLES</a>;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;</div>
+<div class="line"><a name="l00164"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#af6d15e97e215a9d8e552f1667bb6234f">  164</a></span>&#160;    Eigen::Matrix&lt;double, 10, 1&gt; <a class="code" href="classNumericKinematic.html#af6d15e97e215a9d8e552f1667bb6234f">URSULA_MAX_ANGLES_SPEED</a>;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div>
+<div class="line"><a name="l00170"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a146737bc121dfecf585f5dd1012c6fb1">  170</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#a146737bc121dfecf585f5dd1012c6fb1">MAX_ANGLES</a>[10] = {170*DEG_TO_RAD, 120*DEG_TO_RAD, 170*DEG_TO_RAD, 120*DEG_TO_RAD, 170*DEG_TO_RAD, 120*DEG_TO_RAD, 175*DEG_TO_RAD, 85*DEG_TO_RAD, 90*DEG_TO_RAD, 90*DEG_TO_RAD};</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;</div>
+<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a2773f8d9aafe634b8f1e7f52142f98e8">  176</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#a2773f8d9aafe634b8f1e7f52142f98e8">MAX_ANGLES_SPEED</a>[10] = { 85*DEG_TO_RAD, 85*DEG_TO_RAD, 100*DEG_TO_RAD, 75*DEG_TO_RAD, 130*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD};</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;</div>
+<div class="line"><a name="l00182"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#af1e1bf1f56436abba6d1d6582449600b">  182</a></span>&#160;    Eigen::Matrix&lt;double, 10, 10&gt; <a class="code" href="classNumericKinematic.html#af1e1bf1f56436abba6d1d6582449600b">jointWeightMatrix</a>;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;</div>
+<div class="line"><a name="l00188"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#aab2518847c6ad6c4a6cd33746ff4aec2">  188</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#aab2518847c6ad6c4a6cd33746ff4aec2">minDistance</a>{0.05}; <span class="comment">// minimal distance between some objects before collision control starts working</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;</div>
+<div class="line"><a name="l00195"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#ac07694cf3b68d0392d9d5045af85d92f">  195</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code" href="classNumericKinematic.html#ac07694cf3b68d0392d9d5045af85d92f">maxIterations</a>{10};</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;</div>
+<div class="line"><a name="l00201"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#aa96fd840d44735dcf5af2a6007cdd9a5">  201</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#aa96fd840d44735dcf5af2a6007cdd9a5">cycleTime</a>;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="comment">//Endeffector Position in translation and rotation in euler angles (DLR-Convention)</span></div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;</div>
+<div class="line"><a name="l00209"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a92de01f45510f0c7d5c1d8872740efb8">  209</a></span>&#160;    Eigen::Matrix&lt;double, 6, 1&gt; <a class="code" href="classNumericKinematic.html#a92de01f45510f0c7d5c1d8872740efb8">curEEPosition</a>;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;</div>
+<div class="line"><a name="l00215"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#ab77311c858600ae931ce1e34d95a1d6b">  215</a></span>&#160;    Eigen::Matrix&lt;double, 6, 1&gt; <a class="code" href="classNumericKinematic.html#ab77311c858600ae931ce1e34d95a1d6b">desEEPosition</a>;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;</div>
+<div class="line"><a name="l00221"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a2b3815e7cce36ab203257bf8f5e2e236">  221</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#a2b3815e7cce36ab203257bf8f5e2e236">T_0_Q1</a>;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;</div>
+<div class="line"><a name="l00227"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#aa77f38a33ab7d209446df174a9ba61dc">  227</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#aa77f38a33ab7d209446df174a9ba61dc">T_0_Q2</a>;</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;</div>
+<div class="line"><a name="l00233"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a847dcb3a66622d8e67e9676e881e5030">  233</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#a847dcb3a66622d8e67e9676e881e5030">T_0_Q3</a>;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;</div>
+<div class="line"><a name="l00239"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a2dfc754d67f7c27cce1d05fd3d26fcbb">  239</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#a2dfc754d67f7c27cce1d05fd3d26fcbb">T_0_Q4</a>;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;</div>
+<div class="line"><a name="l00245"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a72426b1ae1945e5a09daafb69e2d1deb">  245</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#a72426b1ae1945e5a09daafb69e2d1deb">T_0_Q5</a>;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;</div>
+<div class="line"><a name="l00251"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#ad79c09069f78450e9a6c3657a390f4c2">  251</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#ad79c09069f78450e9a6c3657a390f4c2">T_0_Q6</a>;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;</div>
+<div class="line"><a name="l00257"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a5a64e4e800ee0ae6da0b2df4b2fe35cf">  257</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#a5a64e4e800ee0ae6da0b2df4b2fe35cf">T_0_Q7</a>;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;</div>
+<div class="line"><a name="l00263"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a1d4687858b97b4df67401ddb3bd2c5b4">  263</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#a1d4687858b97b4df67401ddb3bd2c5b4">T_0_FL</a>;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    Eigen::Affine3d T_0_SCH;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;</div>
+<div class="line"><a name="l00275"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a11368a132121a5dc639003ceeca8d0ec">  275</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#a11368a132121a5dc639003ceeca8d0ec">T_0_Q8</a>;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;</div>
+<div class="line"><a name="l00281"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a581d613f2ff4e2f8abf05690eb7eb08a">  281</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#a581d613f2ff4e2f8abf05690eb7eb08a">T_0_Q9</a>;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;</div>
+<div class="line"><a name="l00287"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a628bae48695ed11d4e6072889e75062b">  287</a></span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#a628bae48695ed11d4e6072889e75062b">T_0_Q10</a>;</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;</div>
+<div class="line"><a name="l00293"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a2e5991d67d0e27b171a1ef8f4b759913">  293</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#a2e5991d67d0e27b171a1ef8f4b759913">collisionAvoidanceGain</a>{0.0000001};</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;</div>
+<div class="line"><a name="l00299"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#abcb83da2f2e4934765c8522ac0569405">  299</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#abcb83da2f2e4934765c8522ac0569405">angleMonitoringGain</a>{0.0000001};</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;</div>
+<div class="line"><a name="l00305"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#ab64580c565b5ddcadb7de6fc6d5bd766">  305</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#ab64580c565b5ddcadb7de6fc6d5bd766">singularityGain</a>{0.000001};</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;</div>
+<div class="line"><a name="l00311"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a3f76ee7066ac853557b44fb1b46689cb">  311</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#a3f76ee7066ac853557b44fb1b46689cb">accelerationGain</a>{0.0000001};</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;</div>
+<div class="line"><a name="l00317"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a3c0bd5b51e9bf070bd2570928feb1cc6">  317</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#a3c0bd5b51e9bf070bd2570928feb1cc6">velocityGain</a>{0.0000001};</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;</div>
+<div class="line"><a name="l00323"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a668ce168ed4a3e917f95304153755788">  323</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#a668ce168ed4a3e917f95304153755788">maxSpeed</a>{0.7};</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;</div>
+<div class="line"><a name="l00329"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a6691d8d0fa2579cc4408acec0d2e864b">  329</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#a6691d8d0fa2579cc4408acec0d2e864b">rescueFactor</a>{0};</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;</div>
+<div class="line"><a name="l00335"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a90d84f5207c4c6a956022ba26e3212ad">  335</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#a90d84f5207c4c6a956022ba26e3212ad">trocarGain</a>{1};</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;</div>
+<div class="line"><a name="l00341"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a3ca1ed22eb6d87ca796366015e1709d4">  341</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classNumericKinematic.html#a3ca1ed22eb6d87ca796366015e1709d4">tcpGain</a>{1};</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;</div>
+<div class="line"><a name="l00348"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#a3d773d5b89a38a88ed664896fb139f48">  348</a></span>&#160;    Eigen::MatrixXd <a class="code" href="classNumericKinematic.html#a3d773d5b89a38a88ed664896fb139f48">geomJacobian</a>;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;</div>
+<div class="line"><a name="l00355"></a><span class="lineno"><a class="line" href="classNumericKinematic.html#ae3fd64a575333037133ede9f2a412f76">  355</a></span>&#160;    Eigen::MatrixXd <a class="code" href="classNumericKinematic.html#ae3fd64a575333037133ede9f2a412f76">analyticalJacobian</a>;</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    Eigen::VectorXd <a class="code" href="classNumericKinematic.html#a4486d237a9ec27b6f092ffedf379e02c">rotation2RPY</a>(Eigen::Affine3d transformation);</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    Eigen::Affine3d <a class="code" href="classNumericKinematic.html#a6f116ab38ed9ff1aa0e90b710a4898f8">buildAffine3d</a>(<span class="keyword">const</span> Eigen::Vector3d &amp;translXYZ, <span class="keyword">const</span> Eigen::Vector3d &amp;axisZYX, <span class="keywordtype">bool</span> zyx);</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;};</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="preprocessor">#endif // NumericKinematic_H</span></div>
+<div class="ttc" id="classNumericKinematic_html_af1e1bf1f56436abba6d1d6582449600b"><div class="ttname"><a href="classNumericKinematic.html#af1e1bf1f56436abba6d1d6582449600b">NumericKinematic::jointWeightMatrix</a></div><div class="ttdeci">Eigen::Matrix&lt; double, 10, 10 &gt; jointWeightMatrix</div><div class="ttdoc">Diagonale Gelenkwinkelwichtungsmatrix [10x10]. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:182</div></div>
+<div class="ttc" id="classNumericKinematic_html"><div class="ttname"><a href="classNumericKinematic.html">NumericKinematic</a></div><div class="ttdoc">Klasse zur Berechnung der Kinematiken des Gesamtsystems mit 10 Achsen. Die inverse Kinematik wird num...</div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:42</div></div>
+<div class="ttc" id="classNumericKinematic_html_a628bae48695ed11d4e6072889e75062b"><div class="ttname"><a href="classNumericKinematic.html#a628bae48695ed11d4e6072889e75062b">NumericKinematic::T_0_Q10</a></div><div class="ttdeci">Eigen::Affine3d T_0_Q10</div><div class="ttdoc">Lage des Gelenks Q10 im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:287</div></div>
+<div class="ttc" id="classNumericKinematic_html_abcb83da2f2e4934765c8522ac0569405"><div class="ttname"><a href="classNumericKinematic.html#abcb83da2f2e4934765c8522ac0569405">NumericKinematic::angleMonitoringGain</a></div><div class="ttdeci">double angleMonitoringGain</div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:299</div></div>
+<div class="ttc" id="classNumericKinematic_html_a3ca1ed22eb6d87ca796366015e1709d4"><div class="ttname"><a href="classNumericKinematic.html#a3ca1ed22eb6d87ca796366015e1709d4">NumericKinematic::tcpGain</a></div><div class="ttdeci">double tcpGain</div><div class="ttdoc">Gewichtung Einhaltung des TCP. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:341</div></div>
+<div class="ttc" id="classNumericKinematic_html_ab64580c565b5ddcadb7de6fc6d5bd766"><div class="ttname"><a href="classNumericKinematic.html#ab64580c565b5ddcadb7de6fc6d5bd766">NumericKinematic::singularityGain</a></div><div class="ttdeci">double singularityGain</div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:305</div></div>
+<div class="ttc" id="classNumericKinematic_html_ad6a2a0fc7fee25d1a536bdca40aad47c"><div class="ttname"><a href="classNumericKinematic.html#ad6a2a0fc7fee25d1a536bdca40aad47c">NumericKinematic::minimizeAcceleration</a></div><div class="ttdeci">Eigen::MatrixXd minimizeAcceleration(double cycleTime, Eigen::MatrixXd weightMatrix, Eigen::VectorXd deltaQ, Eigen::MatrixXd &amp;a)</div><div class="ttdoc">Minimiert und verteilt die Gelenkwinkelbeschleunigungen abhängig von der Wichtungsmatrix. </div></div>
+<div class="ttc" id="classNumericKinematic_html_a146737bc121dfecf585f5dd1012c6fb1"><div class="ttname"><a href="classNumericKinematic.html#a146737bc121dfecf585f5dd1012c6fb1">NumericKinematic::MAX_ANGLES</a></div><div class="ttdeci">const double MAX_ANGLES[10]</div><div class="ttdoc">Array der maximalen Gelenkwinkel in [rad]. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:170</div></div>
+<div class="ttc" id="classNumericKinematic_html_ad3306dc5d1753c1bc403e5274c725ada"><div class="ttname"><a href="classNumericKinematic.html#ad3306dc5d1753c1bc403e5274c725ada">NumericKinematic::angleMonitoring</a></div><div class="ttdeci">Eigen::VectorXd angleMonitoring(Eigen::VectorXd deltaQ, Eigen::VectorXd q, double Hmax, double &amp;a)</div><div class="ttdoc">Überwacht die Einhaltung der maximalen Winkel und berechnet ein winkelabhängiges Potential. </div></div>
+<div class="ttc" id="classNumericKinematic_html_a72426b1ae1945e5a09daafb69e2d1deb"><div class="ttname"><a href="classNumericKinematic.html#a72426b1ae1945e5a09daafb69e2d1deb">NumericKinematic::T_0_Q5</a></div><div class="ttdeci">Eigen::Affine3d T_0_Q5</div><div class="ttdoc">Lage des Gelenks Q5 im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:245</div></div>
+<div class="ttc" id="classNumericKinematic_html_a2b3815e7cce36ab203257bf8f5e2e236"><div class="ttname"><a href="classNumericKinematic.html#a2b3815e7cce36ab203257bf8f5e2e236">NumericKinematic::T_0_Q1</a></div><div class="ttdeci">Eigen::Affine3d T_0_Q1</div><div class="ttdoc">Lage des Gelenks Q1 im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:221</div></div>
+<div class="ttc" id="structtoolDescriptionParameters_html"><div class="ttname"><a href="structtoolDescriptionParameters.html">toolDescriptionParameters</a></div><div class="ttdef"><b>Definition:</b> DescriptionParameters.h:5</div></div>
+<div class="ttc" id="classIKinematic_html"><div class="ttname"><a href="classIKinematic.html">IKinematic</a></div><div class="ttdoc">Abstrakte Basisklasse für die Kinematikberechnung. </div><div class="ttdef"><b>Definition:</b> IKinematic.h:21</div></div>
+<div class="ttc" id="classNumericKinematic_html_a6b467211611418e500d58d0d8d172698"><div class="ttname"><a href="classNumericKinematic.html#a6b467211611418e500d58d0d8d172698">NumericKinematic::avoidSingularities</a></div><div class="ttdeci">Eigen::VectorXd avoidSingularities(Eigen::VectorXd qAct, Eigen::VectorXd qOffset, double weight, double &amp;a)</div><div class="ttdoc">Vermeidet Singularitäten durch ein Kosinusquadratpotential. </div></div>
+<div class="ttc" id="classNumericKinematic_html_af6d15e97e215a9d8e552f1667bb6234f"><div class="ttname"><a href="classNumericKinematic.html#af6d15e97e215a9d8e552f1667bb6234f">NumericKinematic::URSULA_MAX_ANGLES_SPEED</a></div><div class="ttdeci">Eigen::Matrix&lt; double, 10, 1 &gt; URSULA_MAX_ANGLES_SPEED</div><div class="ttdoc">Vektor der maximalen Gelenkwinkelgeschwindigkeiten. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:164</div></div>
+<div class="ttc" id="classNumericKinematic_html_a581d613f2ff4e2f8abf05690eb7eb08a"><div class="ttname"><a href="classNumericKinematic.html#a581d613f2ff4e2f8abf05690eb7eb08a">NumericKinematic::T_0_Q9</a></div><div class="ttdeci">Eigen::Affine3d T_0_Q9</div><div class="ttdoc">Lage des Gelenks Q9 im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:281</div></div>
+<div class="ttc" id="classNumericKinematic_html_a1d4687858b97b4df67401ddb3bd2c5b4"><div class="ttname"><a href="classNumericKinematic.html#a1d4687858b97b4df67401ddb3bd2c5b4">NumericKinematic::T_0_FL</a></div><div class="ttdeci">Eigen::Affine3d T_0_FL</div><div class="ttdoc">Lage des Roboterflanschs im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:263</div></div>
+<div class="ttc" id="classNumericKinematic_html_ae480557185cc99b324bae2769afd9faf"><div class="ttname"><a href="classNumericKinematic.html#ae480557185cc99b324bae2769afd9faf">NumericKinematic::trocarMonitoring</a></div><div class="ttdeci">Eigen::VectorXd trocarMonitoring(Eigen::VectorXd qAct, Eigen::VectorXd deltaQ, Eigen::MatrixXd &amp;A)</div><div class="ttdoc">Überwacht die Einhaltung des Trokarpunktes. </div></div>
+<div class="ttc" id="classNumericKinematic_html_a1dc6a0780af1ef87cd5f6e8c95f1f7a7"><div class="ttname"><a href="classNumericKinematic.html#a1dc6a0780af1ef87cd5f6e8c95f1f7a7">NumericKinematic::LBR_PARAMETERS</a></div><div class="ttdeci">const lbrDescriptionParameters LBR_PARAMETERS</div><div class="ttdoc">Geometrische Parameter des LBR iiwa R820. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:143</div></div>
+<div class="ttc" id="classNumericKinematic_html_aa96fd840d44735dcf5af2a6007cdd9a5"><div class="ttname"><a href="classNumericKinematic.html#aa96fd840d44735dcf5af2a6007cdd9a5">NumericKinematic::cycleTime</a></div><div class="ttdeci">double cycleTime</div><div class="ttdoc">Zykluszeit. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:201</div></div>
+<div class="ttc" id="classNumericKinematic_html_ae23ea272ef83d6d3285730fe33fa250b"><div class="ttname"><a href="classNumericKinematic.html#ae23ea272ef83d6d3285730fe33fa250b">NumericKinematic::TOOL_PARAMETERS</a></div><div class="ttdeci">const toolDescriptionParameters TOOL_PARAMETERS</div><div class="ttdoc">Geoemtrische Parameter des Werkzeuges. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:150</div></div>
+<div class="ttc" id="classNumericKinematic_html_a39d3e132f2d0786815cc9b5dc94f186a"><div class="ttname"><a href="classNumericKinematic.html#a39d3e132f2d0786815cc9b5dc94f186a">NumericKinematic::calcInvKin</a></div><div class="ttdeci">bool calcInvKin(Eigen::Affine3d T_0_EE)</div><div class="ttdoc">Berechnung der inversen Kinematik durch numerische Optimierung eines Least-Squares-Problem nach versc...</div></div>
+<div class="ttc" id="classNumericKinematic_html_a3c0bd5b51e9bf070bd2570928feb1cc6"><div class="ttname"><a href="classNumericKinematic.html#a3c0bd5b51e9bf070bd2570928feb1cc6">NumericKinematic::velocityGain</a></div><div class="ttdeci">double velocityGain</div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:317</div></div>
+<div class="ttc" id="classNumericKinematic_html_a3f76ee7066ac853557b44fb1b46689cb"><div class="ttname"><a href="classNumericKinematic.html#a3f76ee7066ac853557b44fb1b46689cb">NumericKinematic::accelerationGain</a></div><div class="ttdeci">double accelerationGain</div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:311</div></div>
+<div class="ttc" id="classNumericKinematic_html_a6f116ab38ed9ff1aa0e90b710a4898f8"><div class="ttname"><a href="classNumericKinematic.html#a6f116ab38ed9ff1aa0e90b710a4898f8">NumericKinematic::buildAffine3d</a></div><div class="ttdeci">Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &amp;translXYZ, const Eigen::Vector3d &amp;axisZYX, bool zyx)</div><div class="ttdoc">Hilfsfunktion zur Erstellung von Affinen Transformationen aus einem Translationsvekt und den RPY-Wink...</div></div>
+<div class="ttc" id="classNumericKinematic_html_a2dfc754d67f7c27cce1d05fd3d26fcbb"><div class="ttname"><a href="classNumericKinematic.html#a2dfc754d67f7c27cce1d05fd3d26fcbb">NumericKinematic::T_0_Q4</a></div><div class="ttdeci">Eigen::Affine3d T_0_Q4</div><div class="ttdoc">Lage des Gelenks Q4 im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:239</div></div>
+<div class="ttc" id="classNumericKinematic_html_ad79c09069f78450e9a6c3657a390f4c2"><div class="ttname"><a href="classNumericKinematic.html#ad79c09069f78450e9a6c3657a390f4c2">NumericKinematic::T_0_Q6</a></div><div class="ttdeci">Eigen::Affine3d T_0_Q6</div><div class="ttdoc">Lage des Gelenks Q6 im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:251</div></div>
+<div class="ttc" id="classNumericKinematic_html_a92de01f45510f0c7d5c1d8872740efb8"><div class="ttname"><a href="classNumericKinematic.html#a92de01f45510f0c7d5c1d8872740efb8">NumericKinematic::curEEPosition</a></div><div class="ttdeci">Eigen::Matrix&lt; double, 6, 1 &gt; curEEPosition</div><div class="ttdoc">Aktuelle Endeffektorlage im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:209</div></div>
+<div class="ttc" id="classNumericKinematic_html_ab77311c858600ae931ce1e34d95a1d6b"><div class="ttname"><a href="classNumericKinematic.html#ab77311c858600ae931ce1e34d95a1d6b">NumericKinematic::desEEPosition</a></div><div class="ttdeci">Eigen::Matrix&lt; double, 6, 1 &gt; desEEPosition</div><div class="ttdoc">Gewünschte Endeffektorlage im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:215</div></div>
+<div class="ttc" id="classNumericKinematic_html_ae3fd64a575333037133ede9f2a412f76"><div class="ttname"><a href="classNumericKinematic.html#ae3fd64a575333037133ede9f2a412f76">NumericKinematic::analyticalJacobian</a></div><div class="ttdeci">Eigen::MatrixXd analyticalJacobian</div><div class="ttdoc">analytische Jacobi-Matrix </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:355</div></div>
+<div class="ttc" id="classNumericKinematic_html_a847dcb3a66622d8e67e9676e881e5030"><div class="ttname"><a href="classNumericKinematic.html#a847dcb3a66622d8e67e9676e881e5030">NumericKinematic::T_0_Q3</a></div><div class="ttdeci">Eigen::Affine3d T_0_Q3</div><div class="ttdoc">Lage des Gelenks Q3 im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:233</div></div>
+<div class="ttc" id="classNumericKinematic_html_a2e5991d67d0e27b171a1ef8f4b759913"><div class="ttname"><a href="classNumericKinematic.html#a2e5991d67d0e27b171a1ef8f4b759913">NumericKinematic::collisionAvoidanceGain</a></div><div class="ttdeci">double collisionAvoidanceGain</div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:293</div></div>
+<div class="ttc" id="classNumericKinematic_html_a2b570a6bd42d5ff63923b3779810d38c"><div class="ttname"><a href="classNumericKinematic.html#a2b570a6bd42d5ff63923b3779810d38c">NumericKinematic::minimizeVelocities</a></div><div class="ttdeci">Eigen::MatrixXd minimizeVelocities(double cycleTime, Eigen::MatrixXd weightMatrix)</div><div class="ttdoc">Minimiert und verteilt die Gelenkwinkelgeschwindigkeiten abhängig von der Wichtungsmatrix. </div></div>
+<div class="ttc" id="classNumericKinematic_html_ac07694cf3b68d0392d9d5045af85d92f"><div class="ttname"><a href="classNumericKinematic.html#ac07694cf3b68d0392d9d5045af85d92f">NumericKinematic::maxIterations</a></div><div class="ttdeci">const int maxIterations</div><div class="ttdoc">Maximale Anzahl der Iterations. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:195</div></div>
+<div class="ttc" id="IKinematic_8h_html"><div class="ttname"><a href="IKinematic_8h.html">IKinematic.h</a></div></div>
+<div class="ttc" id="classNumericKinematic_html_a11368a132121a5dc639003ceeca8d0ec"><div class="ttname"><a href="classNumericKinematic.html#a11368a132121a5dc639003ceeca8d0ec">NumericKinematic::T_0_Q8</a></div><div class="ttdeci">Eigen::Affine3d T_0_Q8</div><div class="ttdoc">Lage des Gelenks Q8 im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:275</div></div>
+<div class="ttc" id="classNumericKinematic_html_a5a64e4e800ee0ae6da0b2df4b2fe35cf"><div class="ttname"><a href="classNumericKinematic.html#a5a64e4e800ee0ae6da0b2df4b2fe35cf">NumericKinematic::T_0_Q7</a></div><div class="ttdeci">Eigen::Affine3d T_0_Q7</div><div class="ttdoc">Lage des Gelenks Q7 im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:257</div></div>
+<div class="ttc" id="classNumericKinematic_html_a90d84f5207c4c6a956022ba26e3212ad"><div class="ttname"><a href="classNumericKinematic.html#a90d84f5207c4c6a956022ba26e3212ad">NumericKinematic::trocarGain</a></div><div class="ttdeci">double trocarGain</div><div class="ttdoc">Gewichtung Einhaltung des Trokarpunktes. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:335</div></div>
+<div class="ttc" id="classNumericKinematic_html_a3d773d5b89a38a88ed664896fb139f48"><div class="ttname"><a href="classNumericKinematic.html#a3d773d5b89a38a88ed664896fb139f48">NumericKinematic::geomJacobian</a></div><div class="ttdeci">Eigen::MatrixXd geomJacobian</div><div class="ttdoc">geometrische Jacobi-Matrix </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:348</div></div>
+<div class="ttc" id="classNumericKinematic_html_a668ce168ed4a3e917f95304153755788"><div class="ttname"><a href="classNumericKinematic.html#a668ce168ed4a3e917f95304153755788">NumericKinematic::maxSpeed</a></div><div class="ttdeci">double maxSpeed</div><div class="ttdoc">maxSpeed decimal </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:323</div></div>
+<div class="ttc" id="classNumericKinematic_html_a48e3a4bce7cb5a0c410261cb110eb371"><div class="ttname"><a href="classNumericKinematic.html#a48e3a4bce7cb5a0c410261cb110eb371">NumericKinematic::calcDirKin</a></div><div class="ttdeci">Eigen::VectorXd calcDirKin(Eigen::VectorXd jointAngles)</div><div class="ttdoc">Berechnung der direkten Kinematik der Gesamtkinematik mit 10 Gelenkfreiheitsgraden. </div></div>
+<div class="ttc" id="classNumericKinematic_html_a2773f8d9aafe634b8f1e7f52142f98e8"><div class="ttname"><a href="classNumericKinematic.html#a2773f8d9aafe634b8f1e7f52142f98e8">NumericKinematic::MAX_ANGLES_SPEED</a></div><div class="ttdeci">const double MAX_ANGLES_SPEED[10]</div><div class="ttdoc">Array der maximalen Gelenkwinkelgeschwindigkeiten in [rad/s]. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:176</div></div>
+<div class="ttc" id="structlbrDescriptionParameters_html"><div class="ttname"><a href="structlbrDescriptionParameters.html">lbrDescriptionParameters</a></div><div class="ttdef"><b>Definition:</b> DescriptionParameters.h:30</div></div>
+<div class="ttc" id="classIKinematic_html_a1c0a95317992b7fcaf26ab2bf9aaf3de"><div class="ttname"><a href="classIKinematic.html#a1c0a95317992b7fcaf26ab2bf9aaf3de">IKinematic::T_0_EE</a></div><div class="ttdeci">Eigen::Affine3d T_0_EE</div><div class="ttdoc">Endeffektorlage im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> IKinematic.h:71</div></div>
+<div class="ttc" id="classNumericKinematic_html_a6691d8d0fa2579cc4408acec0d2e864b"><div class="ttname"><a href="classNumericKinematic.html#a6691d8d0fa2579cc4408acec0d2e864b">NumericKinematic::rescueFactor</a></div><div class="ttdeci">double rescueFactor</div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:329</div></div>
+<div class="ttc" id="classNumericKinematic_html_a4486d237a9ec27b6f092ffedf379e02c"><div class="ttname"><a href="classNumericKinematic.html#a4486d237a9ec27b6f092ffedf379e02c">NumericKinematic::rotation2RPY</a></div><div class="ttdeci">Eigen::VectorXd rotation2RPY(Eigen::Affine3d transformation)</div><div class="ttdoc">Umrechnung einer Rotation einer Affinen Transformation in Euler-Winkel und Übergabe der Translation...</div></div>
+<div class="ttc" id="classNumericKinematic_html_a562cfd1d8c6b0f0074fb2796e8fbff13"><div class="ttname"><a href="classNumericKinematic.html#a562cfd1d8c6b0f0074fb2796e8fbff13">NumericKinematic::URSULA_MAX_ANGLES</a></div><div class="ttdeci">Eigen::Matrix&lt; double, 10, 1 &gt; URSULA_MAX_ANGLES</div><div class="ttdoc">Vektor der maximalen Gelenkwinkel. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:157</div></div>
+<div class="ttc" id="classNumericKinematic_html_aab2518847c6ad6c4a6cd33746ff4aec2"><div class="ttname"><a href="classNumericKinematic.html#aab2518847c6ad6c4a6cd33746ff4aec2">NumericKinematic::minDistance</a></div><div class="ttdeci">const double minDistance</div><div class="ttdoc">Distanz ab der die Kollisionserkennung startt. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:188</div></div>
+<div class="ttc" id="classNumericKinematic_html_ac106c549b81876ea8310dd42e8530a56"><div class="ttname"><a href="classNumericKinematic.html#ac106c549b81876ea8310dd42e8530a56">NumericKinematic::calcAnalyticalJacobian</a></div><div class="ttdeci">Eigen::MatrixXd calcAnalyticalJacobian(Eigen::VectorXd jointAngles)</div><div class="ttdoc">Berechnung der analytischen Jacobi-Matrix der Gesamtkinematik mit 10 Gelenkfreiheitsgraden. </div></div>
+<div class="ttc" id="classNumericKinematic_html_aa77f38a33ab7d209446df174a9ba61dc"><div class="ttname"><a href="classNumericKinematic.html#aa77f38a33ab7d209446df174a9ba61dc">NumericKinematic::T_0_Q2</a></div><div class="ttdeci">Eigen::Affine3d T_0_Q2</div><div class="ttdoc">Lage des Gelenks Q2 im Weltkoordinatensystem. </div><div class="ttdef"><b>Definition:</b> NumericKinematic.h:227</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Erzeugt am Don Mär 24 2016 18:39:32 für Master-Slave von &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.6
+</small></address>
+</body>
+</html>

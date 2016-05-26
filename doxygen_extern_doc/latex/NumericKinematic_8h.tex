@@ -1,0 +1,29 @@
+\hypertarget{NumericKinematic_8h}{\section{include/masterslave/kinematic/\-Numeric\-Kinematic.h-\/\-Dateireferenz}
+\label{NumericKinematic_8h}\index{include/masterslave/kinematic/\-Numeric\-Kinematic.\-h@{include/masterslave/kinematic/\-Numeric\-Kinematic.\-h}}
+}
+{\ttfamily \#include \char`\"{}I\-Kinematic.\-h\char`\"{}}\\*
+{\ttfamily \#include $<$eigen3/\-Eigen/\-Core$>$}\\*
+{\ttfamily \#include \char`\"{}ros/ros.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}masterslave/\-Numeric\-Kinematic\-R\-C\-M.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}masterslave/\-Numeric\-Kinematic\-Direct\-Kinematics.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}masterslave/\-Numeric\-Kinematic\-Inverse\-Kinematics.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}masterslave/\-Numeric\-Kinematic\-Config.\-h\char`\"{}}\\*
+{\ttfamily \#include $<$tf/tf.\-h$>$}\\*
+{\ttfamily \#include $<$tf\-\_\-conversions/tf\-\_\-eigen.\-h$>$}\\*
+{\ttfamily \#include $<$eigen\-\_\-conversions/eigen\-\_\-msg.\-h$>$}\\*
+{\ttfamily \#include $<$tf/transform\-\_\-listener.\-h$>$}\\*
+{\ttfamily \#include $<$std\-\_\-msgs/\-Float64.\-h$>$}\\*
+{\ttfamily \#include \char`\"{}eiquadprog.\-hpp\char`\"{}}\\*
+Include-\/\-Abhängigkeitsdiagramm für Numeric\-Kinematic.\-h\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{NumericKinematic_8h__incl}
+\end{center}
+\end{figure}
+\subsection*{Klassen}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classNumericKinematic}{Numeric\-Kinematic}
+\begin{DoxyCompactList}\small\item\em Klasse zur Berechnung der Kinematiken des Gesamtsystems mit 10 Achsen. Die inverse Kinematik wird numerisch mittels eines Least-\/\-Square-\/\-Problems gelöst Die Klasse berechnet die direkte und inverse Kinematik eines Gesamtsystems bestehend aus L\-B\-R iiwa und dem Laparoskop. Es besitzt insgesamt 10 Achsen, da der Trokarpunkt eingehalten werden muss, bleibt noch eine Redundanz mit Dimension 2 zur Optimierung der Gelenkwinkelkonfiguration. Diese können mit verschiedenen Optimierungskriterien, wie Singularitätsvermeidung, Kollisionsvermeidung, Geschwindigkeits-\/ und Beschleunigungsminimierung, sowie einer Winkelwächterfunktion parametriert werden Zum Lösen wird der Algorithmus aus Quad\-Prog++ eingesetzt, der auf die Eigen-\/\-Bibliothek umgeschrieben wurde. \end{DoxyCompactList}\end{DoxyCompactItemize}

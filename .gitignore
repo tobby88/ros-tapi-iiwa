@@ -43,5 +43,6 @@ build
 # user specific files #
 ######################
 *.user
-.*~
+*.*~
 *.autosave
+*~

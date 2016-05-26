@@ -1,0 +1,164 @@
+\hypertarget{classTrajectoryGenerator}{\section{Trajectory\-Generator Klassenreferenz}
+\label{classTrajectoryGenerator}\index{Trajectory\-Generator@{Trajectory\-Generator}}
+}
+
+
+Klasse zum Abfahren verschiedener Trajektorien zur quantitativen Bestimmung des Trokarpunktes.  
+
+
+
+
+{\ttfamily \#include $<$Trajectory\-Generator.\-h$>$}
+
+
+
+Zusammengehörigkeiten von Trajectory\-Generator\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=202pt]{classTrajectoryGenerator__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Öffentliche Methoden}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classTrajectoryGenerator_af630ce00841ce126cbeca7dabec2b571}{{\bfseries Trajectory\-Generator} (ros\-::\-Node\-Handle \&nh)}\label{classTrajectoryGenerator_af630ce00841ce126cbeca7dabec2b571}
+
+\end{DoxyCompactItemize}
+\subsection*{Private Methoden}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{classTrajectoryGenerator_a78db2b3652839b0f16e959a859be78d1}{trajectory\-Callback} (masterslave\-::\-Manipulation\-::\-Request \&req, masterslave\-::\-Manipulation\-::\-Response \&resp)
+\begin{DoxyCompactList}\small\item\em Callback der den aktuellen T\-C\-P bereitstellt und den neu bestimmten T\-C\-P als Antwort fordert. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_a348c539543ae503b73b4f5380026a7cd}{void \hyperlink{classTrajectoryGenerator_a348c539543ae503b73b4f5380026a7cd}{cycle\-Time\-Callback} (const std\-\_\-msgs\-::\-Float64\-Const\-Ptr \&)}\label{classTrajectoryGenerator_a348c539543ae503b73b4f5380026a7cd}
+
+\begin{DoxyCompactList}\small\item\em Bereitstellung der Zykluszeit über ein R\-O\-S-\/\-Topic. \end{DoxyCompactList}\item 
+void \hyperlink{classTrajectoryGenerator_a542a3d9e6012e504a9bdd3e4d4415d97}{configuration\-Callback} (masterslave\-::\-Trajectory\-Generator\-Config \&config, uint32\-\_\-t level)
+\begin{DoxyCompactList}\small\item\em Dynamic Reconfigure Callbackmethode. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attribute}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classTrajectoryGenerator_a1e215049f93f2b354d7d246ac8d070f2}{ros\-::\-Node\-Handle {\bfseries nh\-\_\-}}\label{classTrajectoryGenerator_a1e215049f93f2b354d7d246ac8d070f2}
+
+\item 
+\hypertarget{classTrajectoryGenerator_a33fc40f24dfab51390b800280dd8ce46}{ros\-::\-Service\-Server \hyperlink{classTrajectoryGenerator_a33fc40f24dfab51390b800280dd8ce46}{trajectory\-Server}}\label{classTrajectoryGenerator_a33fc40f24dfab51390b800280dd8ce46}
+
+\begin{DoxyCompactList}\small\item\em Bereitstellung des Service Servers zur Manipulation des T\-C\-P. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_a7250335d598f1d556b5e826dd206fbc8}{ros\-::\-Subscriber \hyperlink{classTrajectoryGenerator_a7250335d598f1d556b5e826dd206fbc8}{cycle\-Time\-Sub}}\label{classTrajectoryGenerator_a7250335d598f1d556b5e826dd206fbc8}
+
+\begin{DoxyCompactList}\small\item\em Empfänger in R\-O\-S für die bereitgestellte Zykluszeit. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_a676b24e0945d8a8623b3d9ca310b621b}{Eigen\-::\-Vector3d \hyperlink{classTrajectoryGenerator_a676b24e0945d8a8623b3d9ca310b621b}{rcm}}\label{classTrajectoryGenerator_a676b24e0945d8a8623b3d9ca310b621b}
+
+\begin{DoxyCompactList}\small\item\em Position des Trokarpunktes im Weltkoordinatensystem. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_a08c164f7f59ef59a7da96c96f0f60f73}{Eigen\-::\-Affine3d \hyperlink{classTrajectoryGenerator_a08c164f7f59ef59a7da96c96f0f60f73}{start\-Position}}\label{classTrajectoryGenerator_a08c164f7f59ef59a7da96c96f0f60f73}
+
+\begin{DoxyCompactList}\small\item\em Aktuelle Startposition bzw. aktuelle T\-C\-P-\/\-Lage. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_a608c44ff96e9d2504f35b8ff0233ec3b}{Eigen\-::\-Vector3d \hyperlink{classTrajectoryGenerator_a608c44ff96e9d2504f35b8ff0233ec3b}{first\-Point}}\label{classTrajectoryGenerator_a608c44ff96e9d2504f35b8ff0233ec3b}
+
+\begin{DoxyCompactList}\small\item\em Erster Punkt der Trajektorie. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_a1d6419470b689dd6cb23b0c7236fffd9}{Eigen\-::\-Vector3d \hyperlink{classTrajectoryGenerator_a1d6419470b689dd6cb23b0c7236fffd9}{second\-Point}}\label{classTrajectoryGenerator_a1d6419470b689dd6cb23b0c7236fffd9}
+
+\begin{DoxyCompactList}\small\item\em Zweiter Punkt der Trajektorie. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_abffbe637a297379a60c22f6efd53b8d9}{double \hyperlink{classTrajectoryGenerator_abffbe637a297379a60c22f6efd53b8d9}{z\-Coordinate}}\label{classTrajectoryGenerator_abffbe637a297379a60c22f6efd53b8d9}
+
+\begin{DoxyCompactList}\small\item\em z-\/\-Koordinate des Kreismittelpunktes \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_ac02b6a2df43dc5706507835ad5cb84d8}{double \hyperlink{classTrajectoryGenerator_ac02b6a2df43dc5706507835ad5cb84d8}{circle\-Radius}}\label{classTrajectoryGenerator_ac02b6a2df43dc5706507835ad5cb84d8}
+
+\begin{DoxyCompactList}\small\item\em Radius der Kreistrajectorie. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_a908a13ec9428ff58ea9c4622b3845337}{double \hyperlink{classTrajectoryGenerator_a908a13ec9428ff58ea9c4622b3845337}{trajectory\-Speed}}\label{classTrajectoryGenerator_a908a13ec9428ff58ea9c4622b3845337}
+
+\begin{DoxyCompactList}\small\item\em Durchschnittliche Trajektoriengeschwindigkeit in \mbox{[}mm/s\mbox{]}. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_aac65fb524447f9d1e77fb52bfcf70307}{double \hyperlink{classTrajectoryGenerator_aac65fb524447f9d1e77fb52bfcf70307}{cycle\-Time}}\label{classTrajectoryGenerator_aac65fb524447f9d1e77fb52bfcf70307}
+
+\begin{DoxyCompactList}\small\item\em Zykluszeit. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_acebd9fea08097528dbf013d327c39f7c}{bool \hyperlink{classTrajectoryGenerator_acebd9fea08097528dbf013d327c39f7c}{start} \{false\}}\label{classTrajectoryGenerator_acebd9fea08097528dbf013d327c39f7c}
+
+\begin{DoxyCompactList}\small\item\em Startflag, die über Dynamic Reconfigure übertragen wird. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_a4692340647fc11a62aec0cd32194cb45}{bool \hyperlink{classTrajectoryGenerator_a4692340647fc11a62aec0cd32194cb45}{rcm\-Position\-There} \{false\}}\label{classTrajectoryGenerator_a4692340647fc11a62aec0cd32194cb45}
+
+\begin{DoxyCompactList}\small\item\em Flag, ob der R\-C\-M empfangen wurde. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_ab32e4cd8abfe7740a3f7113fbff506b7}{const double {\bfseries M\-M\-\_\-\-T\-O\-\_\-\-M} \{0.\-001\}}\label{classTrajectoryGenerator_ab32e4cd8abfe7740a3f7113fbff506b7}
+
+\item 
+std\-::unique\-\_\-ptr$<$ \hyperlink{classITrajectory}{I\-Trajectory} $>$ \hyperlink{classTrajectoryGenerator_ad945c2000eeab78342a67d627886e211}{trajectory\-Gen}
+\begin{DoxyCompactList}\small\item\em Zeiger auf das Trajectorienobjekt. \end{DoxyCompactList}\item 
+\hypertarget{classTrajectoryGenerator_a3ac417739c130895c6fbdea8b751d496}{\hyperlink{TrajectoryGenerator_8h_ab7e9971a19ca76371c40959c478f6618}{T\-R\-A\-J\-E\-C\-T\-O\-R\-Y\-\_\-\-S\-T\-A\-T\-E} \hyperlink{classTrajectoryGenerator_a3ac417739c130895c6fbdea8b751d496}{state} \{N\-O\-\_\-\-S\-T\-A\-T\-E\}}\label{classTrajectoryGenerator_a3ac417739c130895c6fbdea8b751d496}
+
+\begin{DoxyCompactList}\small\item\em Aktuell gewünschte Trajektorienform. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Ausführliche Beschreibung}
+Klasse zum Abfahren verschiedener Trajektorien zur quantitativen Bestimmung des Trokarpunktes. 
+
+\begin{DoxyAuthor}{Autor}
+Fabian Baier 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Datum}
+20.\-03.\-2016 
+\end{DoxyDate}
+
+
+\subsection{Dokumentation der Elementfunktionen}
+\hypertarget{classTrajectoryGenerator_a542a3d9e6012e504a9bdd3e4d4415d97}{\index{Trajectory\-Generator@{Trajectory\-Generator}!configuration\-Callback@{configuration\-Callback}}
+\index{configuration\-Callback@{configuration\-Callback}!TrajectoryGenerator@{Trajectory\-Generator}}
+\subsubsection[{configuration\-Callback}]{\setlength{\rightskip}{0pt plus 5cm}Trajectory\-Generator\-::configuration\-Callback (
+\begin{DoxyParamCaption}
+\item[{masterslave\-::\-Trajectory\-Generator\-Config \&}]{config, }
+\item[{uint32\-\_\-t}]{level}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classTrajectoryGenerator_a542a3d9e6012e504a9bdd3e4d4415d97}
+
+
+Dynamic Reconfigure Callbackmethode. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em config} & Dynamic Reconfigure Configuration \\
+\hline
+{\em level} & Bitmaske \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{Siehe auch}
+Trajectory\-Generator.\-cfg 
+\end{DoxySeeAlso}
+\hypertarget{classTrajectoryGenerator_a78db2b3652839b0f16e959a859be78d1}{\index{Trajectory\-Generator@{Trajectory\-Generator}!trajectory\-Callback@{trajectory\-Callback}}
+\index{trajectory\-Callback@{trajectory\-Callback}!TrajectoryGenerator@{Trajectory\-Generator}}
+\subsubsection[{trajectory\-Callback}]{\setlength{\rightskip}{0pt plus 5cm}Trajectory\-Generator\-::trajectory\-Callback (
+\begin{DoxyParamCaption}
+\item[{masterslave\-::\-Manipulation\-::\-Request \&}]{req, }
+\item[{masterslave\-::\-Manipulation\-::\-Response \&}]{resp}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classTrajectoryGenerator_a78db2b3652839b0f16e959a859be78d1}
+
+
+Callback der den aktuellen T\-C\-P bereitstellt und den neu bestimmten T\-C\-P als Antwort fordert. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em req} & T\-C\-P vor der Manipulation \\
+\hline
+{\em resp} & T\-C\-P nach der Manipulation \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Rückgabe}
+Flag, ob der Serviceaufruf erfolgreich war 
+\end{DoxyReturn}
+
+
+\subsection{Dokumentation der Datenelemente}
+\hypertarget{classTrajectoryGenerator_ad945c2000eeab78342a67d627886e211}{\index{Trajectory\-Generator@{Trajectory\-Generator}!trajectory\-Gen@{trajectory\-Gen}}
+\index{trajectory\-Gen@{trajectory\-Gen}!TrajectoryGenerator@{Trajectory\-Generator}}
+\subsubsection[{trajectory\-Gen}]{\setlength{\rightskip}{0pt plus 5cm}Trajectory\-Generator\-::trajectory\-Gen\hspace{0.3cm}{\ttfamily [private]}}}\label{classTrajectoryGenerator_ad945c2000eeab78342a67d627886e211}
+
+
+Zeiger auf das Trajectorienobjekt. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classITrajectory}{I\-Trajectory} 
+\end{DoxySeeAlso}
+
+
+Die Dokumentation für diese Klasse wurde erzeugt aufgrund der Datei\-:\begin{DoxyCompactItemize}
+\item 
+include/masterslave/manipulation/\hyperlink{TrajectoryGenerator_8h}{Trajectory\-Generator.\-h}\end{DoxyCompactItemize}

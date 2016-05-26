@@ -1,0 +1,1139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.6"/>
+<title>Master-Slave: NumericKinematic Klassenreferenz</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">Master-Slave
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Erzeugt von Doxygen 1.8.6 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Suchen');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>Hauptseite</span></a></li>
+      <li><a href="pages.html"><span>Zusätzliche&#160;Informationen</span></a></li>
+      <li class="current"><a href="annotated.html"><span>Klassen</span></a></li>
+      <li><a href="files.html"><span>Dateien</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Suchen" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="annotated.html"><span>Auflistung&#160;der&#160;Klassen</span></a></li>
+      <li><a href="classes.html"><span>Klassen-Verzeichnis</span></a></li>
+      <li><a href="inherits.html"><span>Klassenhierarchie</span></a></li>
+      <li><a href="functions.html"><span>Klassen-Elemente</span></a></li>
+    </ul>
+  </div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Alle</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Klassen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Dateien</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Funktionen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variablen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Aufzählungen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Seiten</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Öffentliche Methoden</a> &#124;
+<a href="#pri-methods">Private Methoden</a> &#124;
+<a href="#pri-attribs">Private Attribute</a> &#124;
+<a href="classNumericKinematic-members.html">Aufstellung aller Elemente</a>  </div>
+  <div class="headertitle">
+<div class="title">NumericKinematic Klassenreferenz</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>Klasse zur Berechnung der Kinematiken des Gesamtsystems mit 10 Achsen. Die inverse Kinematik wird numerisch mittels eines Least-Square-Problems gelöst Die Klasse berechnet die direkte und inverse Kinematik eines Gesamtsystems bestehend aus LBR iiwa und dem Laparoskop. Es besitzt insgesamt 10 Achsen, da der Trokarpunkt eingehalten werden muss, bleibt noch eine Redundanz mit Dimension 2 zur Optimierung der Gelenkwinkelkonfiguration. Diese können mit verschiedenen Optimierungskriterien, wie Singularitätsvermeidung, Kollisionsvermeidung, Geschwindigkeits- und Beschleunigungsminimierung, sowie einer Winkelwächterfunktion parametriert werden Zum Lösen wird der Algorithmus aus QuadProg++ eingesetzt, der auf die Eigen-Bibliothek umgeschrieben wurde.  
+ <a href="classNumericKinematic.html#details">Mehr ...</a></p>
+
+<p><code>#include &lt;<a class="el" href="NumericKinematic_8h_source.html">NumericKinematic.h</a>&gt;</code></p>
+<div class="dynheader">
+Klassendiagramm für NumericKinematic:</div>
+<div class="dyncontent">
+<div class="center"><img src="classNumericKinematic__inherit__graph.png" border="0" usemap="#NumericKinematic_inherit__map" alt="Inheritance graph"/></div>
+<map name="NumericKinematic_inherit__map" id="NumericKinematic_inherit__map">
+<area shape="rect" id="node2" href="classIKinematic.html" title="Abstrakte Basisklasse für die Kinematikberechnung. " alt="" coords="60,5,183,259"/></map>
+</div>
+<div class="dynheader">
+Zusammengehörigkeiten von NumericKinematic:</div>
+<div class="dyncontent">
+<div class="center"><img src="classNumericKinematic__coll__graph.png" border="0" usemap="#NumericKinematic_coll__map" alt="Collaboration graph"/></div>
+<map name="NumericKinematic_coll__map" id="NumericKinematic_coll__map">
+<area shape="rect" id="node2" href="classIKinematic.html" title="Abstrakte Basisklasse für die Kinematikberechnung. " alt="" coords="5,5,128,259"/><area shape="rect" id="node3" href="structtoolDescriptionParameters.html" title="{toolDescriptionParameters\n|+ X_0_Q4\l+ Y_0_Q4\l+ Z_0_Q4\l+ A_0_Q4\l+ B_0_Q4\l+ C_0_Q4\l+ L_Q5_Q6\l+ L_Q6_EE\l+ X_RCM\l|}" alt="" coords="152,35,328,229"/><area shape="rect" id="node4" href="structlbrDescriptionParameters.html" title="{lbrDescriptionParameters\n|+ L_0_Q1\l+ L_Q1_Q2\l+ L_Q2_Q3\l+ L_Q3_Q4\l+ L_Q4_Q5\l+ L_Q5_Q6\l+ L_Q6_Q7\l+ L_Q7_FL\l|}" alt="" coords="353,42,521,222"/></map>
+</div>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Öffentliche Methoden</h2></td></tr>
+<tr class="memitem:aed713b319bef7e9bb52855d3b0c4b79c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed713b319bef7e9bb52855d3b0c4b79c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>NumericKinematic</b> (ros::NodeHandle &amp;)</td></tr>
+<tr class="separator:aed713b319bef7e9bb52855d3b0c4b79c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Methoden</h2></td></tr>
+<tr class="memitem:a48e3a4bce7cb5a0c410261cb110eb371"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a48e3a4bce7cb5a0c410261cb110eb371">calcDirKin</a> (Eigen::VectorXd jointAngles)</td></tr>
+<tr class="memdesc:a48e3a4bce7cb5a0c410261cb110eb371"><td class="mdescLeft">&#160;</td><td class="mdescRight">Berechnung der direkten Kinematik der Gesamtkinematik mit 10 Gelenkfreiheitsgraden.  <a href="#a48e3a4bce7cb5a0c410261cb110eb371">Mehr ...</a><br/></td></tr>
+<tr class="separator:a48e3a4bce7cb5a0c410261cb110eb371"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac106c549b81876ea8310dd42e8530a56"><td class="memItemLeft" align="right" valign="top">Eigen::MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#ac106c549b81876ea8310dd42e8530a56">calcAnalyticalJacobian</a> (Eigen::VectorXd jointAngles)</td></tr>
+<tr class="memdesc:ac106c549b81876ea8310dd42e8530a56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Berechnung der analytischen Jacobi-Matrix der Gesamtkinematik mit 10 Gelenkfreiheitsgraden.  <a href="#ac106c549b81876ea8310dd42e8530a56">Mehr ...</a><br/></td></tr>
+<tr class="separator:ac106c549b81876ea8310dd42e8530a56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39d3e132f2d0786815cc9b5dc94f186a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a39d3e132f2d0786815cc9b5dc94f186a">calcInvKin</a> (Eigen::Affine3d <a class="el" href="classIKinematic.html#a1c0a95317992b7fcaf26ab2bf9aaf3de">T_0_EE</a>)</td></tr>
+<tr class="memdesc:a39d3e132f2d0786815cc9b5dc94f186a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Berechnung der inversen Kinematik durch numerische Optimierung eines Least-Squares-Problem nach verschiedenen Kriterien.  <a href="#a39d3e132f2d0786815cc9b5dc94f186a">Mehr ...</a><br/></td></tr>
+<tr class="separator:a39d3e132f2d0786815cc9b5dc94f186a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3306dc5d1753c1bc403e5274c725ada"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#ad3306dc5d1753c1bc403e5274c725ada">angleMonitoring</a> (Eigen::VectorXd deltaQ, Eigen::VectorXd q, double Hmax, double &amp;a)</td></tr>
+<tr class="memdesc:ad3306dc5d1753c1bc403e5274c725ada"><td class="mdescLeft">&#160;</td><td class="mdescRight">Überwacht die Einhaltung der maximalen Winkel und berechnet ein winkelabhängiges Potential.  <a href="#ad3306dc5d1753c1bc403e5274c725ada">Mehr ...</a><br/></td></tr>
+<tr class="separator:ad3306dc5d1753c1bc403e5274c725ada"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7173a170876e1f2500feeb82b5f91b5e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7173a170876e1f2500feeb82b5f91b5e"></a>
+Eigen::MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><b>collisionControl</b> (Eigen::VectorXd q)</td></tr>
+<tr class="separator:a7173a170876e1f2500feeb82b5f91b5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae480557185cc99b324bae2769afd9faf"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#ae480557185cc99b324bae2769afd9faf">trocarMonitoring</a> (Eigen::VectorXd qAct, Eigen::VectorXd deltaQ, Eigen::MatrixXd &amp;A)</td></tr>
+<tr class="memdesc:ae480557185cc99b324bae2769afd9faf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Überwacht die Einhaltung des Trokarpunktes.  <a href="#ae480557185cc99b324bae2769afd9faf">Mehr ...</a><br/></td></tr>
+<tr class="separator:ae480557185cc99b324bae2769afd9faf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b570a6bd42d5ff63923b3779810d38c"><td class="memItemLeft" align="right" valign="top">Eigen::MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a2b570a6bd42d5ff63923b3779810d38c">minimizeVelocities</a> (double <a class="el" href="classNumericKinematic.html#aa96fd840d44735dcf5af2a6007cdd9a5">cycleTime</a>, Eigen::MatrixXd weightMatrix)</td></tr>
+<tr class="memdesc:a2b570a6bd42d5ff63923b3779810d38c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimiert und verteilt die Gelenkwinkelgeschwindigkeiten abhängig von der Wichtungsmatrix.  <a href="#a2b570a6bd42d5ff63923b3779810d38c">Mehr ...</a><br/></td></tr>
+<tr class="separator:a2b570a6bd42d5ff63923b3779810d38c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6a2a0fc7fee25d1a536bdca40aad47c"><td class="memItemLeft" align="right" valign="top">Eigen::MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#ad6a2a0fc7fee25d1a536bdca40aad47c">minimizeAcceleration</a> (double <a class="el" href="classNumericKinematic.html#aa96fd840d44735dcf5af2a6007cdd9a5">cycleTime</a>, Eigen::MatrixXd weightMatrix, Eigen::VectorXd deltaQ, Eigen::MatrixXd &amp;a)</td></tr>
+<tr class="memdesc:ad6a2a0fc7fee25d1a536bdca40aad47c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimiert und verteilt die Gelenkwinkelbeschleunigungen abhängig von der Wichtungsmatrix.  <a href="#ad6a2a0fc7fee25d1a536bdca40aad47c">Mehr ...</a><br/></td></tr>
+<tr class="separator:ad6a2a0fc7fee25d1a536bdca40aad47c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b467211611418e500d58d0d8d172698"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a6b467211611418e500d58d0d8d172698">avoidSingularities</a> (Eigen::VectorXd qAct, Eigen::VectorXd qOffset, double weight, double &amp;a)</td></tr>
+<tr class="memdesc:a6b467211611418e500d58d0d8d172698"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vermeidet Singularitäten durch ein Kosinusquadratpotential.  <a href="#a6b467211611418e500d58d0d8d172698">Mehr ...</a><br/></td></tr>
+<tr class="separator:a6b467211611418e500d58d0d8d172698"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95a6dfcf5c773c0a8e46befe21f86d18"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a95a6dfcf5c773c0a8e46befe21f86d18"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>rcmCallback</b> (masterslave::NumericKinematicRCM::Request &amp;, masterslave::NumericKinematicRCM::Response &amp;)</td></tr>
+<tr class="separator:a95a6dfcf5c773c0a8e46befe21f86d18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc3915a8772203f9c39a31a8869c4206"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc3915a8772203f9c39a31a8869c4206"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>directKinematicsCallback</b> (masterslave::NumericKinematicDirectKinematics::Request &amp;, masterslave::NumericKinematicDirectKinematics::Response &amp;)</td></tr>
+<tr class="separator:adc3915a8772203f9c39a31a8869c4206"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a703b5b58b9edb0039f296e64f8b6e3ab"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a703b5b58b9edb0039f296e64f8b6e3ab"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>inverseKinematicsCallback</b> (masterslave::NumericKinematicInverseKinematics::Request &amp;, masterslave::NumericKinematicInverseKinematics::Response &amp;)</td></tr>
+<tr class="separator:a703b5b58b9edb0039f296e64f8b6e3ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d621216d4e3779465caf121ed931710"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d621216d4e3779465caf121ed931710"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>cycleTimeCallback</b> (const std_msgs::Float64ConstPtr &amp;)</td></tr>
+<tr class="separator:a6d621216d4e3779465caf121ed931710"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51d9888088eec181ecc3846006348ce7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a51d9888088eec181ecc3846006348ce7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>configurationCallback</b> (masterslave::NumericKinematicConfig &amp;config, uint32_t level)</td></tr>
+<tr class="separator:a51d9888088eec181ecc3846006348ce7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4486d237a9ec27b6f092ffedf379e02c"><td class="memItemLeft" align="right" valign="top">Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a4486d237a9ec27b6f092ffedf379e02c">rotation2RPY</a> (Eigen::Affine3d transformation)</td></tr>
+<tr class="memdesc:a4486d237a9ec27b6f092ffedf379e02c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Umrechnung einer Rotation einer Affinen Transformation in Euler-Winkel und Übergabe der Translation.  <a href="#a4486d237a9ec27b6f092ffedf379e02c">Mehr ...</a><br/></td></tr>
+<tr class="separator:a4486d237a9ec27b6f092ffedf379e02c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f116ab38ed9ff1aa0e90b710a4898f8"><td class="memItemLeft" align="right" valign="top">Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a6f116ab38ed9ff1aa0e90b710a4898f8">buildAffine3d</a> (const Eigen::Vector3d &amp;translXYZ, const Eigen::Vector3d &amp;axisZYX, bool zyx)</td></tr>
+<tr class="memdesc:a6f116ab38ed9ff1aa0e90b710a4898f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hilfsfunktion zur Erstellung von Affinen Transformationen aus einem Translationsvekt und den RPY-Winkeln.  <a href="#a6f116ab38ed9ff1aa0e90b710a4898f8">Mehr ...</a><br/></td></tr>
+<tr class="separator:a6f116ab38ed9ff1aa0e90b710a4898f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attribute</h2></td></tr>
+<tr class="memitem:aa34a71fe4f46fe30dd97fc729bf9d41f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa34a71fe4f46fe30dd97fc729bf9d41f"></a>
+ros::NodeHandle&#160;</td><td class="memItemRight" valign="bottom"><b>nh_</b></td></tr>
+<tr class="separator:aa34a71fe4f46fe30dd97fc729bf9d41f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad53a5e081b607e929b5dcd79ba597dfa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad53a5e081b607e929b5dcd79ba597dfa"></a>
+ros::Subscriber&#160;</td><td class="memItemRight" valign="bottom"><b>cycleTimeSub</b></td></tr>
+<tr class="separator:ad53a5e081b607e929b5dcd79ba597dfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1dc6a0780af1ef87cd5f6e8c95f1f7a7"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structlbrDescriptionParameters.html">lbrDescriptionParameters</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a1dc6a0780af1ef87cd5f6e8c95f1f7a7">LBR_PARAMETERS</a> = { 0.160, 0.200, 0.200, 0.220, 0.180, 0.220, 0.076, 0.050}</td></tr>
+<tr class="memdesc:a1dc6a0780af1ef87cd5f6e8c95f1f7a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Geometrische Parameter des LBR iiwa R820.  <a href="#a1dc6a0780af1ef87cd5f6e8c95f1f7a7">Mehr ...</a><br/></td></tr>
+<tr class="separator:a1dc6a0780af1ef87cd5f6e8c95f1f7a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae23ea272ef83d6d3285730fe33fa250b"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structtoolDescriptionParameters.html">toolDescriptionParameters</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#ae23ea272ef83d6d3285730fe33fa250b">TOOL_PARAMETERS</a> = {0.438, 0.0, 0.062, 0.0, 90.0, 0.0, 0.0088, 0.017, 0.305}</td></tr>
+<tr class="memdesc:ae23ea272ef83d6d3285730fe33fa250b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Geoemtrische Parameter des Werkzeuges.  <a href="#ae23ea272ef83d6d3285730fe33fa250b">Mehr ...</a><br/></td></tr>
+<tr class="separator:ae23ea272ef83d6d3285730fe33fa250b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a562cfd1d8c6b0f0074fb2796e8fbff13"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; double, 10, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a562cfd1d8c6b0f0074fb2796e8fbff13">URSULA_MAX_ANGLES</a></td></tr>
+<tr class="memdesc:a562cfd1d8c6b0f0074fb2796e8fbff13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vektor der maximalen Gelenkwinkel.  <a href="#a562cfd1d8c6b0f0074fb2796e8fbff13">Mehr ...</a><br/></td></tr>
+<tr class="separator:a562cfd1d8c6b0f0074fb2796e8fbff13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6d15e97e215a9d8e552f1667bb6234f"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; double, 10, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#af6d15e97e215a9d8e552f1667bb6234f">URSULA_MAX_ANGLES_SPEED</a></td></tr>
+<tr class="memdesc:af6d15e97e215a9d8e552f1667bb6234f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vektor der maximalen Gelenkwinkelgeschwindigkeiten.  <a href="#af6d15e97e215a9d8e552f1667bb6234f">Mehr ...</a><br/></td></tr>
+<tr class="separator:af6d15e97e215a9d8e552f1667bb6234f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a146737bc121dfecf585f5dd1012c6fb1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a146737bc121dfecf585f5dd1012c6fb1"></a>
+const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a146737bc121dfecf585f5dd1012c6fb1">MAX_ANGLES</a> [10] = {170*DEG_TO_RAD, 120*DEG_TO_RAD, 170*DEG_TO_RAD, 120*DEG_TO_RAD, 170*DEG_TO_RAD, 120*DEG_TO_RAD, 175*DEG_TO_RAD, 85*DEG_TO_RAD, 90*DEG_TO_RAD, 90*DEG_TO_RAD}</td></tr>
+<tr class="memdesc:a146737bc121dfecf585f5dd1012c6fb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array der maximalen Gelenkwinkel in [rad]. <br/></td></tr>
+<tr class="separator:a146737bc121dfecf585f5dd1012c6fb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2773f8d9aafe634b8f1e7f52142f98e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2773f8d9aafe634b8f1e7f52142f98e8"></a>
+const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a2773f8d9aafe634b8f1e7f52142f98e8">MAX_ANGLES_SPEED</a> [10] = { 85*DEG_TO_RAD, 85*DEG_TO_RAD, 100*DEG_TO_RAD, 75*DEG_TO_RAD, 130*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD, 135*DEG_TO_RAD}</td></tr>
+<tr class="memdesc:a2773f8d9aafe634b8f1e7f52142f98e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array der maximalen Gelenkwinkelgeschwindigkeiten in [rad/s]. <br/></td></tr>
+<tr class="separator:a2773f8d9aafe634b8f1e7f52142f98e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1e1bf1f56436abba6d1d6582449600b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1e1bf1f56436abba6d1d6582449600b"></a>
+Eigen::Matrix&lt; double, 10, 10 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#af1e1bf1f56436abba6d1d6582449600b">jointWeightMatrix</a></td></tr>
+<tr class="memdesc:af1e1bf1f56436abba6d1d6582449600b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Diagonale Gelenkwinkelwichtungsmatrix [10x10]. <br/></td></tr>
+<tr class="separator:af1e1bf1f56436abba6d1d6582449600b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab2518847c6ad6c4a6cd33746ff4aec2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aab2518847c6ad6c4a6cd33746ff4aec2"></a>
+const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#aab2518847c6ad6c4a6cd33746ff4aec2">minDistance</a> {0.05}</td></tr>
+<tr class="memdesc:aab2518847c6ad6c4a6cd33746ff4aec2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distanz ab der die Kollisionserkennung startt. <br/></td></tr>
+<tr class="separator:aab2518847c6ad6c4a6cd33746ff4aec2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac07694cf3b68d0392d9d5045af85d92f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac07694cf3b68d0392d9d5045af85d92f"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#ac07694cf3b68d0392d9d5045af85d92f">maxIterations</a> {10}</td></tr>
+<tr class="memdesc:ac07694cf3b68d0392d9d5045af85d92f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximale Anzahl der Iterations. <br/></td></tr>
+<tr class="separator:ac07694cf3b68d0392d9d5045af85d92f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa96fd840d44735dcf5af2a6007cdd9a5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa96fd840d44735dcf5af2a6007cdd9a5"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#aa96fd840d44735dcf5af2a6007cdd9a5">cycleTime</a></td></tr>
+<tr class="memdesc:aa96fd840d44735dcf5af2a6007cdd9a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zykluszeit. <br/></td></tr>
+<tr class="separator:aa96fd840d44735dcf5af2a6007cdd9a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92de01f45510f0c7d5c1d8872740efb8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a92de01f45510f0c7d5c1d8872740efb8"></a>
+Eigen::Matrix&lt; double, 6, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a92de01f45510f0c7d5c1d8872740efb8">curEEPosition</a></td></tr>
+<tr class="memdesc:a92de01f45510f0c7d5c1d8872740efb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Aktuelle Endeffektorlage im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a92de01f45510f0c7d5c1d8872740efb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab77311c858600ae931ce1e34d95a1d6b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab77311c858600ae931ce1e34d95a1d6b"></a>
+Eigen::Matrix&lt; double, 6, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#ab77311c858600ae931ce1e34d95a1d6b">desEEPosition</a></td></tr>
+<tr class="memdesc:ab77311c858600ae931ce1e34d95a1d6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gewünschte Endeffektorlage im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:ab77311c858600ae931ce1e34d95a1d6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b3815e7cce36ab203257bf8f5e2e236"><td class="memItemLeft" align="right" valign="top">Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a2b3815e7cce36ab203257bf8f5e2e236">T_0_Q1</a></td></tr>
+<tr class="memdesc:a2b3815e7cce36ab203257bf8f5e2e236"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Gelenks Q1 im Weltkoordinatensystem.  <a href="#a2b3815e7cce36ab203257bf8f5e2e236">Mehr ...</a><br/></td></tr>
+<tr class="separator:a2b3815e7cce36ab203257bf8f5e2e236"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa77f38a33ab7d209446df174a9ba61dc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa77f38a33ab7d209446df174a9ba61dc"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#aa77f38a33ab7d209446df174a9ba61dc">T_0_Q2</a></td></tr>
+<tr class="memdesc:aa77f38a33ab7d209446df174a9ba61dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Gelenks Q2 im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:aa77f38a33ab7d209446df174a9ba61dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a847dcb3a66622d8e67e9676e881e5030"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a847dcb3a66622d8e67e9676e881e5030"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a847dcb3a66622d8e67e9676e881e5030">T_0_Q3</a></td></tr>
+<tr class="memdesc:a847dcb3a66622d8e67e9676e881e5030"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Gelenks Q3 im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a847dcb3a66622d8e67e9676e881e5030"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dfc754d67f7c27cce1d05fd3d26fcbb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2dfc754d67f7c27cce1d05fd3d26fcbb"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a2dfc754d67f7c27cce1d05fd3d26fcbb">T_0_Q4</a></td></tr>
+<tr class="memdesc:a2dfc754d67f7c27cce1d05fd3d26fcbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Gelenks Q4 im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a2dfc754d67f7c27cce1d05fd3d26fcbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72426b1ae1945e5a09daafb69e2d1deb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72426b1ae1945e5a09daafb69e2d1deb"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a72426b1ae1945e5a09daafb69e2d1deb">T_0_Q5</a></td></tr>
+<tr class="memdesc:a72426b1ae1945e5a09daafb69e2d1deb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Gelenks Q5 im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a72426b1ae1945e5a09daafb69e2d1deb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad79c09069f78450e9a6c3657a390f4c2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad79c09069f78450e9a6c3657a390f4c2"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#ad79c09069f78450e9a6c3657a390f4c2">T_0_Q6</a></td></tr>
+<tr class="memdesc:ad79c09069f78450e9a6c3657a390f4c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Gelenks Q6 im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:ad79c09069f78450e9a6c3657a390f4c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a64e4e800ee0ae6da0b2df4b2fe35cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a64e4e800ee0ae6da0b2df4b2fe35cf"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a5a64e4e800ee0ae6da0b2df4b2fe35cf">T_0_Q7</a></td></tr>
+<tr class="memdesc:a5a64e4e800ee0ae6da0b2df4b2fe35cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Gelenks Q7 im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a5a64e4e800ee0ae6da0b2df4b2fe35cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d4687858b97b4df67401ddb3bd2c5b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d4687858b97b4df67401ddb3bd2c5b4"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a1d4687858b97b4df67401ddb3bd2c5b4">T_0_FL</a></td></tr>
+<tr class="memdesc:a1d4687858b97b4df67401ddb3bd2c5b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Roboterflanschs im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a1d4687858b97b4df67401ddb3bd2c5b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e6f0493f1fc31b3c4e33b04ace1c6cc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8e6f0493f1fc31b3c4e33b04ace1c6cc"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><b>T_0_SCH</b></td></tr>
+<tr class="separator:a8e6f0493f1fc31b3c4e33b04ace1c6cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11368a132121a5dc639003ceeca8d0ec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a11368a132121a5dc639003ceeca8d0ec"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a11368a132121a5dc639003ceeca8d0ec">T_0_Q8</a></td></tr>
+<tr class="memdesc:a11368a132121a5dc639003ceeca8d0ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Gelenks Q8 im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a11368a132121a5dc639003ceeca8d0ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a581d613f2ff4e2f8abf05690eb7eb08a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a581d613f2ff4e2f8abf05690eb7eb08a"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a581d613f2ff4e2f8abf05690eb7eb08a">T_0_Q9</a></td></tr>
+<tr class="memdesc:a581d613f2ff4e2f8abf05690eb7eb08a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Gelenks Q9 im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a581d613f2ff4e2f8abf05690eb7eb08a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a628bae48695ed11d4e6072889e75062b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a628bae48695ed11d4e6072889e75062b"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a628bae48695ed11d4e6072889e75062b">T_0_Q10</a></td></tr>
+<tr class="memdesc:a628bae48695ed11d4e6072889e75062b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des Gelenks Q10 im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a628bae48695ed11d4e6072889e75062b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e5991d67d0e27b171a1ef8f4b759913"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a2e5991d67d0e27b171a1ef8f4b759913">collisionAvoidanceGain</a> {0.0000001}</td></tr>
+<tr class="separator:a2e5991d67d0e27b171a1ef8f4b759913"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abcb83da2f2e4934765c8522ac0569405"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#abcb83da2f2e4934765c8522ac0569405">angleMonitoringGain</a> {0.0000001}</td></tr>
+<tr class="separator:abcb83da2f2e4934765c8522ac0569405"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab64580c565b5ddcadb7de6fc6d5bd766"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#ab64580c565b5ddcadb7de6fc6d5bd766">singularityGain</a> {0.000001}</td></tr>
+<tr class="separator:ab64580c565b5ddcadb7de6fc6d5bd766"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f76ee7066ac853557b44fb1b46689cb"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a3f76ee7066ac853557b44fb1b46689cb">accelerationGain</a> {0.0000001}</td></tr>
+<tr class="separator:a3f76ee7066ac853557b44fb1b46689cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c0bd5b51e9bf070bd2570928feb1cc6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a3c0bd5b51e9bf070bd2570928feb1cc6">velocityGain</a> {0.0000001}</td></tr>
+<tr class="separator:a3c0bd5b51e9bf070bd2570928feb1cc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a668ce168ed4a3e917f95304153755788"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a668ce168ed4a3e917f95304153755788"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a668ce168ed4a3e917f95304153755788">maxSpeed</a> {0.7}</td></tr>
+<tr class="memdesc:a668ce168ed4a3e917f95304153755788"><td class="mdescLeft">&#160;</td><td class="mdescRight">maxSpeed decimal <br/></td></tr>
+<tr class="separator:a668ce168ed4a3e917f95304153755788"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6691d8d0fa2579cc4408acec0d2e864b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a6691d8d0fa2579cc4408acec0d2e864b">rescueFactor</a> {0}</td></tr>
+<tr class="separator:a6691d8d0fa2579cc4408acec0d2e864b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90d84f5207c4c6a956022ba26e3212ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a90d84f5207c4c6a956022ba26e3212ad"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a90d84f5207c4c6a956022ba26e3212ad">trocarGain</a> {1}</td></tr>
+<tr class="memdesc:a90d84f5207c4c6a956022ba26e3212ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gewichtung Einhaltung des Trokarpunktes. <br/></td></tr>
+<tr class="separator:a90d84f5207c4c6a956022ba26e3212ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ca1ed22eb6d87ca796366015e1709d4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ca1ed22eb6d87ca796366015e1709d4"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a3ca1ed22eb6d87ca796366015e1709d4">tcpGain</a> {1}</td></tr>
+<tr class="memdesc:a3ca1ed22eb6d87ca796366015e1709d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gewichtung Einhaltung des TCP. <br/></td></tr>
+<tr class="separator:a3ca1ed22eb6d87ca796366015e1709d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d773d5b89a38a88ed664896fb139f48"><td class="memItemLeft" align="right" valign="top">Eigen::MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#a3d773d5b89a38a88ed664896fb139f48">geomJacobian</a></td></tr>
+<tr class="memdesc:a3d773d5b89a38a88ed664896fb139f48"><td class="mdescLeft">&#160;</td><td class="mdescRight">geometrische Jacobi-Matrix  <a href="#a3d773d5b89a38a88ed664896fb139f48">Mehr ...</a><br/></td></tr>
+<tr class="separator:a3d773d5b89a38a88ed664896fb139f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3fd64a575333037133ede9f2a412f76"><td class="memItemLeft" align="right" valign="top">Eigen::MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNumericKinematic.html#ae3fd64a575333037133ede9f2a412f76">analyticalJacobian</a></td></tr>
+<tr class="memdesc:ae3fd64a575333037133ede9f2a412f76"><td class="mdescLeft">&#160;</td><td class="mdescRight">analytische Jacobi-Matrix  <a href="#ae3fd64a575333037133ede9f2a412f76">Mehr ...</a><br/></td></tr>
+<tr class="separator:ae3fd64a575333037133ede9f2a412f76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Weitere Geerbte Elemente</h2></td></tr>
+<tr class="inherit_header pro_methods_classIKinematic"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classIKinematic')"><img src="closed.png" alt="-"/>&#160;Geschützte Methoden geerbt von <a class="el" href="classIKinematic.html">IKinematic</a></td></tr>
+<tr class="memitem:a2c740366fa7cca713fb0962a6be7e9f0 inherit pro_methods_classIKinematic"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a2c740366fa7cca713fb0962a6be7e9f0">checkTCP</a> (Eigen::Affine3d TCP)</td></tr>
+<tr class="memdesc:a2c740366fa7cca713fb0962a6be7e9f0 inherit pro_methods_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Arbeitsraumüberwachung.  <a href="#a2c740366fa7cca713fb0962a6be7e9f0">Mehr ...</a><br/></td></tr>
+<tr class="separator:a2c740366fa7cca713fb0962a6be7e9f0 inherit pro_methods_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2065ef145ec1f796e5e34b123f4dd46 inherit pro_methods_classIKinematic"><td class="memItemLeft" align="right" valign="top">Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#af2065ef145ec1f796e5e34b123f4dd46">buildAffine3d</a> (const Eigen::Vector3d &amp;translXYZ, const Eigen::Vector3d &amp;axisZYX, bool zyx)</td></tr>
+<tr class="memdesc:af2065ef145ec1f796e5e34b123f4dd46 inherit pro_methods_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hilfsfunktion zur Erstellung von Affinen Transformationen aus einem Translationsvekt und den RPY-Winkeln.  <a href="#af2065ef145ec1f796e5e34b123f4dd46">Mehr ...</a><br/></td></tr>
+<tr class="separator:af2065ef145ec1f796e5e34b123f4dd46 inherit pro_methods_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classIKinematic"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classIKinematic')"><img src="closed.png" alt="-"/>&#160;Geschützte Attribute geerbt von <a class="el" href="classIKinematic.html">IKinematic</a></td></tr>
+<tr class="memitem:a8aba9e0c27fc5f01b8eb93fa8afaf641 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8aba9e0c27fc5f01b8eb93fa8afaf641"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a8aba9e0c27fc5f01b8eb93fa8afaf641">RCM</a></td></tr>
+<tr class="memdesc:a8aba9e0c27fc5f01b8eb93fa8afaf641 inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trokarpunkt im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a8aba9e0c27fc5f01b8eb93fa8afaf641 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04a66e41cfd8be035734e5c738df90e0 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04a66e41cfd8be035734e5c738df90e0"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a04a66e41cfd8be035734e5c738df90e0">T_FL_EE</a></td></tr>
+<tr class="memdesc:a04a66e41cfd8be035734e5c738df90e0 inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transformation zwischen Endeffektor und Roboterflansch. <br/></td></tr>
+<tr class="separator:a04a66e41cfd8be035734e5c738df90e0 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c0a95317992b7fcaf26ab2bf9aaf3de inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c0a95317992b7fcaf26ab2bf9aaf3de"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a1c0a95317992b7fcaf26ab2bf9aaf3de">T_0_EE</a></td></tr>
+<tr class="memdesc:a1c0a95317992b7fcaf26ab2bf9aaf3de inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Endeffektorlage im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:a1c0a95317992b7fcaf26ab2bf9aaf3de inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f3ae85bd946533cf8a22120f597ab00 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top">Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a0f3ae85bd946533cf8a22120f597ab00">T_0_Q4</a></td></tr>
+<tr class="memdesc:a0f3ae85bd946533cf8a22120f597ab00 inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des ersten Werkzeuggelenks im Weltkoordinatensystem.  <a href="#a0f3ae85bd946533cf8a22120f597ab00">Mehr ...</a><br/></td></tr>
+<tr class="separator:a0f3ae85bd946533cf8a22120f597ab00 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45621d4e095f5b5ebd6b9eeae160e9fa inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45621d4e095f5b5ebd6b9eeae160e9fa"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a45621d4e095f5b5ebd6b9eeae160e9fa">T_FL_Q4</a></td></tr>
+<tr class="memdesc:a45621d4e095f5b5ebd6b9eeae160e9fa inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des ersten Werkzeuggelenks im Roboterflanschkoordinatensystem. <br/></td></tr>
+<tr class="separator:a45621d4e095f5b5ebd6b9eeae160e9fa inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40a738da633f12f257eb3e9f925cd00b inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a40a738da633f12f257eb3e9f925cd00b"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a40a738da633f12f257eb3e9f925cd00b">T_FL_Q5</a></td></tr>
+<tr class="memdesc:a40a738da633f12f257eb3e9f925cd00b inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des zweiten Werkzeuggelenks im Roboterflanschkoordinatensystem. <br/></td></tr>
+<tr class="separator:a40a738da633f12f257eb3e9f925cd00b inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47670e07b24a57aabea5bbbb809eac03 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47670e07b24a57aabea5bbbb809eac03"></a>
+Eigen::Affine3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a47670e07b24a57aabea5bbbb809eac03">T_FL_Q6</a></td></tr>
+<tr class="memdesc:a47670e07b24a57aabea5bbbb809eac03 inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lage des dritten Werkzeuggelenks im Roboterflanschkoordinatensystem. <br/></td></tr>
+<tr class="separator:a47670e07b24a57aabea5bbbb809eac03 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaac2e6408544098357a85b2b86ab25c3 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaac2e6408544098357a85b2b86ab25c3"></a>
+Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#aaac2e6408544098357a85b2b86ab25c3">jointAnglesTar</a></td></tr>
+<tr class="memdesc:aaac2e6408544098357a85b2b86ab25c3 inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vektor der gewünschten Gelenkwinkel des Werkzeuges bzw. des Gesamtsystems. <br/></td></tr>
+<tr class="separator:aaac2e6408544098357a85b2b86ab25c3 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac262b75f38e66b1829585d398082fa10 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac262b75f38e66b1829585d398082fa10"></a>
+Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#ac262b75f38e66b1829585d398082fa10">jointAnglesAct</a></td></tr>
+<tr class="memdesc:ac262b75f38e66b1829585d398082fa10 inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vektor der aktuellen Gelenkwinkel des Werkzeuges bzw. des Gesamtsystems. <br/></td></tr>
+<tr class="separator:ac262b75f38e66b1829585d398082fa10 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37f44565aecbf830fa9c19b4fab672b2 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a37f44565aecbf830fa9c19b4fab672b2"></a>
+const double&#160;</td><td class="memItemRight" valign="bottom"><b>DEG_TO_RAD</b> {M_PI/180}</td></tr>
+<tr class="separator:a37f44565aecbf830fa9c19b4fab672b2 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac41e50cd51191976b720a8ddd789188e inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac41e50cd51191976b720a8ddd789188e"></a>
+const double&#160;</td><td class="memItemRight" valign="bottom"><b>MM_TO_M</b> {1/1000}</td></tr>
+<tr class="separator:ac41e50cd51191976b720a8ddd789188e inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b70ed8f56334c0ee5041e5eb787a056 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a5b70ed8f56334c0ee5041e5eb787a056">apertureMax</a> {60}</td></tr>
+<tr class="separator:a5b70ed8f56334c0ee5041e5eb787a056 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a628b36a0331179b979468468c1efed54 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a628b36a0331179b979468468c1efed54">penetrationMax</a> {0.3}</td></tr>
+<tr class="separator:a628b36a0331179b979468468c1efed54 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17905911cc852a855bd985bfda640ea2 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a17905911cc852a855bd985bfda640ea2">penetrationMin</a> {0.1}</td></tr>
+<tr class="separator:a17905911cc852a855bd985bfda640ea2 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad784d5dcc50b918c3b447e35b33d10e4 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad784d5dcc50b918c3b447e35b33d10e4"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#ad784d5dcc50b918c3b447e35b33d10e4">rcmServiceCalled</a> {false}</td></tr>
+<tr class="memdesc:ad784d5dcc50b918c3b447e35b33d10e4 inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag, ob der Trokarpunkt berechnet ist. <br/></td></tr>
+<tr class="separator:ad784d5dcc50b918c3b447e35b33d10e4 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4984adc0630f9beaaebc83bc9b46bea inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad4984adc0630f9beaaebc83bc9b46bea"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#ad4984adc0630f9beaaebc83bc9b46bea">directKinematicsServiceCalled</a> {false}</td></tr>
+<tr class="memdesc:ad4984adc0630f9beaaebc83bc9b46bea inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag, ob der aktuelle TCP bekannt ist. <br/></td></tr>
+<tr class="separator:ad4984adc0630f9beaaebc83bc9b46bea inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98088de541bed2487314000b1b0c5e1c inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98088de541bed2487314000b1b0c5e1c"></a>
+ros::ServiceServer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a98088de541bed2487314000b1b0c5e1c">rcmServiceServer</a></td></tr>
+<tr class="memdesc:a98088de541bed2487314000b1b0c5e1c inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">ServiceServer für die Bestimmung des Trokarpunktes. <br/></td></tr>
+<tr class="separator:a98088de541bed2487314000b1b0c5e1c inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23847e7210bfeb2a62ad68de4a9ae6e1 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a23847e7210bfeb2a62ad68de4a9ae6e1"></a>
+ros::ServiceServer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#a23847e7210bfeb2a62ad68de4a9ae6e1">directKinematicsServer</a></td></tr>
+<tr class="memdesc:a23847e7210bfeb2a62ad68de4a9ae6e1 inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">ServiceServer für die Berechnung des TCP. <br/></td></tr>
+<tr class="separator:a23847e7210bfeb2a62ad68de4a9ae6e1 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf7b1bf907b0f1a3f8d8aad56382c7a0 inherit pro_attribs_classIKinematic"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf7b1bf907b0f1a3f8d8aad56382c7a0"></a>
+ros::ServiceServer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIKinematic.html#acf7b1bf907b0f1a3f8d8aad56382c7a0">inverseKinematicsServer</a></td></tr>
+<tr class="memdesc:acf7b1bf907b0f1a3f8d8aad56382c7a0 inherit pro_attribs_classIKinematic"><td class="mdescLeft">&#160;</td><td class="mdescRight">ServiceServer für die Berechnung der Gelenkwinkel und der Roboterflanschlage im Weltkoordinatensystem. <br/></td></tr>
+<tr class="separator:acf7b1bf907b0f1a3f8d8aad56382c7a0 inherit pro_attribs_classIKinematic"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Ausführliche Beschreibung</h2>
+<div class="textblock"><p>Klasse zur Berechnung der Kinematiken des Gesamtsystems mit 10 Achsen. Die inverse Kinematik wird numerisch mittels eines Least-Square-Problems gelöst Die Klasse berechnet die direkte und inverse Kinematik eines Gesamtsystems bestehend aus LBR iiwa und dem Laparoskop. Es besitzt insgesamt 10 Achsen, da der Trokarpunkt eingehalten werden muss, bleibt noch eine Redundanz mit Dimension 2 zur Optimierung der Gelenkwinkelkonfiguration. Diese können mit verschiedenen Optimierungskriterien, wie Singularitätsvermeidung, Kollisionsvermeidung, Geschwindigkeits- und Beschleunigungsminimierung, sowie einer Winkelwächterfunktion parametriert werden Zum Lösen wird der Algorithmus aus QuadProg++ eingesetzt, der auf die Eigen-Bibliothek umgeschrieben wurde. </p>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="eiquadprog_8hpp_source.html">eiquadprog.hpp</a></dd></dl>
+<dl class="section author"><dt>Autor</dt><dd>Fabian Baier </dd></dl>
+<dl class="section date"><dt>Datum</dt><dd>20.03.2016 </dd></dl>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classIKinematic.html" title="Abstrakte Basisklasse für die Kinematikberechnung. ">IKinematic</a> </dd></dl>
+</div><h2 class="groupheader">Dokumentation der Elementfunktionen</h2>
+<a class="anchor" id="ad3306dc5d1753c1bc403e5274c725ada"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::angleMonitoring </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::VectorXd&#160;</td>
+          <td class="paramname"><em>deltaQ</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::VectorXd&#160;</td>
+          <td class="paramname"><em>q</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>Hmax</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>a</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Überwacht die Einhaltung der maximalen Winkel und berechnet ein winkelabhängiges Potential. </p>
+<dl class="params"><dt>Parameter</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deltaQ</td><td>Winkeldifferenz zwischen dem vorherigen Iterationsschritt und dem in dem vorherigen Durchlauf bestimmten Gelenkwinkelvektor </td></tr>
+    <tr><td class="paramname">q</td><td>Aktueller Gelenkwinkelvektor der vorherigen Iteration </td></tr>
+    <tr><td class="paramname">Hmax</td><td>Maximales Potential der Potentialfunktion </td></tr>
+    <tr><td class="paramname">a</td><td>Referenz auf das berechnete Potential </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Rückgabe</dt><dd>Ableitung des Potentials nach den Gelenkwinkeln </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6b467211611418e500d58d0d8d172698"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::avoidSingularities </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::VectorXd&#160;</td>
+          <td class="paramname"><em>qAct</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::VectorXd&#160;</td>
+          <td class="paramname"><em>qOffset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>weight</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>a</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Vermeidet Singularitäten durch ein Kosinusquadratpotential. </p>
+<dl class="params"><dt>Parameter</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">qAct</td><td>Aktueller Gelenkwinkelvektor </td></tr>
+    <tr><td class="paramname">qOffset</td><td>Verschiebung des Kosinusterms </td></tr>
+    <tr><td class="paramname">weight</td><td>Maximales Potential </td></tr>
+    <tr><td class="paramname">a</td><td>Referenz auf das Potential </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Rückgabe</dt><dd>Vektor der Gelenkwinkelpotentiale abgeleitet nach den Gelenkwinkeln </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6f116ab38ed9ff1aa0e90b710a4898f8"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::buildAffine3d </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Vector3d &amp;&#160;</td>
+          <td class="paramname"><em>translXYZ</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Eigen::Vector3d &amp;&#160;</td>
+          <td class="paramname"><em>axisZYX</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>zyx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Hilfsfunktion zur Erstellung von Affinen Transformationen aus einem Translationsvekt und den RPY-Winkeln. </p>
+<dl class="params"><dt>Parameter</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">translXYZ</td><td>Translationsvektor </td></tr>
+    <tr><td class="paramname">axisZYX</td><td>Rotationsvektor </td></tr>
+    <tr><td class="paramname">zyx</td><td>Flag zur Festlegung der Rotationsrichtung </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Rückgabe</dt><dd>Affine Transformation </dd></dl>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classIKinematic.html" title="Abstrakte Basisklasse für die Kinematikberechnung. ">IKinematic</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac106c549b81876ea8310dd42e8530a56"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::calcAnalyticalJacobian </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::VectorXd&#160;</td>
+          <td class="paramname"><em>jointAngles</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Berechnung der analytischen Jacobi-Matrix der Gesamtkinematik mit 10 Gelenkfreiheitsgraden. </p>
+<dl class="params"><dt>Parameter</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">jointAngles</td><td>Gelenkwinkelvektor </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Rückgabe</dt><dd>Analytische Jacobi-Matrix mit dem rotatorischen Anteil in Bezug auf Eulerwinkel </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a48e3a4bce7cb5a0c410261cb110eb371"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::calcDirKin </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::VectorXd&#160;</td>
+          <td class="paramname"><em>jointAngles</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Berechnung der direkten Kinematik der Gesamtkinematik mit 10 Gelenkfreiheitsgraden. </p>
+<dl class="params"><dt>Parameter</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">jointAngles</td><td>Gelenkwinkelvektor </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Rückgabe</dt><dd>Kartesische Position und Vektor der Eulerwinkel in Z-Y'-X''-Reihenfolge </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a39d3e132f2d0786815cc9b5dc94f186a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::calcInvKin </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Affine3d&#160;</td>
+          <td class="paramname"><em>T_0_EE</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Berechnung der inversen Kinematik durch numerische Optimierung eines Least-Squares-Problem nach verschiedenen Kriterien. </p>
+<dl class="params"><dt>Parameter</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">T_0_EE</td><td>gewünschte TCP-Lage </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Rückgabe</dt><dd>Flag, ob der definierte Arbeitsraum eingehalten wurde </dd></dl>
+
+<p>Implementiert <a class="el" href="classIKinematic.html#a6f95d80c4330253643c49a758404e4a7">IKinematic</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad6a2a0fc7fee25d1a536bdca40aad47c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::minimizeAcceleration </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>cycleTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::MatrixXd&#160;</td>
+          <td class="paramname"><em>weightMatrix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::VectorXd&#160;</td>
+          <td class="paramname"><em>deltaQ</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::MatrixXd &amp;&#160;</td>
+          <td class="paramname"><em>a</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Minimiert und verteilt die Gelenkwinkelbeschleunigungen abhängig von der Wichtungsmatrix. </p>
+<dl class="params"><dt>Parameter</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cycleTime</td><td>Zykluszeit </td></tr>
+    <tr><td class="paramname">weightMatrix</td><td>Wichtungsmatrix </td></tr>
+    <tr><td class="paramname">deltaQ</td><td>Winkeldifferenz zwischen dem vorherigen Iterationsschritt und dem in dem vorherigen Durchlauf bestimmten Gelenkwinkelvektor </td></tr>
+    <tr><td class="paramname">a</td><td>Referenz auf das Potential </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Rückgabe</dt><dd>Vektor der Gelenkwinkelpotentiale abgeleitet nach den Gelenkwinkeln </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a2b570a6bd42d5ff63923b3779810d38c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::minimizeVelocities </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>cycleTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::MatrixXd&#160;</td>
+          <td class="paramname"><em>weightMatrix</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Minimiert und verteilt die Gelenkwinkelgeschwindigkeiten abhängig von der Wichtungsmatrix. </p>
+<dl class="params"><dt>Parameter</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cycleTime</td><td>Zykluszeit </td></tr>
+    <tr><td class="paramname">weightMatrix</td><td>Wichtungsmatrix </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Rückgabe</dt><dd>Vektor der Gelenkwinkelpotentiale abgeleitet nach den Gelenkwinkeln </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4486d237a9ec27b6f092ffedf379e02c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::rotation2RPY </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::Affine3d&#160;</td>
+          <td class="paramname"><em>transformation</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Umrechnung einer Rotation einer Affinen Transformation in Euler-Winkel und Übergabe der Translation. </p>
+<dl class="params"><dt>Parameter</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transformation</td><td>Transformation </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Rückgabe</dt><dd>Vektor mit Translation und Rotation in Euler-Winkeln </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae480557185cc99b324bae2769afd9faf"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::trocarMonitoring </td>
+          <td>(</td>
+          <td class="paramtype">Eigen::VectorXd&#160;</td>
+          <td class="paramname"><em>qAct</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::VectorXd&#160;</td>
+          <td class="paramname"><em>deltaQ</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Eigen::MatrixXd &amp;&#160;</td>
+          <td class="paramname"><em>A</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Überwacht die Einhaltung des Trokarpunktes. </p>
+<dl class="params"><dt>Parameter</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">qAct</td><td>Aktueller Gelenkwinkelvektor der vorherigen Iteration </td></tr>
+    <tr><td class="paramname">deltaQ</td><td>Winkeldifferenz zwischen dem vorherigen Iterationsschritt und dem in dem vorherigen Durchlauf bestimmten Gelenkwinkelvektor </td></tr>
+    <tr><td class="paramname">A</td><td>Jacobi-Matrix der Potentialfunktion </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Rückgabe</dt><dd>Vektor der freiheitsgradabhängigen Potentiale </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Dokumentation der Datenelemente</h2>
+<a class="anchor" id="a3f76ee7066ac853557b44fb1b46689cb"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::accelerationGain {0.0000001}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section see"><dt>Siehe auch</dt><dd>accelerationMinimization </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae3fd64a575333037133ede9f2a412f76"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::analyticalJacobian</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>analytische Jacobi-Matrix </p>
+<dl class="section see"><dt>Siehe auch</dt><dd>calculateAnalyticalJacobian </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="abcb83da2f2e4934765c8522ac0569405"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::angleMonitoringGain {0.0000001}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classNumericKinematic.html#ad3306dc5d1753c1bc403e5274c725ada" title="Überwacht die Einhaltung der maximalen Winkel und berechnet ein winkelabhängiges Potential. ">angleMonitoring</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a2e5991d67d0e27b171a1ef8f4b759913"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::collisionAvoidanceGain {0.0000001}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section see"><dt>Siehe auch</dt><dd>collisionAvoidance </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3d773d5b89a38a88ed664896fb139f48"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::geomJacobian</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>geometrische Jacobi-Matrix </p>
+<dl class="section see"><dt>Siehe auch</dt><dd>calculateAnalyticalJacobian </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1dc6a0780af1ef87cd5f6e8c95f1f7a7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::LBR_PARAMETERS = { 0.160, 0.200, 0.200, 0.220, 0.180, 0.220, 0.076, 0.050}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Geometrische Parameter des LBR iiwa R820. </p>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="DescriptionParameters_8h_source.html">DescriptionParameters.h</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6691d8d0fa2579cc4408acec0d2e864b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::rescueFactor {0}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000005">Veraltet:</a></b></dt><dd></dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab64580c565b5ddcadb7de6fc6d5bd766"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::singularityGain {0.000001}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section see"><dt>Siehe auch</dt><dd>singularityAvoidance </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a2b3815e7cce36ab203257bf8f5e2e236"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::T_0_Q1</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Lage des Gelenks Q1 im Weltkoordinatensystem. </p>
+<p>Lage des Schafts im Weltkoordinatensystem. </p>
+
+</div>
+</div>
+<a class="anchor" id="ae23ea272ef83d6d3285730fe33fa250b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::TOOL_PARAMETERS = {0.438, 0.0, 0.062, 0.0, 90.0, 0.0, 0.0088, 0.017, 0.305}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Geoemtrische Parameter des Werkzeuges. </p>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="DescriptionParameters_8h_source.html">DescriptionParameters.h</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a562cfd1d8c6b0f0074fb2796e8fbff13"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::URSULA_MAX_ANGLES</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Vektor der maximalen Gelenkwinkel. </p>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classNumericKinematic.html#a146737bc121dfecf585f5dd1012c6fb1" title="Array der maximalen Gelenkwinkel in [rad]. ">MAX_ANGLES</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af6d15e97e215a9d8e552f1667bb6234f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::URSULA_MAX_ANGLES_SPEED</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Vektor der maximalen Gelenkwinkelgeschwindigkeiten. </p>
+<dl class="section see"><dt>Siehe auch</dt><dd><a class="el" href="classNumericKinematic.html#a2773f8d9aafe634b8f1e7f52142f98e8" title="Array der maximalen Gelenkwinkelgeschwindigkeiten in [rad/s]. ">MAX_ANGLES_SPEED</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3c0bd5b51e9bf070bd2570928feb1cc6"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NumericKinematic::velocityGain {0.0000001}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section see"><dt>Siehe auch</dt><dd>veloticyMinimization </dd></dl>
+
+</div>
+</div>
+<hr/>Die Dokumentation für diese Klasse wurde erzeugt aufgrund der Datei:<ul>
+<li>include/masterslave/kinematic/<a class="el" href="NumericKinematic_8h_source.html">NumericKinematic.h</a></li>
+</ul>
+</div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Erzeugt am Don Mär 24 2016 18:39:32 für Master-Slave von &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.6
+</small></address>
+</body>
+</html>

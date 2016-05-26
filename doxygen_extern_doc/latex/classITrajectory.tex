@@ -1,0 +1,161 @@
+\hypertarget{classITrajectory}{\section{I\-Trajectory Klassenreferenz}
+\label{classITrajectory}\index{I\-Trajectory@{I\-Trajectory}}
+}
+
+
+Abstrakte Basisklasse für verschiedene Trajektorienarten.  
+
+
+
+
+{\ttfamily \#include $<$I\-Trajectory.\-h$>$}
+
+
+
+Klassendiagramm für I\-Trajectory\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classITrajectory__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Zusammengehörigkeiten von I\-Trajectory\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=208pt]{classITrajectory__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Öffentliche Methoden}
+\begin{DoxyCompactItemize}
+\item 
+virtual Eigen\-::\-Affine3d \hyperlink{classITrajectory_a7baff9fb2fc20987e9469d736a90406b}{calculate\-Next\-Point} ()=0
+\begin{DoxyCompactList}\small\item\em Abstrakte Funktion zur Berechnung des nächsten Bahnpunktes. \end{DoxyCompactList}\item 
+void \hyperlink{classITrajectory_a5067fb507df5d1e92249389325752fd6}{set\-Speed} (double speed)
+\begin{DoxyCompactList}\small\item\em Zugriff auf die Bahngeschwindigkeit. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Geschützte Attribute}
+\begin{DoxyCompactItemize}
+\item 
+Eigen\-::\-Affine3d \hyperlink{classITrajectory_a6884ba58490bcce750b698c2da8bc7bc}{start\-Position\-Trajectory\-\_\-}
+\begin{DoxyCompactList}\small\item\em Startpunkt der gewünschten Trajektorie. \end{DoxyCompactList}\item 
+Eigen\-::\-Affine3d \hyperlink{classITrajectory_ac49c42b8d8344554edb24d1ae525a64c}{end\-Position\-Trajectory\-\_\-}
+\begin{DoxyCompactList}\small\item\em Endpunkt der gewünschten Trajektorie. \end{DoxyCompactList}\item 
+Eigen\-::\-Affine3d \hyperlink{classITrajectory_a4fe5238f588ac3ed157bebf0dd7d45f5}{start\-Position\-\_\-}
+\begin{DoxyCompactList}\small\item\em Aktuelle T\-C\-P-\/\-Lage und Startpunkt der P\-T\-P-\/\-Bewegung zu start\-Position\-Trajectory\-\_\-. \end{DoxyCompactList}\item 
+Eigen\-::\-Affine3d \hyperlink{classITrajectory_ad0e7c293d6f0940523a158d4f898d366}{current\-Position}
+\begin{DoxyCompactList}\small\item\em Aktuelle T\-C\-P-\/\-Lage während der Bahninterpolation. \end{DoxyCompactList}\item 
+\hypertarget{classITrajectory_abd771a6cdd78a0a5bc188450c14057ff}{double \hyperlink{classITrajectory_abd771a6cdd78a0a5bc188450c14057ff}{path\-Parameter\-Start\-\_\-} \{0\}}\label{classITrajectory_abd771a6cdd78a0a5bc188450c14057ff}
+
+\begin{DoxyCompactList}\small\item\em Pfadvariable der P\-T\-P-\/\-Bewegung zwischen start\-Position\-\_\- und start\-Position\-Trajectory\-\_\-. \end{DoxyCompactList}\item 
+\hypertarget{classITrajectory_afa79f45c835319a41977e68cd711929c}{double \hyperlink{classITrajectory_afa79f45c835319a41977e68cd711929c}{path\-Increment}}\label{classITrajectory_afa79f45c835319a41977e68cd711929c}
+
+\begin{DoxyCompactList}\small\item\em Der inkrementelle Teil der Bahn zwischen zwei Bahnpunkten. \end{DoxyCompactList}\item 
+\hypertarget{classITrajectory_a04719c7e04b7c358e1a68cd5c9deba90}{double \hyperlink{classITrajectory_a04719c7e04b7c358e1a68cd5c9deba90}{cycle\-Time\-\_\-}}\label{classITrajectory_a04719c7e04b7c358e1a68cd5c9deba90}
+
+\begin{DoxyCompactList}\small\item\em Zykluszeit. \end{DoxyCompactList}\item 
+\hypertarget{classITrajectory_ab6ca758355699639b9210b55feb8de20}{double \hyperlink{classITrajectory_ab6ca758355699639b9210b55feb8de20}{speed\-\_\-}}\label{classITrajectory_ab6ca758355699639b9210b55feb8de20}
+
+\begin{DoxyCompactList}\small\item\em Bahngeschwindigkeit in \mbox{[}mm/s\mbox{]}. \end{DoxyCompactList}\item 
+\hypertarget{classITrajectory_adbe59ec29a3bc03f0d539cad15ccd935}{double \hyperlink{classITrajectory_adbe59ec29a3bc03f0d539cad15ccd935}{path\-Parameter\-\_\-} \{0\}}\label{classITrajectory_adbe59ec29a3bc03f0d539cad15ccd935}
+
+\begin{DoxyCompactList}\small\item\em Pfadvariable der jeweiligen Trajektorie. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Ausführliche Beschreibung}
+Abstrakte Basisklasse für verschiedene Trajektorienarten. 
+
+\begin{DoxyAuthor}{Autor}
+Fabian Baier 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Datum}
+20.\-03.\-2016 
+\end{DoxyDate}
+
+
+\subsection{Dokumentation der Elementfunktionen}
+\hypertarget{classITrajectory_a7baff9fb2fc20987e9469d736a90406b}{\index{I\-Trajectory@{I\-Trajectory}!calculate\-Next\-Point@{calculate\-Next\-Point}}
+\index{calculate\-Next\-Point@{calculate\-Next\-Point}!ITrajectory@{I\-Trajectory}}
+\subsubsection[{calculate\-Next\-Point}]{\setlength{\rightskip}{0pt plus 5cm}I\-Trajectory\-::calculate\-Next\-Point (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classITrajectory_a7baff9fb2fc20987e9469d736a90406b}
+
+
+Abstrakte Funktion zur Berechnung des nächsten Bahnpunktes. 
+
+\begin{DoxyReturn}{Rückgabe}
+Nächster Bahnpunkt 
+\end{DoxyReturn}
+
+
+Implementiert in \hyperlink{classCircleTrajectory_a5629eff71ee01458eb8cdf7ad2b4b82f}{Circle\-Trajectory}, \hyperlink{classLineTrajectory_a94cbb5d8561ef9ea107b9faf8db89df5}{Line\-Trajectory} und \hyperlink{classPTPTrajectory_a6663a421aba9674577cdc014c8cb8b77}{P\-T\-P\-Trajectory}.
+
+\hypertarget{classITrajectory_a5067fb507df5d1e92249389325752fd6}{\index{I\-Trajectory@{I\-Trajectory}!set\-Speed@{set\-Speed}}
+\index{set\-Speed@{set\-Speed}!ITrajectory@{I\-Trajectory}}
+\subsubsection[{set\-Speed}]{\setlength{\rightskip}{0pt plus 5cm}I\-Trajectory\-::set\-Speed (
+\begin{DoxyParamCaption}
+\item[{double}]{speed}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classITrajectory_a5067fb507df5d1e92249389325752fd6}
+
+
+Zugriff auf die Bahngeschwindigkeit. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em speed} & Geschwindigkeit in \mbox{[}mm/s\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Dokumentation der Datenelemente}
+\hypertarget{classITrajectory_ad0e7c293d6f0940523a158d4f898d366}{\index{I\-Trajectory@{I\-Trajectory}!current\-Position@{current\-Position}}
+\index{current\-Position@{current\-Position}!ITrajectory@{I\-Trajectory}}
+\subsubsection[{current\-Position}]{\setlength{\rightskip}{0pt plus 5cm}I\-Trajectory\-::current\-Position\hspace{0.3cm}{\ttfamily [protected]}}}\label{classITrajectory_ad0e7c293d6f0940523a158d4f898d366}
+
+
+Aktuelle T\-C\-P-\/\-Lage während der Bahninterpolation. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classITrajectory_a7baff9fb2fc20987e9469d736a90406b}{calculate\-Next\-Point} 
+\end{DoxySeeAlso}
+\hypertarget{classITrajectory_ac49c42b8d8344554edb24d1ae525a64c}{\index{I\-Trajectory@{I\-Trajectory}!end\-Position\-Trajectory\-\_\-@{end\-Position\-Trajectory\-\_\-}}
+\index{end\-Position\-Trajectory\-\_\-@{end\-Position\-Trajectory\-\_\-}!ITrajectory@{I\-Trajectory}}
+\subsubsection[{end\-Position\-Trajectory\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}I\-Trajectory\-::end\-Position\-Trajectory\-\_\-\hspace{0.3cm}{\ttfamily [protected]}}}\label{classITrajectory_ac49c42b8d8344554edb24d1ae525a64c}
+
+
+Endpunkt der gewünschten Trajektorie. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classITrajectory_a7baff9fb2fc20987e9469d736a90406b}{calculate\-Next\-Point} 
+\end{DoxySeeAlso}
+\hypertarget{classITrajectory_a4fe5238f588ac3ed157bebf0dd7d45f5}{\index{I\-Trajectory@{I\-Trajectory}!start\-Position\-\_\-@{start\-Position\-\_\-}}
+\index{start\-Position\-\_\-@{start\-Position\-\_\-}!ITrajectory@{I\-Trajectory}}
+\subsubsection[{start\-Position\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}I\-Trajectory\-::start\-Position\-\_\-\hspace{0.3cm}{\ttfamily [protected]}}}\label{classITrajectory_a4fe5238f588ac3ed157bebf0dd7d45f5}
+
+
+Aktuelle T\-C\-P-\/\-Lage und Startpunkt der P\-T\-P-\/\-Bewegung zu start\-Position\-Trajectory\-\_\-. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classITrajectory_a7baff9fb2fc20987e9469d736a90406b}{calculate\-Next\-Point} 
+\end{DoxySeeAlso}
+\hypertarget{classITrajectory_a6884ba58490bcce750b698c2da8bc7bc}{\index{I\-Trajectory@{I\-Trajectory}!start\-Position\-Trajectory\-\_\-@{start\-Position\-Trajectory\-\_\-}}
+\index{start\-Position\-Trajectory\-\_\-@{start\-Position\-Trajectory\-\_\-}!ITrajectory@{I\-Trajectory}}
+\subsubsection[{start\-Position\-Trajectory\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}I\-Trajectory\-::start\-Position\-Trajectory\-\_\-\hspace{0.3cm}{\ttfamily [protected]}}}\label{classITrajectory_a6884ba58490bcce750b698c2da8bc7bc}
+
+
+Startpunkt der gewünschten Trajektorie. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classITrajectory_a7baff9fb2fc20987e9469d736a90406b}{calculate\-Next\-Point} 
+\end{DoxySeeAlso}
+
+
+Die Dokumentation für diese Klasse wurde erzeugt aufgrund der Datei\-:\begin{DoxyCompactItemize}
+\item 
+include/masterslave/manipulation/trajectory/\hyperlink{ITrajectory_8h}{I\-Trajectory.\-h}\end{DoxyCompactItemize}

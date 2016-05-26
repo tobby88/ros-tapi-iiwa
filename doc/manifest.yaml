@@ -1,0 +1,32 @@
+actions: []
+authors: ''
+brief: ''
+bugtracker: ''
+depends:
+- dynamic_reconfigure
+- catkin
+- roscpp
+- message_runtime
+- std_msgs
+- faulhaber_driver
+- faulhabeer_driver
+- cmake_modules
+- geometry_msgs
+- message_generation
+description: The masterslave package
+license: TODO
+maintainers: ursula <ursula@todo.todo>
+msgs:
+- Button
+package_type: package
+repo_url: ''
+srvs:
+- Manipulation
+- NumericKinematicInverseKinematics
+- OpenIGTLStateService
+- GeometricKinematicRCM
+- GeometricKinematicInverseKinematics
+- NumericKinematicDirectKinematics
+- GeometricKinematicDirectKinematics
+- NumericKinematicRCM
+url: ''

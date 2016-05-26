@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.6"/>
+<title>Master-Slave: include/masterslave/commander/BoundingBox.h Quellcode</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">Master-Slave
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Erzeugt von Doxygen 1.8.6 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Suchen');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>Hauptseite</span></a></li>
+      <li><a href="pages.html"><span>Zusätzliche&#160;Informationen</span></a></li>
+      <li><a href="annotated.html"><span>Klassen</span></a></li>
+      <li class="current"><a href="files.html"><span>Dateien</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="Suchen" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="files.html"><span>Auflistung&#160;der&#160;Dateien</span></a></li>
+      <li><a href="globals.html"><span>Datei-Elemente</span></a></li>
+    </ul>
+  </div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Alle</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Klassen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Dateien</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Funktionen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variablen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Aufzählungen</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Seiten</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_6f4a0b2fc6f2ce09175717fe052f298d.html">include</a></li><li class="navelem"><a class="el" href="dir_35f06720d9aa0f1d8c18e27f703bb5d7.html">masterslave</a></li><li class="navelem"><a class="el" href="dir_4d2d63ea618361c2bf458addfbc7fab3.html">commander</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">BoundingBox.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="BoundingBox_8h.html">gehe zur Dokumentation dieser Datei</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef BOUNDINGBOX_H</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define BOUNDINGBOX_H</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;Eigen/Dense&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">// nur fürs Debugging mit ROS</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;ros/ros.h&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;geometry_msgs/Point.h&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;tf_conversions/tf_eigen.h&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;eigen_conversions/eigen_msg.h&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="classBoundingBox.html">   21</a></span>&#160;<span class="keyword">class </span><a class="code" href="classBoundingBox.html">BoundingBox</a></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <a class="code" href="classBoundingBox.html">BoundingBox</a>(ros::NodeHandle&amp; nh, Eigen::Affine3d TCP, Eigen::Vector3d RemoteCenterOfMotion, Eigen::Vector3d boundingBoxSizeVector, <span class="keywordtype">double</span> rcmDistance);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">void</span> setTCPDistance(<span class="keywordtype">double</span> value);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">void</span> setBoundingBox(Eigen::Vector3d value);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">void</span> setTCP(Eigen::Affine3d TCP);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">void</span> setRCM(Eigen::Vector3d remoteCenterOfMotion);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classBoundingBox.html#ad5ea0824f81b82172ac870b344e26369">checkBoundingBoxTCP</a>(Eigen::Affine3d TCP);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    ros::NodeHandle nh_;</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classBoundingBox.html#aa4451c8bf589cd4a549be53756bd0ae8">   42</a></span>&#160;    ros::Publisher <a class="code" href="classBoundingBox.html#aa4451c8bf589cd4a549be53756bd0ae8">centerPub</a>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classBoundingBox.html#a1aefa364b31d2a36fce50b79edbb1116">   48</a></span>&#160;    Eigen::Vector3d <a class="code" href="classBoundingBox.html#a1aefa364b31d2a36fce50b79edbb1116">RCM</a>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classBoundingBox.html#a4cc474bf1d1ec1c50fa403e33ac385f1">   53</a></span>&#160;    Eigen::Affine3d <a class="code" href="classBoundingBox.html#a4cc474bf1d1ec1c50fa403e33ac385f1">TCP_old</a>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classBoundingBox.html#a3ea0aa423615b74d9244c94fb7a33870">   59</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classBoundingBox.html#a3ea0aa423615b74d9244c94fb7a33870">rcmDistanceZ</a>;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="classBoundingBox.html#a0331404e2b255f97beba34733d15f52e">   65</a></span>&#160;    Eigen::Vector3d <a class="code" href="classBoundingBox.html#a0331404e2b255f97beba34733d15f52e">boundingBoxSize</a>;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="classBoundingBox.html#a3acf7f8c01012c872b0911fe74c50880">   71</a></span>&#160;    Eigen::Vector3d <a class="code" href="classBoundingBox.html#a3acf7f8c01012c872b0911fe74c50880">upperLeftCorner</a>;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="classBoundingBox.html#a961e24b17d0ae9a404790bebfbf0ad02">   77</a></span>&#160;    Eigen::Vector3d <a class="code" href="classBoundingBox.html#a961e24b17d0ae9a404790bebfbf0ad02">lowerRightCorner</a>;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="classBoundingBox.html#a7ec70c3bac170b64ce2bac40f14f21c7">   83</a></span>&#160;    Eigen::Vector3d <a class="code" href="classBoundingBox.html#a7ec70c3bac170b64ce2bac40f14f21c7">centerOfBoundingBox</a>;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;};</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor">#endif // BOUNDINGBOX_H</span></div>
+<div class="ttc" id="classBoundingBox_html_ad5ea0824f81b82172ac870b344e26369"><div class="ttname"><a href="classBoundingBox.html#ad5ea0824f81b82172ac870b344e26369">BoundingBox::checkBoundingBoxTCP</a></div><div class="ttdeci">bool checkBoundingBoxTCP(Eigen::Affine3d TCP)</div><div class="ttdoc">Überprüft, ob der TCP außerhalb des erlaubten Arbeitsraumes liegt. </div></div>
+<div class="ttc" id="classBoundingBox_html"><div class="ttname"><a href="classBoundingBox.html">BoundingBox</a></div><div class="ttdoc">Arbeitsraumbegrenzung in Form eines Quaders. </div><div class="ttdef"><b>Definition:</b> BoundingBox.h:21</div></div>
+<div class="ttc" id="classBoundingBox_html_a961e24b17d0ae9a404790bebfbf0ad02"><div class="ttname"><a href="classBoundingBox.html#a961e24b17d0ae9a404790bebfbf0ad02">BoundingBox::lowerRightCorner</a></div><div class="ttdeci">Eigen::Vector3d lowerRightCorner</div><div class="ttdoc">Koordinaten er linken unteren Ecke des Quaders. </div><div class="ttdef"><b>Definition:</b> BoundingBox.h:77</div></div>
+<div class="ttc" id="classBoundingBox_html_a1aefa364b31d2a36fce50b79edbb1116"><div class="ttname"><a href="classBoundingBox.html#a1aefa364b31d2a36fce50b79edbb1116">BoundingBox::RCM</a></div><div class="ttdeci">Eigen::Vector3d RCM</div><div class="ttdoc">Koordinaten des Trokarpunktes. </div><div class="ttdef"><b>Definition:</b> BoundingBox.h:48</div></div>
+<div class="ttc" id="classBoundingBox_html_aa4451c8bf589cd4a549be53756bd0ae8"><div class="ttname"><a href="classBoundingBox.html#aa4451c8bf589cd4a549be53756bd0ae8">BoundingBox::centerPub</a></div><div class="ttdeci">ros::Publisher centerPub</div><div class="ttdoc">Sender in ROS, um in V-Rep den Quader an der richtigen Stelle anzuzeigen. </div><div class="ttdef"><b>Definition:</b> BoundingBox.h:42</div></div>
+<div class="ttc" id="classBoundingBox_html_a7ec70c3bac170b64ce2bac40f14f21c7"><div class="ttname"><a href="classBoundingBox.html#a7ec70c3bac170b64ce2bac40f14f21c7">BoundingBox::centerOfBoundingBox</a></div><div class="ttdeci">Eigen::Vector3d centerOfBoundingBox</div><div class="ttdoc">Zentroid des Quaders. </div><div class="ttdef"><b>Definition:</b> BoundingBox.h:83</div></div>
+<div class="ttc" id="classBoundingBox_html_a4cc474bf1d1ec1c50fa403e33ac385f1"><div class="ttname"><a href="classBoundingBox.html#a4cc474bf1d1ec1c50fa403e33ac385f1">BoundingBox::TCP_old</a></div><div class="ttdeci">Eigen::Affine3d TCP_old</div><div class="ttdoc">alter TCP </div><div class="ttdef"><b>Definition:</b> BoundingBox.h:53</div></div>
+<div class="ttc" id="classBoundingBox_html_a0331404e2b255f97beba34733d15f52e"><div class="ttname"><a href="classBoundingBox.html#a0331404e2b255f97beba34733d15f52e">BoundingBox::boundingBoxSize</a></div><div class="ttdeci">Eigen::Vector3d boundingBoxSize</div><div class="ttdoc">Größe des Quaders in drei Dimensionen. </div><div class="ttdef"><b>Definition:</b> BoundingBox.h:65</div></div>
+<div class="ttc" id="classBoundingBox_html_a3ea0aa423615b74d9244c94fb7a33870"><div class="ttname"><a href="classBoundingBox.html#a3ea0aa423615b74d9244c94fb7a33870">BoundingBox::rcmDistanceZ</a></div><div class="ttdeci">double rcmDistanceZ</div><div class="ttdoc">Abstand in z-Richtung zwischen dem Trokarpunkt und der Oberseite des Quaders. </div><div class="ttdef"><b>Definition:</b> BoundingBox.h:59</div></div>
+<div class="ttc" id="classBoundingBox_html_a3acf7f8c01012c872b0911fe74c50880"><div class="ttname"><a href="classBoundingBox.html#a3acf7f8c01012c872b0911fe74c50880">BoundingBox::upperLeftCorner</a></div><div class="ttdeci">Eigen::Vector3d upperLeftCorner</div><div class="ttdoc">Koordinaten der oberen linken Ecke des Quaders. </div><div class="ttdef"><b>Definition:</b> BoundingBox.h:71</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Erzeugt am Don Mär 24 2016 18:39:32 für Master-Slave von &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.6
+</small></address>
+</body>
+</html>

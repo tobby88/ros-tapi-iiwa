@@ -1,0 +1,158 @@
+\hypertarget{classMasterSlaveManipulation}{\section{Master\-Slave\-Manipulation Klassenreferenz}
+\label{classMasterSlaveManipulation}\index{Master\-Slave\-Manipulation@{Master\-Slave\-Manipulation}}
+}
+
+
+Klasse, die sich um die Manipulation des T\-C\-P mittels des Eingabegerätes kümmert.  
+
+
+
+
+{\ttfamily \#include $<$Master\-Slave\-Manipulation.\-h$>$}
+
+
+
+Zusammengehörigkeiten von Master\-Slave\-Manipulation\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=220pt]{classMasterSlaveManipulation__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Öffentliche Methoden}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classMasterSlaveManipulation_a7f517d59d59a8d27d905b36edc604715}{{\bfseries Master\-Slave\-Manipulation} (ros\-::\-Node\-Handle \&nh)}\label{classMasterSlaveManipulation_a7f517d59d59a8d27d905b36edc604715}
+
+\end{DoxyCompactItemize}
+\subsection*{Private Methoden}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classMasterSlaveManipulation_a65c146773e36828ea63e177e8d03017e}{void \hyperlink{classMasterSlaveManipulation_a65c146773e36828ea63e177e8d03017e}{get\-Control\-Device} ()}\label{classMasterSlaveManipulation_a65c146773e36828ea63e177e8d03017e}
+
+\begin{DoxyCompactList}\small\item\em Die Methode liest das Eingabegerät vom Parameterserver aus. \end{DoxyCompactList}\item 
+bool \hyperlink{classMasterSlaveManipulation_a142d1ec4b3126540a6bce1998452d0af}{master\-Slave\-Callback} (masterslave\-::\-Manipulation\-::\-Request \&req, masterslave\-::\-Manipulation\-::\-Response \&resp)
+\begin{DoxyCompactList}\small\item\em Manipulation Service Callbackmethode. \end{DoxyCompactList}\item 
+\hypertarget{classMasterSlaveManipulation_adfd18bc0bb7cdd93586aca7aaea2c696}{void \hyperlink{classMasterSlaveManipulation_adfd18bc0bb7cdd93586aca7aaea2c696}{velocity\-Callback} (const geometry\-\_\-msgs\-::\-Twist\-Stamped\-Const\-Ptr \&)}\label{classMasterSlaveManipulation_adfd18bc0bb7cdd93586aca7aaea2c696}
+
+\begin{DoxyCompactList}\small\item\em Callbackmethode in der die Achswerte des Eingabegerätes ausgelesen werden. \end{DoxyCompactList}\item 
+\hypertarget{classMasterSlaveManipulation_a3030f547b0e41511315948b020912230}{void \hyperlink{classMasterSlaveManipulation_a3030f547b0e41511315948b020912230}{cycle\-Time\-Callback} (const std\-\_\-msgs\-::\-Float64\-Const\-Ptr \&)}\label{classMasterSlaveManipulation_a3030f547b0e41511315948b020912230}
+
+\begin{DoxyCompactList}\small\item\em Callback zum Empfang der Zykluszeit. \end{DoxyCompactList}\item 
+Eigen\-::\-Quaternion$<$ double $>$ \hyperlink{classMasterSlaveManipulation_a09a4d65773ae287f0bf16bb0d8b26791}{Quaternion\-From\-Euler} (const Eigen\-::\-Vector3d \&euler\-X\-Y\-Z, bool Z\-Y\-X)
+\begin{DoxyCompactList}\small\item\em Hilfsfunktion zur Wandlung eines Euler-\/\-Winkel-\/\-Vektors in ein Quaternions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attribute}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classMasterSlaveManipulation_a958d5aeb711682d6dc180631f39961fa}{ros\-::\-Node\-Handle {\bfseries nh\-\_\-}}\label{classMasterSlaveManipulation_a958d5aeb711682d6dc180631f39961fa}
+
+\item 
+ros\-::\-Service\-Server \hyperlink{classMasterSlaveManipulation_ad9ecf87702f7a462130fdb48fe3e8df2}{master\-Slave\-Server}
+\begin{DoxyCompactList}\small\item\em Service Server zur Bereitstellung des Master-\/\-Slave-\/\-Service. \end{DoxyCompactList}\item 
+ros\-::\-Subscriber \hyperlink{classMasterSlaveManipulation_ab7809d9d1d1b96530ca9aec2d10a0fab}{velocity\-Sub}
+\begin{DoxyCompactList}\small\item\em Empfänger des Achsvektors des Eingabegerätes. \end{DoxyCompactList}\item 
+ros\-::\-Subscriber \hyperlink{classMasterSlaveManipulation_ac8952201baad0d7dbc0d4e22b519ef70}{cycle\-Time\-Sub}
+\begin{DoxyCompactList}\small\item\em Empfänger für die Zykluszeit. \end{DoxyCompactList}\item 
+\hypertarget{classMasterSlaveManipulation_a75bc6790c25f850d5047b5b4217834fd}{geometry\-\_\-msgs\-::\-Twist\-Stamped \hyperlink{classMasterSlaveManipulation_a75bc6790c25f850d5047b5b4217834fd}{velocity}}\label{classMasterSlaveManipulation_a75bc6790c25f850d5047b5b4217834fd}
+
+\begin{DoxyCompactList}\small\item\em Vorheriger Achsvektor des Eingabegerätes. \end{DoxyCompactList}\item 
+\hypertarget{classMasterSlaveManipulation_a395fee7bb621b884b79f20e81a1934fc}{double \hyperlink{classMasterSlaveManipulation_a395fee7bb621b884b79f20e81a1934fc}{cycle\-Time}}\label{classMasterSlaveManipulation_a395fee7bb621b884b79f20e81a1934fc}
+
+\begin{DoxyCompactList}\small\item\em Zykluszeit. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Ausführliche Beschreibung}
+Klasse, die sich um die Manipulation des T\-C\-P mittels des Eingabegerätes kümmert. 
+
+\begin{DoxyAuthor}{Autor}
+Fabian Baier 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Datum}
+20.\-03.\-2016 
+\end{DoxyDate}
+
+
+\subsection{Dokumentation der Elementfunktionen}
+\hypertarget{classMasterSlaveManipulation_a142d1ec4b3126540a6bce1998452d0af}{\index{Master\-Slave\-Manipulation@{Master\-Slave\-Manipulation}!master\-Slave\-Callback@{master\-Slave\-Callback}}
+\index{master\-Slave\-Callback@{master\-Slave\-Callback}!MasterSlaveManipulation@{Master\-Slave\-Manipulation}}
+\subsubsection[{master\-Slave\-Callback}]{\setlength{\rightskip}{0pt plus 5cm}Master\-Slave\-Manipulation\-::master\-Slave\-Callback (
+\begin{DoxyParamCaption}
+\item[{masterslave\-::\-Manipulation\-::\-Request \&}]{req, }
+\item[{masterslave\-::\-Manipulation\-::\-Response \&}]{resp}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classMasterSlaveManipulation_a142d1ec4b3126540a6bce1998452d0af}
+
+
+Manipulation Service Callbackmethode. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em req} & Alter T\-C\-P vor der Manipulation \\
+\hline
+{\em resp} & Neuer T\-C\-P nach der Manipulation \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Rückgabe}
+Flag, die den Erfolg des Service Calls anzeigt 
+\end{DoxyReturn}
+\hypertarget{classMasterSlaveManipulation_a09a4d65773ae287f0bf16bb0d8b26791}{\index{Master\-Slave\-Manipulation@{Master\-Slave\-Manipulation}!Quaternion\-From\-Euler@{Quaternion\-From\-Euler}}
+\index{Quaternion\-From\-Euler@{Quaternion\-From\-Euler}!MasterSlaveManipulation@{Master\-Slave\-Manipulation}}
+\subsubsection[{Quaternion\-From\-Euler}]{\setlength{\rightskip}{0pt plus 5cm}Master\-Slave\-Manipulation\-::\-Quaternion\-From\-Euler (
+\begin{DoxyParamCaption}
+\item[{const Eigen\-::\-Vector3d \&}]{euler\-X\-Y\-Z, }
+\item[{bool}]{Z\-Y\-X}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}}\label{classMasterSlaveManipulation_a09a4d65773ae287f0bf16bb0d8b26791}
+
+
+Hilfsfunktion zur Wandlung eines Euler-\/\-Winkel-\/\-Vektors in ein Quaternions. 
+
+
+\begin{DoxyParams}{Parameter}
+{\em euler\-X\-Y\-Z} & Euler-\/\-Winkel-\/\-Vektor \\
+\hline
+{\em Z\-Y\-X} & Flag, zur Festlegung der Rotationsreihenfolge \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Rückgabe}
+Quaternion 
+\end{DoxyReturn}
+
+
+\subsection{Dokumentation der Datenelemente}
+\hypertarget{classMasterSlaveManipulation_ac8952201baad0d7dbc0d4e22b519ef70}{\index{Master\-Slave\-Manipulation@{Master\-Slave\-Manipulation}!cycle\-Time\-Sub@{cycle\-Time\-Sub}}
+\index{cycle\-Time\-Sub@{cycle\-Time\-Sub}!MasterSlaveManipulation@{Master\-Slave\-Manipulation}}
+\subsubsection[{cycle\-Time\-Sub}]{\setlength{\rightskip}{0pt plus 5cm}Master\-Slave\-Manipulation\-::cycle\-Time\-Sub\hspace{0.3cm}{\ttfamily [private]}}}\label{classMasterSlaveManipulation_ac8952201baad0d7dbc0d4e22b519ef70}
+
+
+Empfänger für die Zykluszeit. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classMasterSlaveManipulation_a3030f547b0e41511315948b020912230}{cycle\-Time\-Callback} 
+\end{DoxySeeAlso}
+\hypertarget{classMasterSlaveManipulation_ad9ecf87702f7a462130fdb48fe3e8df2}{\index{Master\-Slave\-Manipulation@{Master\-Slave\-Manipulation}!master\-Slave\-Server@{master\-Slave\-Server}}
+\index{master\-Slave\-Server@{master\-Slave\-Server}!MasterSlaveManipulation@{Master\-Slave\-Manipulation}}
+\subsubsection[{master\-Slave\-Server}]{\setlength{\rightskip}{0pt plus 5cm}Master\-Slave\-Manipulation\-::master\-Slave\-Server\hspace{0.3cm}{\ttfamily [private]}}}\label{classMasterSlaveManipulation_ad9ecf87702f7a462130fdb48fe3e8df2}
+
+
+Service Server zur Bereitstellung des Master-\/\-Slave-\/\-Service. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+Master\-Slave.\-srv 
+\end{DoxySeeAlso}
+\hypertarget{classMasterSlaveManipulation_ab7809d9d1d1b96530ca9aec2d10a0fab}{\index{Master\-Slave\-Manipulation@{Master\-Slave\-Manipulation}!velocity\-Sub@{velocity\-Sub}}
+\index{velocity\-Sub@{velocity\-Sub}!MasterSlaveManipulation@{Master\-Slave\-Manipulation}}
+\subsubsection[{velocity\-Sub}]{\setlength{\rightskip}{0pt plus 5cm}Master\-Slave\-Manipulation\-::velocity\-Sub\hspace{0.3cm}{\ttfamily [private]}}}\label{classMasterSlaveManipulation_ab7809d9d1d1b96530ca9aec2d10a0fab}
+
+
+Empfänger des Achsvektors des Eingabegerätes. 
+
+\begin{DoxySeeAlso}{Siehe auch}
+\hyperlink{classMasterSlaveManipulation_adfd18bc0bb7cdd93586aca7aaea2c696}{velocity\-Callback} 
+\end{DoxySeeAlso}
+
+
+Die Dokumentation für diese Klasse wurde erzeugt aufgrund der Datei\-:\begin{DoxyCompactItemize}
+\item 
+include/masterslave/manipulation/\hyperlink{MasterSlaveManipulation_8h}{Master\-Slave\-Manipulation.\-h}\end{DoxyCompactItemize}

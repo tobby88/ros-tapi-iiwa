@@ -1,0 +1,13 @@
+﻿<?xml version="1.0"?>
+<launch>
+	<arg name="TestDevice" value="Spacenav"/>
+	<include file="$(find masterslave)/launch/MarkerTrackingManipulation.launch" />
+	<node pkg="masterslave" type="GeometricKinematic" name="NumericKinematic" output="log"/>
+	<node pkg="masterslave" type="GeometricKinematicCommander" name="NumericKinematicCommander" args="$(arg TestDevice)" output="log"/>
+	<node pkg="rqt_reconfigure" type="rqt_reconfigure" name="rqt_reconfigure" output="screen"/>
+	<node pkg="masterslave" type="RosOpenIGTLBridge" name="RosOpenIGTLBridge" required="true" />
+	<remap from="vrep/flangeLBR" to="/flangeLBR"/>
+	<remap from="/flangeTarget" to="/vrep/flangeTarget"/> 
+
+</launch>
+
