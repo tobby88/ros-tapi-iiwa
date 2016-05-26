@@ -372,6 +372,12 @@ private:
      * @see IKinematic
      */
     Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
+
+    /**
+     * @var weightVector
+     * @brief Gewichtungsvektor, der online per dynamic_reconfigure geändert werden kann. Dieser wird dann zur diagonalen Wichtungsmatrix
+     */
+    Eigen::Matrix<double,10, 1> weightVector;
 };
 
 #endif // NumericKinematic_H

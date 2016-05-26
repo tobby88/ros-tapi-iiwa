@@ -9,6 +9,7 @@ CircleTrajectory::CircleTrajectory(Eigen::Affine3d startPoint, Eigen::Vector3d R
     cycleTime_ = cycleTime;
     currentPosition = startPoint;
     speed_ = speed;
+    ROS_INFO_STREAM("speed: " << speed_);
     startPosition_ = startPoint;
     startPositionTrajectory_ = Eigen::Affine3d::Identity();
     startPositionTrajectory_.translate(RCM);
@@ -26,7 +27,7 @@ Eigen::Affine3d CircleTrajectory::calculateNextPoint()
         currentPosition.translation() += ((startPositionTrajectory_.translation()-startPosition_.translation())/Eigen::Vector3d(startPositionTrajectory_.translation()-startPosition_.translation()).norm()*cycleTime_*speed_);
         // 0 <= Path parameter <= 1
         pathParameterStart_ += cycleTime_/Eigen::Vector3d(startPositionTrajectory_.translation()-startPosition_.translation()).norm()*speed_;
-        ROS_WARN_STREAM(pathParameterStart_);
+        //ROS_WARN_STREAM(pathParameterStart_);
         return currentPosition;
 
     }
@@ -40,6 +41,6 @@ Eigen::Affine3d CircleTrajectory::calculateNextPoint()
     pathIncrement = cycleTime_/(radius_*2*M_PI)*speed_;
     pathParameter_ += pathIncrement;
     if(pathParameter_>=1) pathParameter_-=1;
-    ROS_WARN_STREAM(currentPosition.translation());
+    //ROS_WARN_STREAM(currentPosition.translation());
     return currentPosition;
 }

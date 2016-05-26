@@ -24,12 +24,15 @@ Eigen::Vector3d VisualServoing::calculateTranslationalPID()
 
 Eigen::Matrix3d VisualServoing::calculateRotationalPID()
 {
-    Eigen::Quaterniond temp;
-    Eigen::Quaterniond acutalRotation(actualTransform.rotation());
-    Eigen::Quaterniond inititialRotaion(initialTransform.rotation());
-    temp = acutalRotation.slerp(pRot*cycleTime,inititialRotaion);
-    ROS_INFO_STREAM(temp.toRotationMatrix());
-    return temp.toRotationMatrix();
+    Eigen::Matrix3d actualRotation = actualTransform.rotation();
+    Eigen::Matrix3d inititialRotation = initialTransform.rotation();
+
+    Eigen::Vector3d eulerAnglesActual = actualRotation.eulerAngles(2,1,0);
+    Eigen::Vector3d eulerAnglesInitial = inititialRotation.eulerAngles(2,1,0);
+
+    Eigen::Vector3d rotationalPID = pRot*(eulerAnglesInitial - eulerAnglesActual) + dRot*(eulerAnglesInitial - eulerAnglesActual)/cycleTime;
+    return buildRotation(rotationalPID,true);
+
 }
 
 bool VisualServoing::visualServoingCallback(masterslave::Manipulation::Request &req, masterslave::Manipulation::Response &resp)
@@ -74,6 +77,7 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
         ROS_ERROR("Marker unsichtbar!");
         return;
     }
+    // Hier fehlt noch die Transformation ins TCP-System
         actualTransform = tcp.inverse()*obj;
         if(initialRun)
         {
@@ -94,6 +98,24 @@ void VisualServoing::configurationCallback(masterslave::VisualServoingConfig &co
     dTrans = config.DTrans;
 }
 
+
+Eigen::Matrix3d VisualServoing::buildRotation(const Eigen::Vector3d &axisZYX, bool zyx=true)
+{
+    Eigen::Affine3d transl;
+    if(zyx)
+    {
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(2), Eigen::Vector3d::UnitZ()));
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(1), Eigen::Vector3d::UnitY()));
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(0), Eigen::Vector3d::UnitX()));
+    }
+    else
+    {
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(0), Eigen::Vector3d::UnitX()));
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(1), Eigen::Vector3d::UnitY()));
+        transl.rotate(Eigen::AngleAxis<double>(axisZYX(2), Eigen::Vector3d::UnitZ()));
+    }
+    return transl.rotation();
+}
 int main(int argc, char** argv)
 {
     ros::init(argc,argv,"VisualServoing");

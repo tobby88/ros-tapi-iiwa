@@ -5,6 +5,16 @@ MasterSlaveManipulation::MasterSlaveManipulation(ros::NodeHandle &nh): nh_(nh)
     getControlDevice();
     cycleTimeSub = nh_.subscribe("/cycleTime",1,&MasterSlaveManipulation::cycleTimeCallback,this);
     masterSlaveServer = nh_.advertiseService("/Manipulation",&MasterSlaveManipulation::masterSlaveCallback,this);
+    /* MasterSlaveMode
+     * 1: MasterSlaveRelative
+     * 2: MasterSlaveAbsolute
+     */
+    if(nh_.hasParam("/masterSlaveMode"))
+    {
+        nh_.deleteParam("/masterSlaveMode");
+    }
+    nh_.setParam("/masterSlaveMode",1);
+
     ros::spin();
 }
 

@@ -5,7 +5,7 @@
 	<!-- <include file="$(find masterslave)/launch/FaulhaberRemoteBasic.launch"/> -->
 	<node pkg="masterslave" type="GeometricKinematicCommander" name="GeometricKinematicCommander" args="$(arg TestDevice)" output="screen" />
 	<node pkg="masterslave" type="GeometricKinematic" name="GeometricKinematic"/>
-	<node pkg="masterslave" type="RosOpenIGTLBridge" name="RosOpenIGTLBridge" />
+	<node pkg="masterslave" type="RosOpenIGTLBridge" name="RosOpenIGTLBridge" required="true" />
 	
 
 </launch>

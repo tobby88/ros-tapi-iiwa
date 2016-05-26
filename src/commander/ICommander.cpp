@@ -24,7 +24,7 @@ void ICommander::configurationCallback(masterslave::MasterSlaveConfig &config, u
     {
         cycleTimeScaleFactor = 1;
     }
-    ROS_INFO("STATE CHANGED");
+    ROS_INFO_STREAM("STATE CHANGED" << cycleTime);
 }
 
 Eigen::Quaternion<double> ICommander::QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX=true)
@@ -49,45 +49,57 @@ Eigen::Quaternion<double> ICommander::QuaternionFromEuler(const Eigen::Vector3d 
  */
 void ICommander::commandVelocities()
 {
-    //ROS_WARN_STREAM(cycleTimeScaleFactor);
+
     double gripperVelocity;
     std_msgs::Float64 Q4Vel, Q5Vel, Q6nVel, Q6pVel;
     Q4Vel.data = (jointAnglesTar.bottomRows(3)(0) - jointAnglesAct.bottomRows(3)(0));
     Q5Vel.data = (jointAnglesTar.bottomRows(3)(1) - jointAnglesAct.bottomRows(3)(1))/cycleTimeScaleFactor;
-    if(gripper_close && !gripper_open && !gripper_stop)
-    {
-        gripperVelocity = gripperVelocityValue;
-    }
-    else if(gripper_open && !gripper_close && !gripper_stop)
-    {
-        gripperVelocity = -gripperVelocityValue;
-    }
-    else
-    {
-        gripperVelocity = 0;
-    }
-
-    if(gripper_stop)
-    {
-        gripperVelocity = 0;
-    }
     if(motorAngles(1)<=CRITICAL_PLIERS_ANGLE && motorAngles(1)>=-CRITICAL_PLIERS_ANGLE && motorAngles(0)>=-CRITICAL_PLIERS_ANGLE && motorAngles(0)<=CRITICAL_PLIERS_ANGLE)
     {
 
-    Q6nVel.data = (jointAnglesTar.tail(3)(2)-jointAnglesAct.tail(3)(2))/cycleTimeScaleFactor;
-    Q6pVel.data = (jointAnglesTar.tail(3)(2)-jointAnglesAct.tail(3)(2))/cycleTimeScaleFactor;
+        Q6nVel.data = (jointAnglesTar.tail(3)(2)-jointAnglesAct.tail(3)(2))/cycleTimeScaleFactor;
+        Q6pVel.data = (+jointAnglesTar.tail(3)(2)-jointAnglesAct.tail(3)(2))/cycleTimeScaleFactor;
+    }
+    if(masterSlaveMode==1)
+    {
+
+        if(gripper_close && !gripper_open && !gripper_stop)
+        {
+            gripperVelocity = -gripperVelocityValue;
+        }
+        else if(gripper_open && !gripper_close && !gripper_stop)
+        {
+            gripperVelocity = gripperVelocityValue;
+        }
+        else
+        {
+            gripperVelocity = 0;
+        }
+
+        if(gripper_stop)
+        {
+            gripperVelocity = 0;
+        }
+        Q6nVel.data += gripperVelocity/cycleTimeScaleFactor;
+
+        Q6pVel.data -= gripperVelocity/cycleTimeScaleFactor;
+    }
+    else if(masterSlaveMode==2)
+    {
+        if(motorAngles(0)-motorAngles(1) < pliersOpeningAngle)
+        {
+            Q6nVel.data += (pliersOpeningAngle-(motorAngles(0)-motorAngles(1)))/cycleTimeScaleFactor;
+            Q6pVel.data -= (pliersOpeningAngle-(motorAngles(0)-motorAngles(1)))/cycleTimeScaleFactor;
+        }
+        else if(motorAngles(0)-motorAngles(1) > 1.05*pliersOpeningAngle)
+        {
+            Q6nVel.data += (pliersOpeningAngle-(motorAngles(0)-motorAngles(1)))/cycleTimeScaleFactor;
+            Q6pVel.data -= (pliersOpeningAngle-(motorAngles(0)-motorAngles(1)))/cycleTimeScaleFactor;
+        }
     }
 
-    if(motorAngles(0)-motorAngles(1) < pliersOpeningAngle)
-    {
-        Q6nVel.data += (pliersOpeningAngle-(motorAngles(0)-motorAngles(1)))/cycleTimeScaleFactor;
-        Q6pVel.data -= (pliersOpeningAngle-(motorAngles(0)-motorAngles(1)))/cycleTimeScaleFactor;
-    }
-    else if(motorAngles(0)-motorAngles(1) > 1.05*pliersOpeningAngle)
-    {
-        Q6nVel.data += (pliersOpeningAngle-(motorAngles(0)-motorAngles(1)))/cycleTimeScaleFactor;
-        Q6pVel.data -= (pliersOpeningAngle-(motorAngles(0)-motorAngles(1)))/cycleTimeScaleFactor;
-    }
+
+
 
     //ROS_INFO_STREAM(Q6nVel.data << " " <<  Q6pVel.data);
 
@@ -100,8 +112,6 @@ void ICommander::commandVelocities()
     {
         Q6nVel.data = 0;
     }
-    Q6nVel.data -= gripperVelocity;
-    Q6pVel.data += gripperVelocity;
 
     //ROS_INFO_STREAM("Q6p" <<Q6pVel.data);
 
@@ -120,7 +130,7 @@ void ICommander::commandVelocities()
  */
 void ICommander::calcQ6()
 {
-    if(motorAngles(0) - motorAngles(1)<0.0 && gripper_close)
+    if(motorAngles(0) - motorAngles(1)<=0. && gripper_close)
     {
         gripper_stop = true;
     }

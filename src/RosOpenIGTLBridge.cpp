@@ -85,6 +85,7 @@ void RosOpenIgtlBridge::openIGTLinkTransformThread()
     if(rTransform==-1)
     {
         ROS_ERROR("No OpenIGTLink-Server available");
+        ros::shutdown();
     }
 
     while(rTransform!=-1 && ros::ok())
@@ -95,6 +96,8 @@ void RosOpenIgtlBridge::openIGTLinkTransformThread()
         rTransform = transformSocket_->GetConnected();
     }
     transformSocket_->CloseSocket();
+    ROS_ERROR("No OpenIGTLink-Server available");
+    ros::shutdown();
 }
 
 void RosOpenIgtlBridge::openIGTLinkThread()
@@ -116,6 +119,7 @@ void RosOpenIgtlBridge::openIGTLinkThread()
     if(rCommand==-1)
     {
         ROS_ERROR("No OpenIGTLink-Server available");
+        ros::shutdown();
     }
 
     ROS_DEBUG_STREAM("rCommand: " << rCommand << " rTransform: " << rTransform);
@@ -143,6 +147,8 @@ void RosOpenIgtlBridge::openIGTLinkThread()
         rate.sleep();
     }
     commandSocket_->CloseSocket();
+    ROS_ERROR("No OpenIGTLink-Server available");
+    ros::shutdown();
 }
 
 int RosOpenIgtlBridge::positionReached(igtl::ClientSocket::Pointer &socket, igtl::MessageBase::Pointer &msgHeader)

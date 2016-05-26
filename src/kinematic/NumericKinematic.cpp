@@ -13,6 +13,10 @@ NumericKinematic::NumericKinematic(ros::NodeHandle& nh): nh_(nh)
     jointAnglesAct = Eigen::VectorXd::Zero(10);
     jointAnglesTar = Eigen::VectorXd::Zero(10);
 
+    weightVector = Eigen::VectorXd(10);
+    weightVector << 1, 1, 1, 1, 1, 1, 1, 1, 1, 1;
+
+
     URSULA_MAX_ANGLES = Eigen::Matrix<double,10,1>(MAX_ANGLES);
     URSULA_MAX_ANGLES_SPEED = Eigen::Matrix<double,10,1>(MAX_ANGLES_SPEED);
 
@@ -126,8 +130,7 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
     Eigen::VectorXd jointAnglesIterationPrevious = Eigen::VectorXd::Zero(10);
 
     //Wichtungsmatrix zur Minimalisierung der Gelenkwinkelgeschwindigkeiten und -beschleunigungen
-    Eigen::VectorXd weightVector(10);
-    weightVector << 1,1,1,1,1,1,1,1,1,1;
+
     Eigen::MatrixXd weightMatrix(10,10);
     weightMatrix = weightVector.asDiagonal();
 
@@ -192,7 +195,7 @@ bool NumericKinematic::calcInvKin(Eigen::Affine3d T_0_EE)
         singularityAngles << jointAnglesIterationPrevious;
 
         double d_sing = 0;
-        Eigen::VectorXd C_sing = avoidSingularities(singularityAngles,Eigen::VectorXd::Zero(10),5,d_sing);
+        Eigen::VectorXd C_sing = avoidSingularities(singularityAngles,Eigen::VectorXd::Zero(10),10,d_sing);
 
         Eigen::MatrixXd C(C_acc.rows()+C_vel.rows()+2+2,Akin.cols());
         Eigen::VectorXd d(d_acc.rows()+d_vel.rows()+2+2);
@@ -480,7 +483,7 @@ Eigen::VectorXd NumericKinematic::avoidSingularities(Eigen::VectorXd qAct, Eigen
     a=0;
     for(int i=0; i<qAct.rows();i++)
     {
-        a += weight*pow(cos(qAct(i)+qOffset(i)),2);
+        a *= weight*pow(cos(qAct(i)+qOffset(i)),2);
         A(i) = weight*-sin(2*(qAct(i)+qOffset(i)));
     }
     return A;
@@ -526,6 +529,17 @@ void NumericKinematic::configurationCallback(masterslave::NumericKinematicConfig
     velocityGain = config.VelocityGain;
     maxSpeed = config.MaxSpeed;
     singularityGain = config.SingularityAvoidanceGain;
+
+    weightVector(0) = config.groups.jointweights.joint1;
+    weightVector(1) = config.groups.jointweights.joint2;
+    weightVector(2) = config.groups.jointweights.joint3;
+    weightVector(3) = config.groups.jointweights.joint4;
+    weightVector(4) = config.groups.jointweights.joint5;
+    weightVector(5) = config.groups.jointweights.joint6;
+    weightVector(6) = config.groups.jointweights.joint7;
+    weightVector(7) = config.groups.jointweights.joint8;
+    weightVector(8) = config.groups.jointweights.joint9;
+    weightVector(9) = config.groups.jointweights.joint10;
 }
 
 int main (int argc, char** argv)

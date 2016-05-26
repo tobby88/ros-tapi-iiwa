@@ -6,9 +6,9 @@
 		<param name="image_height" value="1080" />
 		<param name="image_width" value="1920" />
 		<param name="framerate" value="30" />
-		<param name="brightness" value="2" />
-		<param name="focus" value="90" />
-		<param name="sharpness" value="110"/>
+		<param name="brightness" value="22" />
+		<param name="focus" value="20" />
+		<param name="sharpness" value="130"/>
 	</node>
 	<node ns="camera" pkg="image_proc" type="image_proc" name="image_proc_node" output="screen"/>
 	

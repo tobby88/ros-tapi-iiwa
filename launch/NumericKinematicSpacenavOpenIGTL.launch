@@ -5,7 +5,7 @@
 	<include file="$(find masterslave)/launch/BasicUrsula.launch"/>
 	<node pkg="masterslave" type="NumericKinematicCommander" name="NumericKinematicCommander" args="$(arg TestDevice)" output="screen"/>
 	<node pkg="masterslave" type="NumericKinematic" name="NumericKinematic" output="log"/>
-	<node pkg="masterslave" type="RosOpenIGTLBridge" name="RosOpenIGTLBridge" output="log"/>
+	<node pkg="masterslave" type="RosOpenIGTLBridge" name="RosOpenIGTLBridge" output="log" required="true"/>
 
 
 

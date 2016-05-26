@@ -29,7 +29,6 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     tcpClient = nh_.serviceClient<masterslave::Manipulation>("/Manipulation");
     stateService = nh_.serviceClient<masterslave::OpenIGTLStateService>("/openIGTLState");
 
-
     // Zyklischer Aufruf um den Stateservice regelmäßig neuzusetzen bzw. abzusenden
     ros::Timer timer = nh_.createTimer(ros::Duration(0.02), &NumericKinematicCommander::statemachineThread, this);
 
@@ -100,7 +99,12 @@ void NumericKinematicCommander::statemachineThread(const ros::TimerEvent& event)
 void NumericKinematicCommander::loop()
 {
     ros::spinOnce();
-    if(((callBacksCalled+1) >> 10 <=1))
+    /* MasterSlaveMode
+     * 1: MasterSlaveRelative
+     * 2: MasterSlaveAbsolute
+     */
+    nh_.getParam("/masterSlaveMode",masterSlaveMode);
+    if(((callBacksCalled+1) >> 13<=1))
     {
         return;
     }
@@ -150,6 +154,7 @@ void NumericKinematicCommander::loop()
             masterslave::NumericKinematicInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
             ROS_DEBUG_STREAM(inverseKinematicsService.request.T_0_EE.position);
+            
             /* Check, ob der Servicecall funktioniert hat
              * RECOVERY_MOVEMENT: Wenn nicht wird der TCP über die aktuellen Gelenkwinkel neu gesetzt
              */

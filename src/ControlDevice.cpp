@@ -12,7 +12,10 @@ ControlDevice::ControlDevice(ros::NodeHandle &nh): nh_(nh)
     rotGain = 0.002;
     transGain = 0.001;
 
-
+    dynamic_reconfigure::Server<masterslave::ControlDeviceConfig> server;
+    dynamic_reconfigure::Server<masterslave::ControlDeviceConfig>::CallbackType f;
+    f = boost::bind(&ControlDevice::configurationCallback,this ,_1,_2);
+    server.setCallback(f);
 
 
     registration();

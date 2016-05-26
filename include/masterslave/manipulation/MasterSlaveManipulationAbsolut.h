@@ -73,6 +73,8 @@ private:
 
     void configurationCallback(masterslave::MasterSlaveManipulationAbsoluteConfig &config, uint32_t level);
 
+    Eigen::Affine3d filterPose(Eigen::Affine3d actualPose, Eigen::Affine3d lastPose);
+
     /**
      * @var nh_
      * @brief ROS-NodeHandle
@@ -109,7 +111,11 @@ private:
 
     Eigen::Affine3d poseIndexFinger;
 
+    Eigen::Affine3d poseIndexFingerOld;
+
     Eigen::Affine3d poseThumb;
+
+    Eigen::Affine3d poseThumbOld;
 
     /**
      * @var poseAct
@@ -117,6 +123,7 @@ private:
      */
     Eigen::Affine3d poseAct;
 
+    Eigen::Affine3d poseOld;
     /**
      * @var poseOld
      * @brief Lage des TCP im vorherigen Frame
@@ -170,12 +177,17 @@ private:
     double slerpParameter{0};
 
     /**
-     * @var handMarkerFound
+     * @var indexFingerMarkerFound
      * @brief Wurden die Steuerungsmarker gefunden?!
      * @see masterSlaveCallback
      */
     bool indexFingerMarkerFound{false};
 
+    /**
+     * @var thumbMarkerFound
+     * @brief Wurde der Daumenmarker gefunden?!
+     * @see masterSlaveCallback
+     */
     bool thumbMarkerFound{false};
 
     /**
@@ -192,27 +204,73 @@ private:
      */
     bool markerCallbackCalled{false};
 
+    /**
+     * @var initialRotationMarker
+     * @brief die initiale Rotation der Marker bei Programmstart
+     */
     Eigen::Quaterniond initialRotationMarker;
 
+    /**
+     * @var initialRotationRobot
+     * @brief initiale Roboterrotation
+     */
     Eigen::Quaterniond initialRotationRobot;
 
+    /**
+     * @var oldRotation
+     * @todo löschen oder überprüfen
+     */
     Eigen::Quaterniond oldRotation;
 
+    /**
+     * @var initialPoseRobot
+     * @brief initiale kartesische Roboterposition
+     */
     Eigen::Vector3d initialPoseRobot;
 
+    /**
+     * @var transMotionScaling
+     * @brief translatorische Skalierung
+     */
     double transMotionScaling{1};
 
+    /**
+     * @var rotationScaling
+     * @brief rotatorische Skalierung
+     */
     double rotationScaling{1};
 
-    const double MINIMAL_DISTANCE{4e-03};
+    /**
+     * @var MINIMAL_DISTANCE
+     * @brief Die minimale Bewegungsauflösung der Kameras
+     */
+    const double MINIMAL_DISTANCE{2e-3};
 
-    const double MINIMAL_STEP_DISTANCE{2e-03};
+    /**
+     * @var MINIMAL_STEP_DISTANCE
+     * @brief Der Bereich, indem der Grenzwert existiert
+     */
+    const double MINIMAL_STEP_DISTANCE{7e-03};
 
+    /**
+     * @var MAXIMUM_DIFFERENCE_ANGLE_PER_STEP
+     * @brief Maximale Winkeländerung pro Schritt
+     */
     const double MAXIMUM_DIFFERENCE_ANGLE_PER_STEP{M_PI/4};
 
+    /**
+     * @var MAXIMUM_TRANSLATIONAL_VELOCITY
+     * @brief Maximale kartesische Geschwindigkeit
+     */
     const double MAXIMUM_TRANSLATIONAL_VELOCITY{0.1};
 
+    /**
+     * @var distance
+     * @brief Distanz zwischen zwei Bildern bei der Markerlage
+     */
+    double distance;
 
+    const double DEG_TO_RAD{M_PI/180};
 
 };
 

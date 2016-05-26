@@ -36,6 +36,7 @@ public:
      */
     VisualServoing(ros::NodeHandle &nh);
 private:
+    Eigen::Matrix3d buildRotation(const Eigen::Vector3d &axisZYX, bool zyx);
 
     /**
      * @fn markerCallback
@@ -133,13 +134,7 @@ private:
      */
     double pTrans{1};
     double dTrans{0.001};
-    double iTrans{0.0001};
 
-    /**
-     * @var integralErrorTrans
-     * @brief Integrierervariable für den translatorischen Anteil
-     */
-    Eigen::Vector3d integralErrorTrans{0,0,0};
 
     /**
      * @var pRot
@@ -149,13 +144,7 @@ private:
      */
     double pRot{1};
     double dRot{0};
-    double iRot{0};
 
-    /**
-     * @var integralErrorRot
-     * @brief Integrierervariable für den rotatorischen Anteil
-     */
-    Eigen::Vector3d integralErrorRot;
 
 };
 

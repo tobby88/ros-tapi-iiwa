@@ -39,11 +39,13 @@ GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ro
 
     cycleTimePub = nh_.advertise<std_msgs::Float64>("/cycleTime",1);
 
+
+
     statemachineIsRunning = true;
     ros::Timer timer = nh_.createTimer(ros::Duration(0.02), &GeometricKinematicCommander::statemachineThread, this);
 
     ros::Rate waiteRate(0.5);
-    ROS_INFO_STREAM(nh_.getNamespace() << " has found the start position of the robot!");
+    //ROS_INFO_STREAM(nh_.getNamespace() << " has found the start position of the robot!");
     setZero();
     while(ros::ok())
     {
@@ -66,15 +68,12 @@ void GeometricKinematicCommander::statemachineThread(const ros::TimerEvent& even
     {
         case IDLE:
             stateStringMsg.request.state.append("IDLE;");
-            ROS_INFO("IDLE");
             break;
         case FREE:
             stateStringMsg.request.state.append("GravComp;");
-            ROS_INFO("FREE");
             break;
         case MOVE_TO_POSE:
             stateStringMsg.request.state.append("MoveToPose;rob;");
-            ROS_INFO("MOVE_TO");
             break;
         default:
             ROS_ERROR("No Valid state");
@@ -83,7 +82,6 @@ void GeometricKinematicCommander::statemachineThread(const ros::TimerEvent& even
     {
         stateService.call(stateStringMsg);
         statemachineIsRunning = stateStringMsg.response.alive;
-        ROS_INFO_STREAM("Service Call: alive: " << statemachineIsRunning);
     }
 }
 
@@ -131,7 +129,7 @@ void GeometricKinematicCommander::flangeCallback(const geometry_msgs::PoseStampe
 
 void GeometricKinematicCommander::loop()
 {
-    if(callBacksCalled < 8) return;
+    if(callBacksCalled +1 < 1 << 4) return;
     double lastTime = ros::Time::now().toSec();
     masterslave::GeometricKinematicRCM rcmService;
     geometry_msgs::PoseStamped stampedPose;
@@ -161,6 +159,12 @@ void GeometricKinematicCommander::loop()
     while(ros::ok())
     {
         ros::spinOnce();
+
+        /* MasterSlaveMode
+         * 1: MasterSlaveRelative
+         * 2: MasterSlaveAbsolute
+         */
+        nh_.getParam("/masterSlaveMode",masterSlaveMode);
         cycleTime = ros::Time::now().toSec() - lastTime;
         lastTime = ros::Time::now().toSec();
         std_msgs::Float64 timeMsg;
@@ -202,14 +206,14 @@ void GeometricKinematicCommander::loop()
 void GeometricKinematicCommander::Q4StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct(0) = state->position.at(0);
-    //callBacksCalled += 1 << 0;
+    callBacksCalled += 1 << 0;
 }
 
 
 void GeometricKinematicCommander::Q5StateCallback(const sensor_msgs::JointStateConstPtr &state)
 {
     jointAnglesAct(1) = state->position.at(0);
-    //callBacksCalled += 1 << 1;
+    callBacksCalled += 1 << 1;
 }
 
 void GeometricKinematicCommander::Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state)
@@ -221,6 +225,7 @@ void GeometricKinematicCommander::Q6nStateCallback(const sensor_msgs::JointState
     if(1 == Q6CallbacksCalled+1 >> 2)
     {
         calcQ6();
+        callBacksCalled += 1 << 2;
     }
 }
 
@@ -265,6 +270,7 @@ void GeometricKinematicCommander::velocityCallback(const geometry_msgs::TwistSta
 
 void GeometricKinematicCommander::pliersDistanceCallback(const std_msgs::Float64ConstPtr &value)
 {
+    pliersOpeningAngleOld = pliersOpeningAngle;
     // Öffnungswinkel berechnen mit Sinus von der halben Öffnungsdistanz durch die Zangenlänge
     pliersOpeningAngle = sin((value->data-PLIERS_DISTANCE_TOLERANCE)/(2*PLIERS_LENGTH));
     if(pliersOpeningAngle>M_PI/4)

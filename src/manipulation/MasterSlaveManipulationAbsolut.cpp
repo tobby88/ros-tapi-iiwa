@@ -17,12 +17,21 @@ MasterSlaveManipulationAbsolute::MasterSlaveManipulationAbsolute(ros::NodeHandle
 
 
     poseAct = Eigen::Affine3d::Identity();
+    poseThumb = Eigen::Affine3d::Identity();
+    poseIndexFinger = Eigen::Affine3d::Identity();
     initialPoseMarker = Eigen::Affine3d::Identity();
+
     difference = Eigen::Vector3d::Zero();
     //markerCallback
     lastFrameTime = ros::Time::now().toSec();
     //masterSlaveCallback
     lastMasterSlaveTime = ros::Time::now().toSec();
+
+    if(nh_.hasParam("/masterSlaveMode"))
+    {
+        nh_.deleteParam("/masterSlaveMode");
+    }
+    nh_.setParam("/masterSlaveMode",2);
 
     ros::spin();
 }
@@ -40,16 +49,20 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
     // Suche der Steuerungsmarker
     for(int i=0; i<handMarker->markers.size();i++)
     {
+        ROS_INFO_STREAM("confidence: \n" << handMarker->markers[i].confidence);
         switch(handMarker->markers[i].id)
         {
             case 0:
                 thumbMarkerFound = true;
+                poseThumbOld = poseThumb;
                 tf::poseMsgToEigen(handMarker->markers[i].pose.pose,poseThumb);
-                //ROS_INFO_STREAM("poseThumb: \n" << poseThumb.matrix());
+                poseThumb = filterPose(poseThumb,poseThumbOld);
                 break;
             case 5:
                 indexFingerMarkerFound = true;
+                poseIndexFingerOld = poseIndexFinger;
                 tf::poseMsgToEigen(handMarker->markers[i].pose.pose,poseIndexFinger);
+                poseIndexFinger = filterPose(poseIndexFinger,poseIndexFingerOld);
                 //ROS_INFO_STREAM("poseIndexFinger: \n" << poseIndexFinger.matrix());
                 break;
         }
@@ -68,10 +81,6 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
     poseAct.translate(poseThumb.translation()+(poseIndexFinger.translation()-poseThumb.translation())/2);
     poseAct.rotate(interpolatedRotation);
 
-
-
-    //ROS_INFO_STREAM("poseAct: \n" << poseAct.matrix());
-
     if(initialRun)
     {
         initialPoseMarker = poseAct;
@@ -82,6 +91,7 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
     // Überwachung, ob Bewegungsanforderung oder Rauschen
     double distance = (poseAct.translation()-initialPoseMarker.translation()).norm();
 
+    ROS_INFO_STREAM("distance" << distance);
 
     if(distance >= MINIMAL_DISTANCE)
     {
@@ -89,11 +99,9 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
         if(minimalDistanceFactor > 1) minimalDistanceFactor = 1;
         difference = minimalDistanceFactor*transMotionScaling*((poseAct.translation()-initialPoseMarker.translation()));
     }
-
-    ROS_INFO_STREAM("difference: \n" << difference);
     slerpParameter = 0;
 
-
+    poseOld = poseAct;
     markerCallbackCalled  = true;
     return;
 }
@@ -129,7 +137,7 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
      */
     if(slerpParameter >= 1) slerpParameter =0;
 
-    T_0_EE_new.translate(T_0_EE_old.translation());
+
     Eigen::Vector3d newTranslation = (initialPoseRobot-difference-T_0_EE_old.translation())*slerpParameter;
 
 
@@ -140,6 +148,7 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
     {
         newTranslation /=(newTranslation.norm()/(MAXIMUM_TRANSLATIONAL_VELOCITY*frameTime*slerpParameter));
     }
+    T_0_EE_new.translate(T_0_EE_old.translation());
     T_0_EE_new.translate(newTranslation);
 
     //Rotationsskalierung
@@ -167,7 +176,8 @@ bool MasterSlaveManipulationAbsolute::masterSlaveCallback(masterslave::Manipulat
 
     ROS_DEBUG_STREAM("Rotation T_0_EE_new: \n" << T_0_EE_new.rotation());
     tf::poseEigenToMsg(T_0_EE_new,resp.T_0_EE_new);
-    ROS_INFO_STREAM(difference);
+    //ROS_INFO_STREAM(difference);
+
     return true;
 
 }
@@ -181,6 +191,37 @@ void MasterSlaveManipulationAbsolute::configurationCallback(masterslave::MasterS
 {
     transMotionScaling = config.motionScaling;
     rotationScaling = config.rotationScaling;
+}
+
+Eigen::Affine3d MasterSlaveManipulationAbsolute::filterPose(Eigen::Affine3d actualPose, Eigen::Affine3d lastPose)
+{
+    Eigen::Affine3d newPose = Eigen::Affine3d::Identity();
+    Eigen::Affine3d differencePose = actualPose*lastPose.inverse();
+    double differenceDistance = differencePose.translation().norm();
+
+    if(differenceDistance >= MINIMAL_DISTANCE)
+    {
+        double minimalDistanceFactor = (differenceDistance - MINIMAL_DISTANCE)/(differenceDistance-MINIMAL_DISTANCE+MINIMAL_STEP_DISTANCE);
+        if(minimalDistanceFactor > 1) minimalDistanceFactor = 1;
+        newPose.translate(lastPose.translation()+differencePose.translation()*minimalDistanceFactor);
+    }
+    else
+    {
+        newPose.translate(lastPose.translation());
+    }
+
+    Eigen::AngleAxisd differenceAngle = Eigen::AngleAxisd(differencePose.rotation());
+    /*if(differenceAngle.angle()>=20*DEG_TO_RAD)
+    {
+        newPose.rotate(lastPose.rotation());
+    }
+    else
+    {
+        newPose.rotate(actualPose.rotation());
+    }*/
+    newPose.rotate(actualPose.rotation());
+    ROS_INFO_STREAM(newPose.matrix());
+    return newPose;
 }
 
 int main(int argc, char** argv)

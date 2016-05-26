@@ -64,8 +64,8 @@ Eigen::Affine3d GeometricKinematic::calcDirKin(Eigen::VectorXd jointAngles)
 
 bool GeometricKinematic::calcInvKin(Eigen::Affine3d desEEPosition)
 {
-    ROS_INFO_STREAM("desEEPosition: \n" << desEEPosition.matrix());
-    ROS_INFO_STREAM("RCM: \n" << RCM.matrix());
+    //ROS_INFO_STREAM("desEEPosition: \n" << desEEPosition.matrix());
+    //ROS_INFO_STREAM("RCM: \n" << RCM.matrix());
     Eigen::Affine3d T_0_Q6 = desEEPosition.translate(Eigen::Vector3d(-TOOL_PARAMETERS.L_Q6_EE,0,0));
     Eigen::Vector3d p_RCM_Q6 = T_0_Q6.translation()-RCM.translation();
     Eigen::Vector3d z_Q6 = T_0_Q6.matrix().col(2).head(3);
@@ -89,11 +89,11 @@ bool GeometricKinematic::calcInvKin(Eigen::Affine3d desEEPosition)
     {
         jointAnglesTar(2) = -jointAnglesTar(2);
     }
-    ROS_INFO_STREAM(jointAnglesTar(2));
+    //ROS_INFO_STREAM(jointAnglesTar(2));
     Eigen::Affine3d T_EE_Q5 = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(90*DEG_TO_RAD,0,-jointAnglesTar(2)),true);
     T_EE_Q5.translate(Eigen::Vector3d(-TOOL_PARAMETERS.L_Q5_Q6,0,0));
     Eigen::Affine3d T_0_Q5 = desEEPosition*T_EE_Q5;
-    ROS_INFO_STREAM("T_0_Q5" << T_0_Q5.matrix());
+    //ROS_INFO_STREAM("T_0_Q5" << T_0_Q5.matrix());
 
     Eigen::Vector3d z_Q5 = T_0_Q5.matrix().col(2).head(3);
 
@@ -104,7 +104,7 @@ bool GeometricKinematic::calcInvKin(Eigen::Affine3d desEEPosition)
     Eigen::Vector3d x_Q4 = p_Q5_RCM.cross(z_Q5);
 
     jointAnglesTar(1) = acos(x_Q4.dot(y_Q5)/(x_Q4.norm()*y_Q5.norm()));
-    ROS_INFO_STREAM("Q5:\n" << jointAnglesTar(1));
+    //ROS_INFO_STREAM("Q5:\n" << jointAnglesTar(1));
 
     if(isnan(jointAnglesTar(1)))
     {
@@ -123,7 +123,7 @@ bool GeometricKinematic::calcInvKin(Eigen::Affine3d desEEPosition)
 
     Eigen::Affine3d T_Q5_Q4 = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(-90*DEG_TO_RAD,0,-90*DEG_TO_RAD-jointAnglesTar(1)),true);
     T_0_Q4 = T_0_Q5*T_Q5_Q4;
-    ROS_INFO_STREAM("T_0_Q4: \n" << T_0_Q4.matrix());
+    //ROS_INFO_STREAM("T_0_Q4: \n" << T_0_Q4.matrix());
 
     Eigen::Vector3d p_Q4_RCM = T_0_Q4.translation() - RCM.translation();
 

@@ -3,7 +3,8 @@
 
 #include "Eigen/Core"
 #include "Eigen/Dense"
-
+#include <iostream>
+#include "ros/ros.h"
 /**
  * @file ITrajectory.h
  *
@@ -30,7 +31,11 @@ public:
      * @brief Zugriff auf die Bahngeschwindigkeit
      * @param speed Geschwindigkeit in [mm/s]
      */
-    void setSpeed(double speed){ speed_ = speed;}
+    void setSpeed(double speed)
+    {
+        speed_ = speed;
+        ROS_INFO_STREAM(speed_);
+    }
 protected:
 
     /**

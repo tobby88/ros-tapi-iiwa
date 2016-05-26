@@ -276,7 +276,7 @@ class ICommander
          * @var gripperVelocityValue
          * @brief Greifergeschwindigkeit in der Einheit [rad/s]
          */
-        double gripperVelocityValue{0.1};
+        double gripperVelocityValue{0.05};
 
         /**
          * @fn QuaternionFromEuler
@@ -334,18 +334,48 @@ class ICommander
          */
         ros::Publisher cycleTimePub;
 
+        /**
+         * @var setTrocar
+         * @brief Darf der Trokar neu gesetzt werden bei Neustart des Zustandes?!
+         */
         bool setTrocar{false};
 
-        double CRITICAL_PLIERS_ANGLE{0.95*M_PI};
+        /**
+         * @var CRITICAL_PLIERS_ANGLE
+         * @brief Kritischer Zangenwinkel als Konstante
+         */
+        double CRITICAL_PLIERS_ANGLE{0.95*M_PI/2};
 
+        /**
+         * @var PLIERS_DISTANCE_TOLERANCE
+         * @brief Wie weit müssen die Marker zusammen sein damit dies als geschlossene Zange interpretiert ist
+         */
         double PLIERS_DISTANCE_TOLERANCE{0.06};
 
+        /**
+         * @var PLIERS_LENGTH
+         * @brief Zangenlänge
+         */
         double PLIERS_LENGTH{0.017};
 
+        /**
+         * @var pliersOpeningAngle
+         * @brief Zangenöffnungswinkel
+         */
         double pliersOpeningAngle{0};
 
+        /**
+         * @var pliersOpeningAngleOld
+         * @brief Zangenöffnungswinkel im letzten Zyklus
+         */
         double pliersOpeningAngleOld{0};
+
+        /**
+         * @var masterSlaveRelative
+         * @brief wird der Spacenav (relative Master-Slave-Steuerung) oder das AR-Tracking-Device (absolute Master-Slave-Steuerung) verwendet?
+         */
+        int masterSlaveMode{-1};
 
 };
 
-#endif // TASK_H
+#endif // ICOMMANDER_H

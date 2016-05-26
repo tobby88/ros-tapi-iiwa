@@ -48,7 +48,7 @@ void TrajectoryGenerator::configurationCallback(masterslave::TrajectoryGenerator
     start = config.Start;
     state = static_cast<TRAJECTORY_STATE>(config.curTrajType);
 
-    trajectorySpeed = config.Speed*MM_TO_M;
+    ;
     zCoordinate = config.groups.circle.ZCoord*MM_TO_M;
     circleRadius = config.groups.circle.Radius*MM_TO_M;
     firstPoint = Eigen::Vector3d(config.groups.first_point.XCoordinate*MM_TO_M,config.groups.first_point.YCoordinate*MM_TO_M,config.groups.first_point.ZCoordinate*MM_TO_M);
@@ -59,13 +59,13 @@ void TrajectoryGenerator::configurationCallback(masterslave::TrajectoryGenerator
         switch(state)
         {
             case PTP:
-                trajectoryGen.reset(new PTPTrajectory(startPosition,rcm,firstPoint,secondPoint,trajectorySpeed,cycleTime));
+                trajectoryGen.reset(new PTPTrajectory(startPosition,rcm,firstPoint,secondPoint,config.Speed*MM_TO_M,cycleTime));
                 break;
             case LINE:
-                trajectoryGen.reset(new LineTrajectory(startPosition,rcm,firstPoint,secondPoint,trajectorySpeed,cycleTime));
+                trajectoryGen.reset(new LineTrajectory(startPosition,rcm,firstPoint,secondPoint,config.Speed*MM_TO_M,cycleTime));
                 break;
             case CIRCLE:
-                trajectoryGen.reset(new CircleTrajectory(startPosition,rcm,circleRadius,zCoordinate,trajectorySpeed,cycleTime));
+                trajectoryGen.reset(new CircleTrajectory(startPosition,rcm,circleRadius,zCoordinate,config.Speed*MM_TO_M,cycleTime));
                 break;
         }
     }

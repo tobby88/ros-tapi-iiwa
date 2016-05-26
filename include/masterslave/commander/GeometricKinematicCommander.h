@@ -90,6 +90,8 @@ class GeometricKinematicCommander : public ICommander
          */
         void loop();
         ros::NodeHandle nh_;
+
+        // Ein Haufen Callbacks ;)
         void Q4StateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q5StateCallback(const sensor_msgs::JointStateConstPtr &state);
         void Q6nStateCallback(const sensor_msgs::JointStateConstPtr &state);
