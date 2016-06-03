@@ -19,6 +19,9 @@
 #include <dynamic_reconfigure/server.h>
 #include "masterslave/VisualServoingConfig.h"
 
+#include <message_filters/subscriber.h>
+#include <message_filters/time_synchronizer.h>
+
 #include "staticFunctions.h"
 
 /**
@@ -45,7 +48,7 @@ private:
 
     void getControlDevice();
 
-    void markerJointAngleCallback(const sensor_msgs::JointStateConstPtr &state);
+    void markerJointAngleCallback(const sensor_msgs::JointStateConstPtr &Q6Pstate, const sensor_msgs::JointStateConstPtr &Q6Nstate);
 
     /**
      * @fn markerCallback
@@ -74,7 +77,7 @@ private:
     bool visualServoingCallback(masterslave::Manipulation::Request& req, masterslave::Manipulation::Response& resp);
 
     /**
-     * @fn calculateTranslationalPID
+     * @fn calculateTranslationalPIDcallback
      * @brief Berechnung des translatorischen PID-Regler-Rückgabewertes mit den Reglerverstärkungen @var pTrans, @var dTrans und @var iTrans
      *
      * @return Reglerausgang für den translatorischen Anteil
@@ -116,6 +119,7 @@ private:
      */
     Eigen::Affine3d actualTransform;
 
+    Eigen::Affine3d lastTransform;
     /**
      * @var differenceTransform
      * @brief Transformationsdifferenz zwischen aktueller und ursprünglicher Transformation, die ausgeregelt werden muss im Zyklus i
@@ -188,10 +192,11 @@ private:
 
     Eigen::Affine3d objOld;
 
-    double MINIMAL_DISTANCE{4e-3};
+    double MINIMAL_DISTANCE{8e-3};
 
     double MINIMAL_STEP_DISTANCE{6e-3};
 
+    Eigen::Affine3d lastTrackedPosition;
 };
 
 #endif // VISUALSERVOING_H
