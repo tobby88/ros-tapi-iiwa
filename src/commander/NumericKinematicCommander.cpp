@@ -133,7 +133,7 @@ void NumericKinematicCommander::loop()
     //BoundingBox zur Arbeitsraumbegrenzung
 
     boundingBox = std::move(std::unique_ptr<BoundingBox>(new BoundingBox(nh_,TCP,RCM.translation(),boundingBoxSize,rcmDistance)));
-
+    ros::Rate rate(rosRate);
     while(ros::ok() && state == MOVE_TO_POSE)
     {
         ros::spinOnce();
@@ -153,7 +153,7 @@ void NumericKinematicCommander::loop()
         {
             masterslave::NumericKinematicInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
-            ROS_DEBUG_STREAM(inverseKinematicsService.request.T_0_EE.position);
+            ROS_INFO_STREAM(inverseKinematicsService.request.T_0_EE.position);
             
             /* Check, ob der Servicecall funktioniert hat
              * RECOVERY_MOVEMENT: Wenn nicht wird der TCP über die aktuellen Gelenkwinkel neu gesetzt
@@ -175,6 +175,8 @@ void NumericKinematicCommander::loop()
             jointAngleTemp.data = jointAnglesTar(i);
             lbrJointAnglePub[i].publish(jointAngleTemp);
         }
+        rate.sleep();
+
     }
 }
 

@@ -49,21 +49,19 @@ void MasterSlaveManipulationAbsolute::markerCallback(const ar_track_alvar_msgs::
     // Suche der Steuerungsmarker
     for(int i=0; i<handMarker->markers.size();i++)
     {
-        ROS_INFO_STREAM("confidence: \n" << handMarker->markers[i].confidence);
         switch(handMarker->markers[i].id)
         {
             case 0:
                 thumbMarkerFound = true;
                 poseThumbOld = poseThumb;
                 tf::poseMsgToEigen(handMarker->markers[i].pose.pose,poseThumb);
-                poseThumb = filterPose(poseThumb,poseThumbOld);
+                poseThumb = filterPose(poseThumb,poseThumbOld, MINIMAL_DISTANCE, MINIMAL_STEP_DISTANCE);
                 break;
             case 5:
                 indexFingerMarkerFound = true;
                 poseIndexFingerOld = poseIndexFinger;
                 tf::poseMsgToEigen(handMarker->markers[i].pose.pose,poseIndexFinger);
-                poseIndexFinger = filterPose(poseIndexFinger,poseIndexFingerOld);
-                //ROS_INFO_STREAM("poseIndexFinger: \n" << poseIndexFinger.matrix());
+                poseIndexFinger = filterPose(poseIndexFinger,poseIndexFingerOld, MINIMAL_DISTANCE, MINIMAL_STEP_DISTANCE);
                 break;
         }
      }
@@ -193,36 +191,7 @@ void MasterSlaveManipulationAbsolute::configurationCallback(masterslave::MasterS
     rotationScaling = config.rotationScaling;
 }
 
-Eigen::Affine3d MasterSlaveManipulationAbsolute::filterPose(Eigen::Affine3d actualPose, Eigen::Affine3d lastPose)
-{
-    Eigen::Affine3d newPose = Eigen::Affine3d::Identity();
-    Eigen::Affine3d differencePose = actualPose*lastPose.inverse();
-    double differenceDistance = differencePose.translation().norm();
 
-    if(differenceDistance >= MINIMAL_DISTANCE)
-    {
-        double minimalDistanceFactor = (differenceDistance - MINIMAL_DISTANCE)/(differenceDistance-MINIMAL_DISTANCE+MINIMAL_STEP_DISTANCE);
-        if(minimalDistanceFactor > 1) minimalDistanceFactor = 1;
-        newPose.translate(lastPose.translation()+differencePose.translation()*minimalDistanceFactor);
-    }
-    else
-    {
-        newPose.translate(lastPose.translation());
-    }
-
-    Eigen::AngleAxisd differenceAngle = Eigen::AngleAxisd(differencePose.rotation());
-    /*if(differenceAngle.angle()>=20*DEG_TO_RAD)
-    {
-        newPose.rotate(lastPose.rotation());
-    }
-    else
-    {
-        newPose.rotate(actualPose.rotation());
-    }*/
-    newPose.rotate(actualPose.rotation());
-    ROS_INFO_STREAM(newPose.matrix());
-    return newPose;
-}
 
 int main(int argc, char** argv)
 {

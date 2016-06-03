@@ -26,6 +26,8 @@
 #include <dynamic_reconfigure/server.h>
 #include "masterslave/MasterSlaveManipulationAbsoluteConfig.h"
 
+#include "staticFunctions.h"
+
 /**
  * @file MasterSlaveManipulationAbsolute.h
  *
@@ -72,8 +74,6 @@ private:
 
 
     void configurationCallback(masterslave::MasterSlaveManipulationAbsoluteConfig &config, uint32_t level);
-
-    Eigen::Affine3d filterPose(Eigen::Affine3d actualPose, Eigen::Affine3d lastPose);
 
     /**
      * @var nh_
@@ -250,19 +250,19 @@ private:
      * @var MINIMAL_STEP_DISTANCE
      * @brief Der Bereich, indem der Grenzwert existiert
      */
-    const double MINIMAL_STEP_DISTANCE{7e-03};
+    const double MINIMAL_STEP_DISTANCE{2e-03};
 
     /**
      * @var MAXIMUM_DIFFERENCE_ANGLE_PER_STEP
      * @brief Maximale Winkeländerung pro Schritt
      */
-    const double MAXIMUM_DIFFERENCE_ANGLE_PER_STEP{M_PI/4};
+    const double MAXIMUM_DIFFERENCE_ANGLE_PER_STEP{M_PI/6};
 
     /**
      * @var MAXIMUM_TRANSLATIONAL_VELOCITY
      * @brief Maximale kartesische Geschwindigkeit
      */
-    const double MAXIMUM_TRANSLATIONAL_VELOCITY{0.1};
+    const double MAXIMUM_TRANSLATIONAL_VELOCITY{0.08};
 
     /**
      * @var distance

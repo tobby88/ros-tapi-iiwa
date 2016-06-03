@@ -30,7 +30,7 @@ bool GeometricKinematic::directKinematicsCallback(masterslave::GeometricKinemati
     Eigen::VectorXd jointAngles = Eigen::VectorXd::Map(req.jointAngles.data(),req.jointAngles.size());
     T_0_EE = T_0_FL * calcDirKin(jointAngles);
     tf::poseEigenToMsg(T_0_EE,resp.T_0_EE);
-    ROS_INFO_STREAM("TCP: \n" << T_0_EE.matrix());
+    //ROS_INFO_STREAM("TCP: \n" << T_0_EE.matrix());
     return true;
 }
 
@@ -146,26 +146,6 @@ bool GeometricKinematic::calcInvKin(Eigen::Affine3d desEEPosition)
     Eigen::Affine3d T_Q4_FL = buildAffine3d(Eigen::Vector3d::Zero(),Eigen::Vector3d(-TOOL_PARAMETERS.A_0_Q4*DEG_TO_RAD,-TOOL_PARAMETERS.B_0_Q4*DEG_TO_RAD,-TOOL_PARAMETERS.C_0_Q4*DEG_TO_RAD-jointAnglesTar(0)),true);
     T_Q4_FL.translate(Eigen::Vector3d(-TOOL_PARAMETERS.X_0_Q4,-TOOL_PARAMETERS.Y_0_Q4,-TOOL_PARAMETERS.Z_0_Q4));
     T_0_FL = T_0_Q4*T_Q4_FL;
-}
-
-Eigen::Affine3d GeometricKinematic::buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx=true)
-{
-    Eigen::Affine3d transl;
-    transl.setIdentity();
-    transl.translate(translXYZ);
-    if(zyx)
-    {
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(2), Eigen::Vector3d::UnitZ()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(1), Eigen::Vector3d::UnitY()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(0), Eigen::Vector3d::UnitX()));
-    }
-    else
-    {
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(0), Eigen::Vector3d::UnitX()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(1), Eigen::Vector3d::UnitY()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(2), Eigen::Vector3d::UnitZ()));
-    }
-    return transl;
 }
 
 int main(int argc, char** argv)

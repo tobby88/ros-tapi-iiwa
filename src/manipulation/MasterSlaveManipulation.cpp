@@ -79,23 +79,6 @@ bool MasterSlaveManipulation::masterSlaveCallback(masterslave::Manipulation::Req
 }
 
 
-Eigen::Quaternion<double> MasterSlaveManipulation::QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX=true)
-{
-    Eigen::Quaternion<double> quat;
-    quat.Identity();
-    Eigen::AngleAxisd zAngle(eulerXYZ[2], Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd yAngle(eulerXYZ[1], Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd xAngle(eulerXYZ[0], Eigen::Vector3d::UnitX());
-    if(ZYX)
-        quat = zAngle * yAngle * xAngle;
-    else
-        quat = xAngle * yAngle * zAngle;
-
-    return quat;
-}
-
-
-
 int main(int argc, char** argv)
 {
     ros::init(argc,argv,"MasterSlaveManipulation");

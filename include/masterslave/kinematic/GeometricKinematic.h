@@ -13,6 +13,9 @@
 #include <eigen_conversions/eigen_msg.h>
 #include <tf/transform_listener.h>
 
+
+#include "staticFunctions.h"
+
 /**
  * @file GeometricKinematic.h
  *
@@ -130,16 +133,6 @@ class GeometricKinematic: public IKinematic
          * @brief ServiceServer für die Berechnung der Gelenkwinkel und der Roboterflanschlage im Weltkoordinatensystem
          */
         ros::ServiceServer inverseKinematicsServer;
-
-        /**
-         * @fn buildAffine3d
-         * @brief Hilfsfunktion zur Erstellung von Affinen Transformationen aus einem Translationsvekt und den RPY-Winkeln
-         * @param translXYZ Translationsvektor
-         * @param axisZYX Rotationsvektor
-         * @param zyx Flag zur Festlegung der Rotationsrichtung
-         * @return Affine Transformation
-         */
-        Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
 
 
 };

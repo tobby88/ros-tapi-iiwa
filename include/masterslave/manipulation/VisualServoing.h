@@ -1,10 +1,13 @@
 #ifndef VISUALSERVOING_H
 #define VISUALSERVOING_H
 
+#include "sensor_msgs/JointState.h"
+
 #include "ros/ros.h"
 #include "Eigen/Dense"
 #include "masterslave/Manipulation.h"
 #include "ar_track_alvar_msgs/AlvarMarkers.h"
+#include "geometry_msgs/TwistStamped.h"
 
 #include <array>
 
@@ -15,6 +18,8 @@
 
 #include <dynamic_reconfigure/server.h>
 #include "masterslave/VisualServoingConfig.h"
+
+#include "staticFunctions.h"
 
 /**
  * @file VisualServoing.h
@@ -36,7 +41,11 @@ public:
      */
     VisualServoing(ros::NodeHandle &nh);
 private:
-    Eigen::Matrix3d buildRotation(const Eigen::Vector3d &axisZYX, bool zyx);
+    void velocityCallback(const geometry_msgs::TwistStampedConstPtr val);
+
+    void getControlDevice();
+
+    void markerJointAngleCallback(const sensor_msgs::JointStateConstPtr &state);
 
     /**
      * @fn markerCallback
@@ -77,7 +86,7 @@ private:
      * @brief Berechnung des translatorischen PID-Regler-Rückgabewertes mit den Reglerverstärkungen @var pRot, @var dRot und @var iRot
      * @return Reglerausang für den rotatorischen Anteil
      */
-    Eigen::Matrix3d calculateRotationalPID();
+    Eigen::Quaterniond calculateRotationalPID();
 
     ros::NodeHandle nh_;
 
@@ -92,6 +101,8 @@ private:
      * @brief Server zur Bereitstellung der Manipulationsschnittstelle
      */
     ros::ServiceServer visualServoingServer;
+
+    ros::Subscriber velocitySub;
 
     /**
      * @var initialTransform
@@ -124,8 +135,6 @@ private:
     std::array<int,2> ids = {{0,1}};
     bool initialRun = true;
 
-    double cycleTime{0.033};
-
     /**
      * @var pTrans
      * @var dTrans
@@ -133,7 +142,7 @@ private:
      * @brief Translatorische Reglerverstärkungen
      */
     double pTrans{1};
-    double dTrans{0.001};
+    double dTrans{0.00};
 
 
     /**
@@ -145,6 +154,43 @@ private:
     double pRot{1};
     double dRot{0};
 
+    bool markerFoundTCP{false};
+    bool markerFoundObject{false};
+
+    ros::Subscriber markerJointAngleSub;
+
+    double markerJointAngle{0};
+
+    const double DEG_TO_RAD{M_PI/180};
+
+    const double MARKER_TO_TCP_ANGLE{9.53*DEG_TO_RAD};
+
+    Eigen::Affine3d markerJointRotation;
+
+    double markerCycleTime;
+
+    double lastMarkerTime;
+
+    double cycleTime;
+
+    double lastTime{0};
+
+    Eigen::Quaterniond initialRotationRobot;
+
+    bool initialRunVisualServoing{true};
+
+    geometry_msgs::TwistStamped velocity;
+
+    //Zum Togglen des InitialShot
+    bool resetInitOld;
+
+    Eigen::Affine3d tcpOld;
+
+    Eigen::Affine3d objOld;
+
+    double MINIMAL_DISTANCE{4e-3};
+
+    double MINIMAL_STEP_DISTANCE{6e-3};
 
 };
 

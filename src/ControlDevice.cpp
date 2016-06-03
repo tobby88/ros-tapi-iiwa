@@ -127,10 +127,10 @@ void ControlDevice::controlDeviceCallback(const sensor_msgs::Joy::ConstPtr &joy)
     {
         output.twist.linear.x = transGain*filteredInput.axes[0];
         output.twist.linear.y = transGain*filteredInput.axes[1];
-        //output.twist.linear.z = transGain*joy->axes[2];
+        output.twist.linear.z = transGain*joy->axes[2];
         output.twist.angular.x = rotGain*filteredInput.axes[3];
         output.twist.angular.y = rotGain*filteredInput.axes[4];
-        //output.twist.angular.z = rotGain*joy->axes[5];
+        output.twist.angular.z = rotGain*joy->axes[5];
 
     }
     // iterate through the buttons map and publish every button press with name and value

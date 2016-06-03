@@ -8,6 +8,7 @@
 #include <dynamic_reconfigure/server.h>
 
 
+
 /**
  * @file IKinematic.h
  *
@@ -25,7 +26,7 @@ class IKinematic
 
     protected:
     
-        /**
+        /**#include "staticFunctions.h"
          * @fn calcInvKin
          * @brief Abstrakte Methode zur Berechnung der inversen Kinematik
          * @param T_0_EE Aktuelle TCP-Lage
@@ -33,15 +34,7 @@ class IKinematic
          */
         virtual bool calcInvKin(Eigen::Affine3d T_0_EE)=0;
 
-        /**
-         * @fn buildAffine3d
-         * @brief Hilfsfunktion zur Erstellung von Affinen Transformationen aus einem Translationsvekt und den RPY-Winkeln
-         * @param translXYZ Translationsvektor
-         * @param axisZYX Rotationsvektor
-         * @param zyx Flag zur Festlegung der Rotationsrichtung
-         * @return Affine Transformation
-         */
-        Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
+
 
         /**
          * @var RCM

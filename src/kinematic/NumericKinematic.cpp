@@ -342,7 +342,7 @@ Eigen::MatrixXd NumericKinematic::calcAnalyticalJacobian(Eigen::VectorXd jointAn
 Eigen::VectorXd NumericKinematic::angleMonitoring(Eigen::VectorXd deltaQ, Eigen::VectorXd q, double Hmax, double &a)
 {
     // percentage when the angle gets critical
-    const double critical = 0.85;
+    const double critical = 0.85;NumericKinematic:
     //combined matrix of H and dH (dH/dq)
     Eigen::VectorXd dH(q.rows());
     double H=0;
@@ -489,37 +489,6 @@ Eigen::VectorXd NumericKinematic::avoidSingularities(Eigen::VectorXd qAct, Eigen
     return A;
 }
 
-Eigen::VectorXd NumericKinematic::rotation2RPY(Eigen::Affine3d transformation)
-{
-    Eigen::VectorXd retVal = Eigen::VectorXd::Zero(6);
-    // Conversion from Transformation Matrix into Transformation Vector and Euler Angles YPR
-    retVal.head(3) = transformation.translation();
-    retVal(3) = atan2(transformation.matrix()(2,1),transformation.matrix()(2,2));
-    retVal(5) = atan2(transformation.matrix()(1,0),transformation.matrix()(0,0));
-    retVal(4) = atan2(-transformation.matrix()(2,0),sqrt(pow(transformation.matrix()(0,0),2)+pow(transformation.matrix()(1,0),2)));
-    return retVal;
-}
-
-
-Eigen::Affine3d NumericKinematic::buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx=true)
-{
-    Eigen::Affine3d transl;
-    transl.setIdentity();
-    transl.translate(translXYZ);
-    if(zyx)
-    {
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(2), Eigen::Vector3d::UnitZ()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(1), Eigen::Vector3d::UnitY()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(0), Eigen::Vector3d::UnitX()));
-    }
-    else
-    {
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(0), Eigen::Vector3d::UnitX()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(1), Eigen::Vector3d::UnitY()));
-        transl.rotate(Eigen::AngleAxis<double>(axisZYX(2), Eigen::Vector3d::UnitZ()));
-    }
-    return transl;
-}
 
 void NumericKinematic::configurationCallback(masterslave::NumericKinematicConfig &config, uint32_t level)
 {

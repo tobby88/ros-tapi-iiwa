@@ -23,6 +23,8 @@
 
 #include <dynamic_reconfigure/server.h>
 #include "masterslave/TrajectoryGeneratorConfig.h"
+
+#include "staticFunctions.h"
 /**
  * @enum TRAJECTORY_STATE
  * @brief Verschiedene Trajektorienarten, die die Klassen TrajectoryGenerator zur Verfügung stellt

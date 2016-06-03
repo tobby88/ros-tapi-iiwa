@@ -15,6 +15,8 @@
 
 #include "masterslave/Manipulation.h"
 
+#include "staticFunctions.h"
+
 /**
  * @file MasterSlaveManipulation.h
  *
@@ -57,15 +59,6 @@ class MasterSlaveManipulation
          * @brief Callback zum Empfang der Zykluszeit
          */
         void cycleTimeCallback(const std_msgs::Float64ConstPtr&);
-
-        /**
-         * @fn QuaternionFromEuler
-         * @brief Hilfsfunktion zur Wandlung eines Euler-Winkel-Vektors in ein Quaternions
-         * @param eulerXYZ Euler-Winkel-Vektor
-         * @param ZYX Flag, zur Festlegung der Rotationsreihenfolge
-         * @return Quaternion
-         */
-        Eigen::Quaternion<double> QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX);
 
         ros::NodeHandle nh_;
 

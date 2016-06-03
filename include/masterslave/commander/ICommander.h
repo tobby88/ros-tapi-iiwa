@@ -28,6 +28,8 @@
 
 #include "masterslave/OpenIGTLStateDescription.h"
 
+
+
 /**
  * @file ICommander.h
  *
@@ -278,14 +280,7 @@ class ICommander
          */
         double gripperVelocityValue{0.05};
 
-        /**
-         * @fn QuaternionFromEuler
-         * @brief Hilfsmethode um ein Quaternion aus Eulerwinkel zu erstellen
-         * @param eulerXYZ Eulerwinkel (Reihenfolge im Vektor X-Y-Z)
-         * @param ZYX Flag, ob die Rotationsreihenfolge X-Y'-Z'' oder Z-Y'-X'' ist
-         * @return Das berechnete Quaternion
-         */
-        Eigen::Quaternion<double> QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX);
+
 
         const double DEG_TO_RAD{M_PI/180};
 

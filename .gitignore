@@ -46,3 +46,4 @@ build
 *.*~
 *.autosave
 *~
+*.save

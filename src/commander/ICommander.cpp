@@ -27,20 +27,6 @@ void ICommander::configurationCallback(masterslave::MasterSlaveConfig &config, u
     ROS_INFO_STREAM("STATE CHANGED" << cycleTime);
 }
 
-Eigen::Quaternion<double> ICommander::QuaternionFromEuler(const Eigen::Vector3d &eulerXYZ, bool ZYX=true)
-{
-    Eigen::Quaternion<double> quat;
-    quat.Identity();
-    Eigen::AngleAxisd zAngle(eulerXYZ[2], Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd yAngle(eulerXYZ[1], Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd xAngle(eulerXYZ[0], Eigen::Vector3d::UnitX());
-    if(ZYX)
-        quat = zAngle * yAngle * xAngle;
-    else
-        quat = xAngle * yAngle * zAngle;
-
-    return quat;
-}
 
 
 /*

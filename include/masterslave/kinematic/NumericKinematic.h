@@ -23,6 +23,9 @@
 //solver algorithm for quadratic programming problems (very nice perfomance)
 #include "eiquadprog.hpp"
 
+
+#include "staticFunctions.h"
+
 /**
  * @file NumericKinematic.h
  *
@@ -83,6 +86,7 @@ private:
      * @return Ableitung des Potentials nach den Gelenkwinkeln
      */
     Eigen::VectorXd angleMonitoring(Eigen::VectorXd deltaQ, Eigen::VectorXd q, double Hmax, double& a);
+
     Eigen::MatrixXd collisionControl(Eigen::VectorXd q);
 
     /**
@@ -353,25 +357,6 @@ private:
      * @see calculateAnalyticalJacobian
      */
     Eigen::MatrixXd analyticalJacobian;
-
-    /**
-     * @fn rotation2RPY
-     * @brief Umrechnung einer Rotation einer Affinen Transformation in Euler-Winkel und Übergabe der Translation
-     * @param transformation Transformation
-     * @return Vektor mit Translation und Rotation in Euler-Winkeln
-     */
-    Eigen::VectorXd rotation2RPY(Eigen::Affine3d transformation);
-
-    /**
-     * @fn buildAffine3d
-     * @brief Hilfsfunktion zur Erstellung von Affinen Transformationen aus einem Translationsvekt und den RPY-Winkeln
-     * @param translXYZ Translationsvektor
-     * @param axisZYX Rotationsvektor
-     * @param zyx Flag zur Festlegung der Rotationsrichtung
-     * @return Affine Transformation
-     * @see IKinematic
-     */
-    Eigen::Affine3d buildAffine3d(const Eigen::Vector3d &translXYZ, const Eigen::Vector3d &axisZYX, bool zyx);
 
     /**
      * @var weightVector

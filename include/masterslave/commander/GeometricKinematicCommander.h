@@ -9,6 +9,8 @@
 #include <eigen_conversions/eigen_msg.h>
 #include <tf/transform_listener.h>
 
+#include "staticFunctions.h"
+
 /**
  * @file GeometricKinematicCommander.h
  *
