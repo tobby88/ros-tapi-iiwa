@@ -44,6 +44,8 @@ public:
      */
     VisualServoing(ros::NodeHandle &nh);
 private:
+    void manipulateTransform(Eigen::Vector3d translation, Eigen::Vector3d orientation);
+
     void velocityCallback(const geometry_msgs::TwistStampedConstPtr val);
 
     void getControlDevice();
@@ -145,7 +147,7 @@ private:
      * @var iTrans
      * @brief Translatorische Reglerverstärkungen
      */
-    double pTrans{1};
+    double pTrans{0};
     double dTrans{0.00};
 
 
@@ -155,7 +157,7 @@ private:
      * @var iRot
      * @brief Rotatorische Reglerverstärkungen
      */
-    double pRot{1};
+    double pRot{0};
     double dRot{0};
 
     bool markerFoundTCP{false};
@@ -166,6 +168,8 @@ private:
     double markerJointAngle{0};
 
     const double DEG_TO_RAD{M_PI/180};
+
+    const double MM_TO_M{0.001};
 
     const double MARKER_TO_TCP_ANGLE{9.53*DEG_TO_RAD};
 
@@ -192,11 +196,13 @@ private:
 
     Eigen::Affine3d objOld;
 
-    double MINIMAL_DISTANCE{8e-3};
+    double MINIMAL_DISTANCE{2e-3};
 
-    double MINIMAL_STEP_DISTANCE{6e-3};
+    double MINIMAL_STEP_DISTANCE{2e-3};
 
     Eigen::Affine3d lastTrackedPosition;
+
+    dynamic_reconfigure::Server<masterslave::VisualServoingConfig> server;
 };
 
 #endif // VISUALSERVOING_H

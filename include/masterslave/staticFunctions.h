@@ -85,7 +85,7 @@ Eigen::Affine3d filterPose(Eigen::Affine3d actualPose, Eigen::Affine3d lastPose,
     if(differenceDistance >= MINIMAL_DISTANCE)
     {
 
-        double minimalDistanceFactor = (differenceDistance - MINIMAL_DISTANCE)/(differenceDistance-MINIMAL_DISTANCE+MINIMAL_STEP_DISTANCE);
+        double minimalDistanceFactor = std::abs((differenceDistance - MINIMAL_DISTANCE)/(differenceDistance-MINIMAL_DISTANCE+MINIMAL_STEP_DISTANCE));
         ROS_WARN_STREAM("Test" << minimalDistanceFactor);
         if(minimalDistanceFactor > 1) minimalDistanceFactor = 1;
         newPose.translate(lastPose.translation()+differencePose.translation()*minimalDistanceFactor);
@@ -100,7 +100,7 @@ Eigen::Affine3d filterPose(Eigen::Affine3d actualPose, Eigen::Affine3d lastPose,
     Eigen::Quaterniond actualPoseQuat = Eigen::Quaterniond(actualPose.rotation());
     if(differenceAngle.angle()>=2*DEG)
     {
-        double minimalAngleFactor = (differenceAngle.angle() - 2*DEG)/(differenceAngle.angle()-2*DEG+3*DEG);
+        double minimalAngleFactor = std::abs((differenceAngle.angle() - 2*DEG)/(differenceAngle.angle()-2*DEG+3*DEG));
         if(minimalAngleFactor > 1) minimalAngleFactor = 1;
         newPose.rotate(lastPoseQuat.slerp(minimalAngleFactor,actualPoseQuat));
     }

@@ -5,7 +5,7 @@ VisualServoing::VisualServoing(ros::NodeHandle &nh): nh_(nh)
     markerJointRotation = Eigen::Affine3d::Identity();
     differenceTransform = Eigen::Affine3d::Identity();
     differenceTransformOld = Eigen::Affine3d::Identity();
-    dynamic_reconfigure::Server<masterslave::VisualServoingConfig> server;
+
     dynamic_reconfigure::Server<masterslave::VisualServoingConfig>::CallbackType f;
     f = boost::bind(&VisualServoing::configurationCallback,this ,_1,_2);
     server.setCallback(f);
@@ -72,16 +72,13 @@ Eigen::Vector3d VisualServoing::calculateTranslationalPID()
 {
     Eigen::Vector3d retValue = Eigen::Vector3d::Zero();
     retValue = pTrans*differenceTransform.translation() + dTrans*(differenceTransform.translation()-differenceTransformOld.translation())/markerCycleTime ;
+    //return markerJointRotation.rotation()*retValue;
     return retValue;
 }
 
 Eigen::Quaterniond VisualServoing::calculateRotationalPID()
 {
-    Eigen::Quaterniond initialRotation = Eigen::Quaterniond(initialTransform.rotation());
-    Eigen::Quaterniond actualRotation = Eigen::Quaterniond(actualTransform.rotation());
-
-
-    return actualRotation.slerp(pRot,initialRotation)*actualRotation.inverse();
+    return Eigen::Quaterniond::Identity().slerp(pRot,Eigen::Quaterniond(differenceTransform.rotation()));
 }
 
 void VisualServoing::velocityCallback(const geometry_msgs::TwistStampedConstPtr val)
@@ -90,14 +87,7 @@ void VisualServoing::velocityCallback(const geometry_msgs::TwistStampedConstPtr 
 
     if(!initialRun)
     {
-        Eigen::Affine3d manipulatedInitialTransform = Eigen::Affine3d::Identity();
-
-        manipulatedInitialTransform.translate(initialTransform.translation());
-
-        manipulatedInitialTransform.translate(markerJointRotation.rotation().inverse()*Eigen::Vector3d(velocity.twist.linear.x*markerCycleTime,velocity.twist.linear.y*markerCycleTime,velocity.twist.linear.z*markerCycleTime));
-        manipulatedInitialTransform.rotate(QuaternionFromEuler(Eigen::Vector3d(velocity.twist.angular.x*markerCycleTime,velocity.twist.angular.y*markerCycleTime,velocity.twist.angular.z*markerCycleTime),true));
-        manipulatedInitialTransform.rotate(initialTransform.rotation());
-        initialTransform = manipulatedInitialTransform;
+        manipulateTransform(Eigen::Vector3d(velocity.twist.linear.x*markerCycleTime,velocity.twist.linear.y*markerCycleTime,velocity.twist.linear.z*markerCycleTime),Eigen::Vector3d(velocity.twist.angular.x*markerCycleTime,velocity.twist.angular.y*markerCycleTime,velocity.twist.angular.z*markerCycleTime));
     }
 }
 
@@ -109,29 +99,29 @@ bool VisualServoing::visualServoingCallback(masterslave::Manipulation::Request &
     cycleTime = ros::Time::now().toSec() - lastTime;
     lastTime = ros::Time::now().toSec();
     tf::poseMsgToEigen(req.T_0_EE_old,T_0_EE_old);
-    if(initialRunVisualServoing)
-    {
-        lastTrackedPosition = T_0_EE_old;
-    }
-    if(markerFoundObject || markerFoundTCP || !initialRun || !initialRunVisualServoing)
-    {
-        Eigen::Quaterniond oldRotation = Eigen::Quaterniond(T_0_EE_old.rotation());
-        Eigen::Vector3d feedForwardTrans = Eigen::Vector3d::Zero();
-        feedForwardTrans << markerCycleTime*velocity.twist.linear.x, markerCycleTime*velocity.twist.linear.y, markerCycleTime*velocity.twist.linear.z;
-        T_0_EE_new.translate(T_0_EE_old.translation()+calculateTranslationalPID()*(cycleTime/markerCycleTime)+feedForwardTrans);
 
-        Eigen::Vector3d eulerZYX;
-        eulerZYX << markerCycleTime*velocity.twist.angular.x, markerCycleTime*velocity.twist.angular.y, markerCycleTime*velocity.twist.angular.z;
-        Eigen::Quaterniond feedForwardRot = QuaternionFromEuler(eulerZYX,true);
-        T_0_EE_new.rotate(oldRotation.slerp(cycleTime,oldRotation*calculateRotationalPID())*feedForwardRot);
-        lastTrackedPosition = T_0_EE_old;
-    }
-    else
+    // Falls die  Marker nicht gefunden wurden
+    if(!markerFoundObject || !markerFoundTCP)
     {
-        T_0_EE_new = lastTrackedPosition;
+        T_0_EE_new = T_0_EE_old;
+        tf::poseEigenToMsg(T_0_EE_new,resp.T_0_EE_new);
+        return true;
     }
+
+    Eigen::Vector3d feedforwardTranslational = Eigen::Vector3d(velocity.twist.linear.x, velocity.twist.linear.y, velocity.twist.linear.z);
+    T_0_EE_new.translate(T_0_EE_old.translation());
+    T_0_EE_new.translate(cycleTime*(calculateTranslationalPID()+feedforwardTranslational));
+
+
+
+    T_0_EE_new.rotate(T_0_EE_old.rotation());
+    T_0_EE_new.rotate(Eigen::Quaterniond::Identity().slerp(cycleTime,calculateRotationalPID()));
     tf::poseEigenToMsg(T_0_EE_new,resp.T_0_EE_new);
     return true;
+
+
+
+
 
 }
 
@@ -141,7 +131,6 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
     markerFoundObject=false;
     Eigen::Affine3d tcp;
     Eigen::Affine3d obj;
-    differenceTransformOld = differenceTransform;
     differenceTransform = Eigen::Affine3d::Identity();
     actualTransform = Eigen::Affine3d::Identity();
     markerCycleTime = ros::Time::now().toSec() - lastMarkerTime;
@@ -152,33 +141,13 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
         {
             case 10:
             tf::poseMsgToEigen(markerPtr->markers[i].pose.pose,tcp);
-            if(initialRun)
-            {
-                tcpOld = tcp;
-            }
-            else
-            {
-                tcp = filterPose(tcp, tcpOld,MINIMAL_DISTANCE,MINIMAL_STEP_DISTANCE);
-            }
-            //Drehung des Markers in das TCP-System
-            tcpOld = tcp;
+            tcp = tcp;
             markerFoundTCP = true;
-            ROS_INFO_STREAM("TCP" << tcp.matrix());
             break;
 
             case 11:
             tf::poseMsgToEigen(markerPtr->markers[i].pose.pose,obj);
-            if(initialRun)
-            {
-                objOld = obj;
-            }
-            else
-            {
-                obj= filterPose(obj, objOld,MINIMAL_DISTANCE,MINIMAL_STEP_DISTANCE);
-            }
-            objOld = obj;
             markerFoundObject = true;
-            ROS_INFO_STREAM("OBJ" << obj.matrix());
             break;
         }
     }
@@ -189,32 +158,48 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
         return;
     }
     // Hier fehlt noch die Transformation ins TCP-System
-    actualTransform.translate(obj.translation()-tcp.translation());
-    actualTransform.rotate(tcp.rotation().inverse()*obj.rotation());
+    actualTransform = tcp.inverse()*obj;
+
+
     if(initialRun)
     {
-        initialTransform = actualTransform;
-        lastTransform = actualTransform;
+        initialTransform = actualTransform; // Delta X_Soll
         initialRun = false;
     }
-    actualTransform = filterPose(actualTransform,lastTransform, MINIMAL_DISTANCE, MINIMAL_STEP_DISTANCE);
-    // neue Toollage im alten Toolkoordinatensystem
-    ROS_WARN_STREAM("actualTransform" << actualTransform.matrix());
-    differenceTransform.translate(markerJointRotation.rotation()*(initialTransform.translation()-actualTransform.translation()));
-    differenceTransform.rotate((actualTransform.rotation().inverse()*initialTransform.rotation()));
-    filterPose(differenceTransform,Eigen::Affine3d::Identity(),2e-3,1e-3);
-    ROS_WARN_STREAM("differenceTransform" << differenceTransform.matrix());
-    lastTransform = actualTransform;
 
+    // neue Toollage im alten Toolkoordinatensystem
+    differenceTransform = markerJointRotation.inverse()*actualTransform.inverse()*initialTransform*markerJointRotation;
+
+
+    ROS_WARN_STREAM("differenceTransform" << differenceTransform.matrix());
+
+    return;
 }
 
 void VisualServoing::configurationCallback(masterslave::VisualServoingConfig &config, uint32_t level)
 {
-    pRot = config.PRot;
-    dRot = config.DRot;
+    switch(level)
+    {
+        case 0:
+            pRot = config.PRot;
+            pTrans = config.PTrans;
+            dTrans = config.DTrans;
+            ROS_INFO_STREAM("KTrans: " << pTrans << " DTrans: " << dTrans << " KRot: " << pRot);
+            break;
+        case 1:
+            Eigen::Vector3d translation = Eigen::Vector3d((double)config.XOffset*MM_TO_M,(double)config.YOffset*MM_TO_M,(double)config.ZOffset*MM_TO_M);
+            Eigen::Vector3d orientation = Eigen::Vector3d(config.AOffset*DEG_TO_RAD,config.BOffset*DEG_TO_RAD,config.COffset*DEG_TO_RAD);
+            manipulateTransform(translation,orientation);
+            config.XOffset = 0;
+            config.YOffset = 0;
+            config.ZOffset = 0;
+            config.AOffset = 0;
+            config.BOffset = 0;
+            config.COffset = 0;
+            server.updateConfig(config);
+            break;
 
-    pTrans = config.PTrans;
-    dTrans = config.DTrans;
+    }
 
     if(config.ResetInit != resetInitOld)
     {
@@ -229,11 +214,21 @@ void VisualServoing::markerJointAngleCallback(const sensor_msgs::JointStateConst
 {
     markerJointAngle = (Q6Pstate->position[0]-Q6Nstate->position[0])/2;
     Eigen::Vector3d anglesMarkerTool;
-    anglesMarkerTool << -M_PI/2-MARKER_TO_TCP_ANGLE,0,M_PI;
+    anglesMarkerTool << -M_PI/2-MARKER_TO_TCP_ANGLE+markerJointAngle,0,M_PI;
     markerJointRotation = Eigen::Affine3d::Identity();
     markerJointRotation.rotate(QuaternionFromEuler(anglesMarkerTool,true));
+}
 
+void VisualServoing::manipulateTransform(Eigen::Vector3d translation, Eigen::Vector3d orientation)
+{
+    Eigen::Affine3d manipulatedInitialTransform = Eigen::Affine3d::Identity();
 
+    manipulatedInitialTransform.translate(initialTransform.translation());
+
+    manipulatedInitialTransform.translate(translation);
+    manipulatedInitialTransform.rotate(QuaternionFromEuler(orientation,true));
+    manipulatedInitialTransform.rotate(initialTransform.rotation());
+    initialTransform = manipulatedInitialTransform;
 }
 
 int main(int argc, char** argv)
