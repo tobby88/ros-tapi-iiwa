@@ -20,9 +20,10 @@ VisualServoing::VisualServoing(ros::NodeHandle &nh): nh_(nh)
     sync.registerCallback(boost::bind(&VisualServoing::markerJointAngleCallback, this, _1, _2));
 
     Eigen::Vector3d anglesMarkerTool;
-    anglesMarkerTool << -M_PI/2-MARKER_TO_TCP_ANGLE-markerJointAngle,0,M_PI;
+    anglesMarkerTool << M_PI/2-MARKER_TO_TCP_ANGLE-markerJointAngle,0,M_PI;
     markerJointRotation = Eigen::Affine3d::Identity();
     markerJointRotation.rotate(QuaternionFromEuler(anglesMarkerTool,true));
+    //markerJointRotation.rotate(Eigen::AngleAxisd(M_PI,Eigen::Vector3d::UnitZ()));
 
     /* MasterSlaveMode
      * 1: MasterSlaveRelative
@@ -72,7 +73,6 @@ Eigen::Vector3d VisualServoing::calculateTranslationalPID()
 {
     Eigen::Vector3d retValue = Eigen::Vector3d::Zero();
     retValue = pTrans*differenceTransform.translation() + dTrans*(differenceTransform.translation()-differenceTransformOld.translation())/markerCycleTime ;
-    //return markerJointRotation.rotation()*retValue;
     return retValue;
 }
 
@@ -157,8 +157,8 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
         ROS_ERROR_THROTTLE(1,"Marker unsichtbar!");
         return;
     }
-    // Hier fehlt noch die Transformation ins TCP-System
-    actualTransform = tcp.inverse()*obj;
+    // Hier fehlt noch die Transformation ins TCP-System (NICHT MEHR!)
+    actualTransform = tcp.inverse()*obj*markerJointRotation;
 
 
     if(initialRun)
@@ -168,8 +168,8 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
     }
 
     // neue Toollage im alten Toolkoordinatensystem
-    differenceTransform = markerJointRotation.inverse()*actualTransform.inverse()*initialTransform*markerJointRotation;
-
+    //differenceTransform = (markerJointRotation.inverse()*actualTransform.inverse()*initialTransform*markerJointRotation);
+    differenceTransform = actualTransform.inverse()*initialTransform;
 
     ROS_WARN_STREAM("differenceTransform" << differenceTransform.matrix());
 
@@ -223,11 +223,11 @@ void VisualServoing::manipulateTransform(Eigen::Vector3d translation, Eigen::Vec
 {
     Eigen::Affine3d manipulatedInitialTransform = Eigen::Affine3d::Identity();
 
-    manipulatedInitialTransform.translate(initialTransform.translation());
-
     manipulatedInitialTransform.translate(translation);
+    manipulatedInitialTransform.translate(initialTransform.translation());
     manipulatedInitialTransform.rotate(QuaternionFromEuler(orientation,true));
     manipulatedInitialTransform.rotate(initialTransform.rotation());
+
     initialTransform = manipulatedInitialTransform;
 }
 

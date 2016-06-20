@@ -32,4 +32,5 @@
 	<node pkg="masterslave" name="MasterSlaveManipulationAbsolute" type="MasterSlaveManipulationAbsolute" respawn="false" output="screen"/>	
 	
 	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find masterslave)/rviz/UrsulaRviz.rviz" />
+	<node pkg="rosbag" type="record" name="rosbag_record_position" args="-ao $(find masterslave)/rosbag/URSULA_Bag -x /camera/(.*)" output="log" />
 </launch>

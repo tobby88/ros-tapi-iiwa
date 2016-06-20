@@ -221,6 +221,8 @@ class ICommander
          */
         ros::Publisher  Q6nPub;
 
+        ros::Publisher positionPub;
+
         /**
          * @var motorAngles
          * @brief Zwischenspeicher für die eingehenden Motorwinkel der Gelenke Q6n und Q6p

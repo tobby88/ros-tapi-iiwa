@@ -51,6 +51,8 @@ NumericKinematicCommander::NumericKinematicCommander(ros::NodeHandle& nh, ros::N
     Q6nPub = nh_.advertise<std_msgs::Float64>("/Q6N/setPointVelocity",1);
     Q6pPub = nh_.advertise<std_msgs::Float64>("/Q6P/setPointVelocity",1);
 
+    positionPub = nh_.advertise<geometry_msgs::Pose>("/desiredPose",1);
+
     setZero();
 
     ros::Rate waiteRate(25);
@@ -148,7 +150,9 @@ void NumericKinematicCommander::loop()
         tf::poseEigenToMsg(TCP,manipulationService.request.T_0_EE_old);
 
         tcpClient.call(manipulationService);
+
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
+        positionPub.publish(manipulationService.response.T_0_EE_new);
         if(!TCP.isApprox(TCP_old))
         {
             masterslave::NumericKinematicInverseKinematics inverseKinematicsService;

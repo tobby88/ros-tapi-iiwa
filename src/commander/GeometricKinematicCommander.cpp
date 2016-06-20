@@ -29,6 +29,7 @@ GeometricKinematicCommander::GeometricKinematicCommander(ros::NodeHandle &nh, ro
     inverseKinematicsClient = nh_.serviceClient<masterslave::GeometricKinematicInverseKinematics>("/inverseKinematics");
     tcpClient = nh_.serviceClient<masterslave::Manipulation>("/Manipulation");
     stateService = nh_.serviceClient<masterslave::OpenIGTLStateService>("/openIGTLState");
+    positionPub = nh_.advertise<geometry_msgs::Pose>("/desiredPose",1);
 
     Q4Pub = nh_.advertise<std_msgs::Float64>("/Q4/setPointVelocity",1);
     Q5Pub = nh_.advertise<std_msgs::Float64>("/Q5/setPointVelocity",1);
@@ -176,6 +177,7 @@ void GeometricKinematicCommander::loop()
         Eigen::Affine3d TCP_old = TCP;
         tf::poseEigenToMsg(TCP,manipulationService.request.T_0_EE_old);
         tcpClient.call(manipulationService);
+        positionPub.publish(manipulationService.response.T_0_EE_new);
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
 
         ROS_DEBUG_STREAM(TCP.matrix());

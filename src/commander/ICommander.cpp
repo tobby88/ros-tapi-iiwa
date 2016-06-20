@@ -28,7 +28,6 @@ void ICommander::configurationCallback(masterslave::MasterSlaveConfig &config, u
 }
 
 
-
 /*
  * Gemeinsame Implementierung der Kommandierung der Gelenkwinkel des Werkzeuges
  * CRITICAL_PLIERS_ANGLE: kritischer Zangenöffnungswinkel

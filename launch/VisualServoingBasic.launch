@@ -19,8 +19,17 @@
         <arg name="cam_image_topic" default="/camera/image_mono" />
         <arg name="cam_info_topic" default="/camera/camera_info" />   
         <arg name="output_frame" default="/camera" />
+	<arg name="bundle_files_hand" default="$(find masterslave)/bundles/Tool.xml $(find masterslave)/bundles/Object.xml"/>
 
-        <node ns="visualServoing" name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen" args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame)" />
+        <node ns="visualServoing" name="ar_track_alvar" pkg="ar_track_alvar" type="findMarkerBundlesNoKinect" respawn="false" output="screen" args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame) $(arg bundle_files_hand)" />
+
+	<node pkg="rosbag" type="record" name="rosbag_record_position" args="-ao $(find masterslave)/rosbag/URSULA_Bag  -x /camera/(.*) /camera/image_color" output="log"/>
+
+	
+	
+
+
+ 
 
 
   	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find masterslave)/rviz/UrsulaVisualServoing.rviz"/>
