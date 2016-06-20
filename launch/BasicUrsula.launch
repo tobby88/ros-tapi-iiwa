@@ -14,5 +14,5 @@
 	</node>
 	<node pkg="masterslave" type="MasterSlaveManipulation" name="MasterSlaveManipulation" args="$(arg TestDevice)" output="screen"/>
 	<node pkg="rqt_reconfigure" type="rqt_reconfigure" name="rqt_reconfigure" output="screen"/>
-	<node pkg="rosbag" type="record" name="rosbag_record_position" args="-a -o $(find masterslave)/rosbag -x /camera/(.*)" />
+	<node pkg="rosbag" type="record" name="rosbag_record_position" args="-a -o $(find masterslave)/rosbag -x /camera/(.*)|/tf/(.*)" />
 </launch>

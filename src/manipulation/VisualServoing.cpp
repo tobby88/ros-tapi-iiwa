@@ -19,6 +19,8 @@ VisualServoing::VisualServoing(ros::NodeHandle &nh): nh_(nh)
     message_filters::TimeSynchronizer<sensor_msgs::JointState, sensor_msgs::JointState> sync(Q6pSub, Q6nSub, 10);
     sync.registerCallback(boost::bind(&VisualServoing::markerJointAngleCallback, this, _1, _2));
 
+    differenceTransformPub = nh_.advertise<geometry_msgs::Pose>("/controlError",1);
+
     Eigen::Vector3d anglesMarkerTool;
     anglesMarkerTool << M_PI/2-MARKER_TO_TCP_ANGLE-markerJointAngle,0,M_PI;
     markerJointRotation = Eigen::Affine3d::Identity();
@@ -171,7 +173,9 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
     //differenceTransform = (markerJointRotation.inverse()*actualTransform.inverse()*initialTransform*markerJointRotation);
     differenceTransform = actualTransform.inverse()*initialTransform;
 
-    ROS_WARN_STREAM("differenceTransform" << differenceTransform.matrix());
+    geometry_msgs::Pose differencePose;
+    tf::poseEigenToMsg(differenceTransform,differencePose);
+    differenceTransformPub.publish(differencePose);
 
     return;
 }

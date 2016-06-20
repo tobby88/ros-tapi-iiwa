@@ -109,6 +109,8 @@ private:
 
     ros::Subscriber velocitySub;
 
+    ros::Publisher differenceTransformPub;
+
     /**
      * @var initialTransform
      * @brief ursprüngliche Transformation zwischen TCP und verfolgtem Objekt
