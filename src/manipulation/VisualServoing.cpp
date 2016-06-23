@@ -142,14 +142,17 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
         switch(markerPtr->markers[i].id)
         {
             case 10:
+
             tf::poseMsgToEigen(markerPtr->markers[i].pose.pose,tcp);
-            tcp = tcp;
             markerFoundTCP = true;
+
             break;
 
             case 11:
+
             tf::poseMsgToEigen(markerPtr->markers[i].pose.pose,obj);
             markerFoundObject = true;
+
             break;
         }
     }
@@ -159,14 +162,29 @@ void VisualServoing::markerCallback(const ar_track_alvar_msgs::AlvarMarkersConst
         ROS_ERROR_THROTTLE(1,"Marker unsichtbar!");
         return;
     }
+    if(!initialRun)
+    {
+        tcp = checkAngle(tcp,tcpOld);
+        obj = checkAngle(obj,objOld);
+    }
+    tcpOld = tcp;
+    objOld = obj;
+
     // Hier fehlt noch die Transformation ins TCP-System (NICHT MEHR!)
     actualTransform = tcp.inverse()*obj*markerJointRotation;
+
 
 
     if(initialRun)
     {
         initialTransform = actualTransform; // Delta X_Soll
+
         initialRun = false;
+    }
+    else
+    {
+
+
     }
 
     // neue Toollage im alten Toolkoordinatensystem
@@ -234,6 +252,9 @@ void VisualServoing::manipulateTransform(Eigen::Vector3d translation, Eigen::Vec
 
     initialTransform = manipulatedInitialTransform;
 }
+
+
+
 
 int main(int argc, char** argv)
 {

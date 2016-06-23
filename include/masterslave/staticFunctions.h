@@ -111,5 +111,33 @@ Eigen::Affine3d filterPose(Eigen::Affine3d actualPose, Eigen::Affine3d lastPose,
     return newPose;
 }
 
+Eigen::Affine3d checkAngle(Eigen::Affine3d newPose, Eigen::Affine3d oldPose)
+{
+    Eigen::Affine3d returnValue;
+    Eigen::Quaterniond newRot(newPose.rotation());
+    Eigen::Quaterniond oldRot(oldPose.rotation());
+
+    Eigen::AngleAxisd difRot = Eigen::AngleAxisd(newRot.inverse()*oldRot);
+
+    if(std::abs(difRot.angle()) < (double)5/180*M_PI)
+    {
+        returnValue = newPose;
+    }
+    else if(std::abs(difRot.angle()) <= (double)15/180*M_PI)
+    {
+        returnValue.translate(oldPose.translation());
+        returnValue.rotate((oldRot.slerp((double)5/180*M_PI/difRot.angle(),newRot)));
+        ROS_WARN("Big rotational Difference");
+    }
+    else if(std::abs(difRot.angle()) > (double)15/180*M_PI)
+    {
+        ROS_ERROR_STREAM("Rotation too big!!: " << difRot.angle() <<" " <<(double)15/180*M_PI );
+        returnValue = oldPose;
+    }
+    return returnValue;
+    
+}
+
+
 
 #endif // STATICFUNCTIONS_H

@@ -153,7 +153,7 @@ void NumericKinematicCommander::loop()
 
         tf::poseMsgToEigen(manipulationService.response.T_0_EE_new,TCP);
         positionPub.publish(manipulationService.response.T_0_EE_new);
-        if(!TCP.isApprox(TCP_old))
+        if(!TCP.isApprox(TCP_old) && boundingBox->checkBoundingBoxTCP(TCP))
         {
             masterslave::NumericKinematicInverseKinematics inverseKinematicsService;
             tf::poseEigenToMsg(TCP,inverseKinematicsService.request.T_0_EE);
