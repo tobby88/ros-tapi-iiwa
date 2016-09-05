@@ -1,8 +1,8 @@
 #ifndef LINETRAJECTORY_H
 #define LINETRAJECTORY_H
 
-#include "ITrajectory.h"
 #include <array>
+#include "ITrajectory.h"
 
 /**
  * @file LineTrajectory.h
@@ -16,40 +16,42 @@
 
 class LineTrajectory : public ITrajectory
 {
-    public:
-        LineTrajectory(Eigen::Affine3d startPosition, Eigen::Vector3d RCM,Eigen::Vector3d firstPoint, Eigen::Vector3d secondPoint, int speed, double cycleTime);
+public:
+  LineTrajectory(Eigen::Affine3d startPosition, Eigen::Vector3d RCM, Eigen::Vector3d firstPoint,
+                 Eigen::Vector3d secondPoint, int speed, double cycleTime);
 
-        /**
-         * @fn calculateNextPoint
-         * @see ITrajectory
-         */
-        Eigen::Affine3d calculateNextPoint();
-    private:
+  /**
+   * @fn calculateNextPoint
+   * @see ITrajectory
+   */
+  Eigen::Affine3d calculateNextPoint();
 
-        /**
-         * @var coefficients
-         * @brief Koeffizienten des Polynoms fünften Grades
-         */
-        std::array<Eigen::Vector3d,6> coefficients;
+private:
+  /**
+   * @var coefficients
+   * @brief Koeffizienten des Polynoms fünften Grades
+   */
+  std::array<Eigen::Vector3d, 6> coefficients;
 
-        /**
-         * @var trajectoryExecutionTime_
-         * @brief Zeit für die Interpolation zwischen den zwei Punkten in Abhängigkeit der gewünschten durchschnittlichen Geschwindigkeit
-         */
-        double trajectoryExecutionTime_;
+  /**
+   * @var trajectoryExecutionTime_
+   * @brief Zeit für die Interpolation zwischen den zwei Punkten in Abhängigkeit der gewünschten durchschnittlichen
+   * Geschwindigkeit
+   */
+  double trajectoryExecutionTime_;
 
-        /**
-         * @var steps_
-         * @brief Anzahl der Interpolationsschritte in Abhängigkeit der Länge der Trajektore, der Bahngeschwindigkeit und der Zykluszeit
-         */
-        int steps_;
+  /**
+   * @var steps_
+   * @brief Anzahl der Interpolationsschritte in Abhängigkeit der Länge der Trajektore, der Bahngeschwindigkeit und der
+   * Zykluszeit
+   */
+  int steps_;
 
-        /**
-         * @var cycleTime_
-         * @brief Zykluszeit
-         */
-        double cycleTime_;
-
+  /**
+   * @var cycleTime_
+   * @brief Zykluszeit
+   */
+  double cycleTime_;
 };
 
-#endif // LINETRAJECTORY_H
+#endif  // LINETRAJECTORY_H

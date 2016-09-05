@@ -4,24 +4,24 @@
 #include <algorithm>
 #include <array>
 
-#include "ros/ros.h"
 #include "ar_track_alvar_msgs/AlvarMarkers.h"
 #include "masterslave/Manipulation.h"
+#include "ros/ros.h"
 
+#include "Eigen/Dense"
 #include "geometry_msgs/PoseStamped.h"
 #include "std_msgs/Float64.h"
-#include "Eigen/Dense"
 
-#include <tf/tf.h>
-#include <tf_conversions/tf_eigen.h>
 #include <eigen_conversions/eigen_msg.h>
-#include <tf/transform_listener.h>
-#include <tf/transform_broadcaster.h>
 #include <tf/tf.h>
+#include <tf/tf.h>
+#include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
+#include <tf_conversions/tf_eigen.h>
 
+#include <message_filters/subscriber.h>
 #include <message_filters/synchronizer.h>
 #include <message_filters/time_synchronizer.h>
-#include <message_filters/subscriber.h>
 
 #include <dynamic_reconfigure/server.h>
 #include "masterslave/MasterSlaveManipulationAbsoluteConfig.h"
@@ -41,237 +41,234 @@
 class MasterSlaveManipulationAbsolute
 {
 public:
+  /**
+   * @fn MasterSlaveManipulationAbsolute
+   * @brief Standardkonstruktor
+   * @param nh ROS-Node Handle
+   */
+  MasterSlaveManipulationAbsolute(ros::NodeHandle& nh);
 
-    /**
-     * @fn MasterSlaveManipulationAbsolute
-     * @brief Standardkonstruktor
-     * @param nh ROS-Node Handle
-     */
-    MasterSlaveManipulationAbsolute(ros::NodeHandle &nh);
 private:
-    /**
-     * @fn markerCallback
-     * @brief gemeinsamer Callback der beiden MarkerTrackingInstanzen für das Tracking der Referenz- und der Steuerungsmarker
-     * @param handMarker Steuerungsmarkervektor
-     * @param referenceMarker Referenzmarkervektor
-     */
-    void markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr &handMarker);
-    /**
-     * @fn cycleTimeCallback
-     * @brief Zykluszeit der Interpolation bzw. der inversen Kinematik
-     * @param val Zykluszeit
-     */
-    void cycleTimeCallback(const std_msgs::Float64ConstPtr& val);
+  /**
+   * @fn markerCallback
+   * @brief gemeinsamer Callback der beiden MarkerTrackingInstanzen für das Tracking der Referenz- und der
+   * Steuerungsmarker
+   * @param handMarker Steuerungsmarkervektor
+   * @param referenceMarker Referenzmarkervektor
+   */
+  void markerCallback(const ar_track_alvar_msgs::AlvarMarkersConstPtr& handMarker);
+  /**
+   * @fn cycleTimeCallback
+   * @brief Zykluszeit der Interpolation bzw. der inversen Kinematik
+   * @param val Zykluszeit
+   */
+  void cycleTimeCallback(const std_msgs::Float64ConstPtr& val);
 
-    /**
-     * @fn masterSlaveCallback
-     * @brief Implementierung des MasterSlaveServices zur Steuerung des Roboters
-     * @param req Request des Clients: alte Transformation vor der Manipulation
-     * @param resp Response des Servers: neue Transformation nach der Manipulation
-     * @return Status, ob die Manipulation erfolgreich war
-     */
-    bool masterSlaveCallback(masterslave::Manipulation::Request& req, masterslave::Manipulation::Response& resp);
+  /**
+   * @fn masterSlaveCallback
+   * @brief Implementierung des MasterSlaveServices zur Steuerung des Roboters
+   * @param req Request des Clients: alte Transformation vor der Manipulation
+   * @param resp Response des Servers: neue Transformation nach der Manipulation
+   * @return Status, ob die Manipulation erfolgreich war
+   */
+  bool masterSlaveCallback(masterslave::Manipulation::Request& req, masterslave::Manipulation::Response& resp);
 
+  void configurationCallback(masterslave::MasterSlaveManipulationAbsoluteConfig& config, uint32_t level);
 
-    void configurationCallback(masterslave::MasterSlaveManipulationAbsoluteConfig &config, uint32_t level);
+  /**
+   * @var nh_
+   * @brief ROS-NodeHandle
+   */
+  ros::NodeHandle nh_;
 
-    /**
-     * @var nh_
-     * @brief ROS-NodeHandle
-     */
-    ros::NodeHandle nh_;
+  ros::Publisher pliersDistancePub;
 
-    ros::Publisher pliersDistancePub;
+  /**
+   * @var markerSub
+   * @brief Empfänger für die Steuerungsmarker
+   */
+  ros::Subscriber markerSub;
 
-    /**
-     * @var markerSub
-     * @brief Empfänger für die Steuerungsmarker
-     */
-    ros::Subscriber markerSub;
+  /**
+   * @var cycleTimeSub
+   * @brief Empfänger für die Zykluszeit
+   */
+  ros::Subscriber cycleTimeSub;
 
+  /**
+   * @var masterSlaveServer
+   * @brief Serverinstanz für die MasterSlaveSchnittstelle
+   */
+  ros::ServiceServer masterSlaveServer;
 
+  /**
+   * @var cycleTime
+   * @brief Zykluszeit
+   */
+  double cycleTime;
 
-    /**
-     * @var cycleTimeSub
-     * @brief Empfänger für die Zykluszeit
-     */
-    ros::Subscriber cycleTimeSub;
+  Eigen::Affine3d poseIndexFinger;
 
-    /**
-     * @var masterSlaveServer
-     * @brief Serverinstanz für die MasterSlaveSchnittstelle
-     */
-    ros::ServiceServer masterSlaveServer;
+  Eigen::Affine3d poseIndexFingerOld;
 
-    /**
-     * @var cycleTime
-     * @brief Zykluszeit
-     */
-    double cycleTime;
+  Eigen::Affine3d poseThumb;
 
-    Eigen::Affine3d poseIndexFinger;
+  Eigen::Affine3d poseThumbOld;
 
-    Eigen::Affine3d poseIndexFingerOld;
+  /**
+   * @var poseAct
+   * @brief aktuelle Lage des TCP
+   */
+  Eigen::Affine3d poseAct;
 
-    Eigen::Affine3d poseThumb;
+  Eigen::Affine3d poseOld;
+  /**
+   * @var poseOld
+   * @brief Lage des TCP im vorherigen Frame
+   */
+  Eigen::Affine3d initialPoseMarker;
 
-    Eigen::Affine3d poseThumbOld;
+  /**
+   * @var difference
+   * @brief Differenztransformation zwuischen der alten und aktuellen TCP-Lage
+   */
+  Eigen::Vector3d difference;
 
-    /**
-     * @var poseAct
-     * @brief aktuelle Lage des TCP
-     */
-    Eigen::Affine3d poseAct;
+  /**
+   * @var initialRun
+   * @brief Initialer Durchlauf (ja oder nein)
+   */
+  bool initialRun{ true };
 
-    Eigen::Affine3d poseOld;
-    /**
-     * @var poseOld
-     * @brief Lage des TCP im vorherigen Frame
-     */
-    Eigen::Affine3d initialPoseMarker;
+  bool initialRunMasterSlave{ true };
 
-    /**
-     * @var difference
-     * @brief Differenztransformation zwuischen der alten und aktuellen TCP-Lage
-     */
-    Eigen::Vector3d difference;
+  /**
+   * @var frameTime
+   * @brief Zeit zwischen zwei Frames der Kamera
+   */
+  double frameTime;
 
-    /**
-     * @var initialRun
-     * @brief Initialer Durchlauf (ja oder nein)
-     */
-    bool initialRun{true};
+  /**
+   * @var lastTime
+   * @brief Zeitpunkt des letzten Frames in Sekunden
+   */
+  double lastFrameTime;
 
-    bool initialRunMasterSlave{true};
+  /**
+   * @var masterSlaveTime
+   * @brief Zeit zwischen zwei MasterSlaveCallbacks
+   */
 
-    /**
-     * @var frameTime
-     * @brief Zeit zwischen zwei Frames der Kamera
-     */
-    double frameTime;
+  double masterSlaveTime;
 
-    /**
-     * @var lastTime
-     * @brief Zeitpunkt des letzten Frames in Sekunden
-     */
-    double lastFrameTime;
+  /**
+   * @var lastMasterSlaveTime
+   * @brief Letzter Aufruf des MasterSlaveCallbacks
+   */
 
-    /**
-     * @var masterSlaveTime
-     * @brief Zeit zwischen zwei MasterSlaveCallbacks
-     */
+  double lastMasterSlaveTime;
 
-    double masterSlaveTime;
+  /**
+   * @var slerpParameter
+   * @brief Parameter [0;1] für die Rotationsinterpolation
+   */
+  double slerpParameter{ 0 };
 
-    /**
-     * @var lastMasterSlaveTime
-     * @brief Letzter Aufruf des MasterSlaveCallbacks
-     */
+  /**
+   * @var indexFingerMarkerFound
+   * @brief Wurden die Steuerungsmarker gefunden?!
+   * @see masterSlaveCallback
+   */
+  bool indexFingerMarkerFound{ false };
 
-    double lastMasterSlaveTime;
+  /**
+   * @var thumbMarkerFound
+   * @brief Wurde der Daumenmarker gefunden?!
+   * @see masterSlaveCallback
+   */
+  bool thumbMarkerFound{ false };
 
-    /**
-     * @var slerpParameter
-     * @brief Parameter [0;1] für die Rotationsinterpolation
-     */
-    double slerpParameter{0};
+  /**
+   * @var referenceMarkerFound
+   * @brief Wurden die Referenzmarker gefunden?!
+   * @see masterSlaveCallback
+   */
+  bool referenceMarkerFound{ false };
 
-    /**
-     * @var indexFingerMarkerFound
-     * @brief Wurden die Steuerungsmarker gefunden?!
-     * @see masterSlaveCallback
-     */
-    bool indexFingerMarkerFound{false};
+  /**
+   * @var markerCallbackCalled
+   * @brief Wurde der MarkerCallback bereits einmal ausgelöst?
+   * @see masterSlaveCallback
+   */
+  bool markerCallbackCalled{ false };
 
-    /**
-     * @var thumbMarkerFound
-     * @brief Wurde der Daumenmarker gefunden?!
-     * @see masterSlaveCallback
-     */
-    bool thumbMarkerFound{false};
+  /**
+   * @var initialRotationMarker
+   * @brief die initiale Rotation der Marker bei Programmstart
+   */
+  Eigen::Quaterniond initialRotationMarker;
 
-    /**
-     * @var referenceMarkerFound
-     * @brief Wurden die Referenzmarker gefunden?!
-     * @see masterSlaveCallback
-     */
-    bool referenceMarkerFound{false};
+  /**
+   * @var initialRotationRobot
+   * @brief initiale Roboterrotation
+   */
+  Eigen::Quaterniond initialRotationRobot;
 
-    /**
-     * @var markerCallbackCalled
-     * @brief Wurde der MarkerCallback bereits einmal ausgelöst?
-     * @see masterSlaveCallback
-     */
-    bool markerCallbackCalled{false};
+  /**
+   * @var oldRotation
+   * @todo löschen oder überprüfen
+   */
+  Eigen::Quaterniond oldRotation;
 
-    /**
-     * @var initialRotationMarker
-     * @brief die initiale Rotation der Marker bei Programmstart
-     */
-    Eigen::Quaterniond initialRotationMarker;
+  /**
+   * @var initialPoseRobot
+   * @brief initiale kartesische Roboterposition
+   */
+  Eigen::Vector3d initialPoseRobot;
 
-    /**
-     * @var initialRotationRobot
-     * @brief initiale Roboterrotation
-     */
-    Eigen::Quaterniond initialRotationRobot;
+  /**
+   * @var transMotionScaling
+   * @brief translatorische Skalierung
+   */
+  double transMotionScaling{ 1 };
 
-    /**
-     * @var oldRotation
-     * @todo löschen oder überprüfen
-     */
-    Eigen::Quaterniond oldRotation;
+  /**
+   * @var rotationScaling
+   * @brief rotatorische Skalierung
+   */
+  double rotationScaling{ 1 };
 
-    /**
-     * @var initialPoseRobot
-     * @brief initiale kartesische Roboterposition
-     */
-    Eigen::Vector3d initialPoseRobot;
+  /**
+   * @var MINIMAL_DISTANCE
+   * @brief Die minimale Bewegungsauflösung der Kameras
+   */
+  const double MINIMAL_DISTANCE{ 2e-3 };
 
-    /**
-     * @var transMotionScaling
-     * @brief translatorische Skalierung
-     */
-    double transMotionScaling{1};
+  /**
+   * @var MINIMAL_STEP_DISTANCE
+   * @brief Der Bereich, indem der Grenzwert existiert
+   */
+  const double MINIMAL_STEP_DISTANCE{ 2e-03 };
 
-    /**
-     * @var rotationScaling
-     * @brief rotatorische Skalierung
-     */
-    double rotationScaling{1};
+  /**
+   * @var MAXIMUM_DIFFERENCE_ANGLE_PER_STEP
+   * @brief Maximale Winkeländerung pro Schritt
+   */
+  const double MAXIMUM_DIFFERENCE_ANGLE_PER_STEP{ M_PI / 6 };
 
-    /**
-     * @var MINIMAL_DISTANCE
-     * @brief Die minimale Bewegungsauflösung der Kameras
-     */
-    const double MINIMAL_DISTANCE{2e-3};
+  /**
+   * @var MAXIMUM_TRANSLATIONAL_VELOCITY
+   * @brief Maximale kartesische Geschwindigkeit
+   */
+  const double MAXIMUM_TRANSLATIONAL_VELOCITY{ 0.08 };
 
-    /**
-     * @var MINIMAL_STEP_DISTANCE
-     * @brief Der Bereich, indem der Grenzwert existiert
-     */
-    const double MINIMAL_STEP_DISTANCE{2e-03};
+  /**
+   * @var distance
+   * @brief Distanz zwischen zwei Bildern bei der Markerlage
+   */
+  double distance;
 
-    /**
-     * @var MAXIMUM_DIFFERENCE_ANGLE_PER_STEP
-     * @brief Maximale Winkeländerung pro Schritt
-     */
-    const double MAXIMUM_DIFFERENCE_ANGLE_PER_STEP{M_PI/6};
-
-    /**
-     * @var MAXIMUM_TRANSLATIONAL_VELOCITY
-     * @brief Maximale kartesische Geschwindigkeit
-     */
-    const double MAXIMUM_TRANSLATIONAL_VELOCITY{0.08};
-
-    /**
-     * @var distance
-     * @brief Distanz zwischen zwei Bildern bei der Markerlage
-     */
-    double distance;
-
-    const double DEG_TO_RAD{M_PI/180};
-
+  const double DEG_TO_RAD{ M_PI / 180 };
 };
 
-#endif // MASTERSLAVEMANIPULATIONABSOLUT_H
+#endif  // MASTERSLAVEMANIPULATIONABSOLUT_H

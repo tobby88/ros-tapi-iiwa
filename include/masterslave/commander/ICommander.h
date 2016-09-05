@@ -4,31 +4,29 @@
 #include <ros/ros.h>
 #include <std_msgs/Float64.h>
 
-#include "Eigen/Dense"
 #include "Eigen/Core"
+#include "Eigen/Dense"
 
 #include "masterslave/DescriptionParameters.h"
-#include "masterslave/kinematic/IKinematic.h"
 #include "masterslave/commander/BoundingBox.h"
+#include "masterslave/kinematic/IKinematic.h"
 
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/TwistStamped.h"
-#include "sensor_msgs/JointState.h"
 #include "masterslave/Button.h"
+#include "sensor_msgs/JointState.h"
 
 #include "masterslave/Manipulation.h"
 
 #include <dynamic_reconfigure/server.h>
 
-#include <masterslave/MasterSlaveConfig.h>
 #include <masterslave/BoundingBoxConfig.h>
+#include <masterslave/MasterSlaveConfig.h>
 
 // State Service MEssage
 #include "masterslave/OpenIGTLStateService.h"
 
 #include "masterslave/OpenIGTLStateDescription.h"
-
-
 
 /**
  * @file ICommander.h
@@ -40,339 +38,340 @@
  * @date 20.03.2016
  */
 
-
 class ICommander
 {
-    public:
+public:
+  /**
+       * @fn setGripperStatus
+       * @brief
+       * @param open Flag, ob der Greifer geöffnet werden soll. Diese wird vom Knopfdruck getriggert.
+       * @param close Flag, ob der Greifer geschlossen werden soll. Diese vom Knopfdruck getriggert.
+       */
+  void setGripperStatus(bool open, bool close)
+  {
+    gripper_open = open;
+    gripper_close = close;
+  }
 
-    /**
-         * @fn setGripperStatus
-         * @brief
-         * @param open Flag, ob der Greifer geöffnet werden soll. Diese wird vom Knopfdruck getriggert.
-         * @param close Flag, ob der Greifer geschlossen werden soll. Diese vom Knopfdruck getriggert.
-         */
-        void setGripperStatus(bool open, bool close){ gripper_open = open; gripper_close = close;}
+  /**
+   * @fn configurationCallback
+   * @brief dynamic reconfigure Callbackmethode
+   * @param config Konfiguration von dynamic reconfigure als Struktur
+   * @param level Bitmaske zur Maskierung einzelner Einstellungen
+   * @see MasterSlaveConfig.h
+   */
+  void configurationCallback(masterslave::MasterSlaveConfig &config, uint32_t level);
 
-        /**
-         * @fn configurationCallback
-         * @brief dynamic reconfigure Callbackmethode
-         * @param config Konfiguration von dynamic reconfigure als Struktur
-         * @param level Bitmaske zur Maskierung einzelner Einstellungen
-         * @see MasterSlaveConfig.h
-         */
-        void configurationCallback(masterslave::MasterSlaveConfig &config, uint32_t level);
+protected:
+  /**
+   * @fn setZero
+   * @brief Stellt die Gelenkwinkelstellung des Werkzeuges auf 0
+   */
 
+  void setZero();
 
-    protected:
-        /**
-         * @fn setZero
-         * @brief Stellt die Gelenkwinkelstellung des Werkzeuges auf 0
-         */
+  /**
+   * @fn statemachineThread
+   * @brief abstrakte Methode um den Zustand des OpenIGTLinkInterfaces wechseln
+   */
+  virtual void statemachineThread(const ros::TimerEvent &) = 0;
 
-        void setZero();
+  /**
+   * @var startPositionLBR
+   * @brief kartesische Startposition des Endeffektors des LBR
+   */
+  Eigen::Affine3d startPositionLBR;
 
-        /**
-         * @fn statemachineThread
-         * @brief abstrakte Methode um den Zustand des OpenIGTLinkInterfaces wechseln
-         */
-        virtual void statemachineThread(const ros::TimerEvent&)=0;
+  /**
+   * @var TCP
+   * @brief kartesische Startposition des TCP des Werkzeuges
+   */
+  Eigen::Affine3d TCP;
 
-        /**
-         * @var startPositionLBR
-         * @brief kartesische Startposition des Endeffektors des LBR
-         */
-        Eigen::Affine3d startPositionLBR;
+  /**
+   * @var RCM
+   * @brief Trokarpunkt
+   */
+  Eigen::Affine3d RCM;
 
-        /**
-         * @var TCP
-         * @brief kartesische Startposition des TCP des Werkzeuges
-         */
-        Eigen::Affine3d TCP;
+  /**
+   * @fn calcQ6
+   * @brief Die abstrakte Methode berechnet aus dem Gelenkwinkel Q6 die Gelenkwinkel Q6n und Q6p des Zangengreifers
+   *
+   */
+  void calcQ6();
 
-        /**
-         * @var RCM
-         * @brief Trokarpunkt
-         */
-        Eigen::Affine3d RCM;
+  /**
+   * @fn commandVelocities
+   * @brief Die abstrakte Methode übernimmt die Kommandierung der Gelenkwinkel
+   */
+  void commandVelocities();
 
-        /**
-         * @fn calcQ6
-         * @brief Die abstrakte Methode berechnet aus dem Gelenkwinkel Q6 die Gelenkwinkel Q6n und Q6p des Zangengreifers
-         *
-         */
-        void calcQ6();
+  /**
+   * @fn loop
+   * @brief Die abstrakte Methode übernimmt je nach Implementierung die Kommunikation mit dem Roboter bzw. der
+   * Simulation und der Kinematikklasse über ROS-Servies
+   */
+  virtual void loop() = 0;
 
-        /**
-         * @fn commandVelocities
-         * @brief Die abstrakte Methode übernimmt die Kommandierung der Gelenkwinkel
-         */
-        void commandVelocities();
+  /**
+   * @var buttons
+   * @brief Vektor, der die Knopfkonfiguration enthält
+   * @todo check ob noch benötigt
+   * @see buttonCheck
+   */
+  std::vector<std::string> buttons;
 
-        /**
-         * @fn loop
-         * @brief Die abstrakte Methode übernimmt je nach Implementierung die Kommunikation mit dem Roboter bzw. der Simulation und der Kinematikklasse über ROS-Servies
-         */
-        virtual void loop()=0;
+  ros::Subscriber pliersDistanceSub;
 
-        /**
-         * @var buttons
-         * @brief Vektor, der die Knopfkonfiguration enthält
-         * @todo check ob noch benötigt
-         * @see buttonCheck
-         */
-        std::vector<std::string> buttons;
+  /**
+   * @var velocitySub
+   * @todo check ob noch benötigt
+   */
+  ros::Subscriber velocitySub;
 
-        ros::Subscriber pliersDistanceSub;
+  /**
+   * @var Q4StateSub
+   * @brief Empfänger in ROS für den Gelenkwinkel Q4
+   */
+  ros::Subscriber Q4StateSub;
 
-        /**
-         * @var velocitySub
-         * @todo check ob noch benötigt
-         */
-        ros::Subscriber velocitySub;
+  /**
+   * @var Q5StateSub
+   * @brief Empfänger in ROS für den Gelenkwinkel Q5
+   */
+  ros::Subscriber Q5StateSub;
 
-        /**
-         * @var Q4StateSub
-         * @brief Empfänger in ROS für den Gelenkwinkel Q4
-         */
-        ros::Subscriber Q4StateSub;
+  /**
+   * @var Q6pStateSub
+   * @brief Empfänger in ROS für den Gelenkwinkel Q6p
+   */
+  ros::Subscriber Q6pStateSub;
 
-        /**
-         * @var Q5StateSub
-         * @brief Empfänger in ROS für den Gelenkwinkel Q5
-         */
-        ros::Subscriber Q5StateSub;
+  /**
+   * @var Q6nStateSub
+   * @brief Empfänger in ROS für den Gelenkwinkel Q6n
+   */
+  ros::Subscriber Q6nStateSub;
 
-        /**
-         * @var Q6pStateSub
-         * @brief Empfänger in ROS für den Gelenkwinkel Q6p
-         */
-        ros::Subscriber Q6pStateSub;
+  /**
+   * @var lbrPositionSub
+   * @brief Empfänger in ROS für die kartesische Flanschpose
+   */
+  ros::Subscriber lbrPositionSub;
 
-        /**
-         * @var Q6nStateSub
-         * @brief Empfänger in ROS für den Gelenkwinkel Q6n
-         */
-        ros::Subscriber Q6nStateSub;
+  /**
+   * @var buttonSub
+   * @brief Empfänger in ROS für die Knopfeingaben für das Eingabegerät
+   */
+  ros::Subscriber buttonSub;
 
-        /**
-         * @var lbrPositionSub
-         * @brief Empfänger in ROS für die kartesische Flanschpose
-         */
-        ros::Subscriber lbrPositionSub;
+  /**
+   * @var tcpClient
+   * @brief ServiceClient zur Ansteuerung der Manipulationsschnittstelle in ROS
+   */
+  ros::ServiceClient tcpClient;
 
-        /**
-         * @var buttonSub
-         * @brief Empfänger in ROS für die Knopfeingaben für das Eingabegerät
-         */
-        ros::Subscriber buttonSub;
+  /**
+   * @var rcmClient
+   * @brief ServiceClient zur Bestimmung des Trokarpunktes
+   */
+  ros::ServiceClient rcmClient;
 
-        /**
-         * @var tcpClient
-         * @brief ServiceClient zur Ansteuerung der Manipulationsschnittstelle in ROS
-         */
-        ros::ServiceClient tcpClient;
+  /**
+   * @var directKinematicsClient
+   * @brief ServiceClient zur Durchführung der direkten Kinematik in ROS mit der jeweiligen Kinematik
+   */
+  ros::ServiceClient directKinematicsClient;
 
-        /**
-         * @var rcmClient
-         * @brief ServiceClient zur Bestimmung des Trokarpunktes
-         */
-        ros::ServiceClient rcmClient;
+  /**
+   * @var inverseKinematicsClient
+   * @brief ServiceClient zur Durchführung der inversen Kinematik in ROS mit der jeweiligen Kinematik
+   */
+  ros::ServiceClient inverseKinematicsClient;
 
-        /**
-         * @var directKinematicsClient
-         * @brief ServiceClient zur Durchführung der direkten Kinematik in ROS mit der jeweiligen Kinematik
-         */
-        ros::ServiceClient directKinematicsClient;
+  /**
+   * @var stateService
+   * @brief ServiceClient zum Zustandswechsel des OpenIGTLink-Interfaces in der ROSOpenIGTLinkBridge
+   * @see RosOpenIGTLBridge
+   */
+  ros::ServiceClient stateService;
 
-        /**
-         * @var inverseKinematicsClient
-         * @brief ServiceClient zur Durchführung der inversen Kinematik in ROS mit der jeweiligen Kinematik
-         */
-        ros::ServiceClient inverseKinematicsClient;
+  /**
+   * @var Q4Pub
+   * @brief Sender in ROS für den Gelenkwinkel Q4
+   */
+  ros::Publisher Q4Pub;
 
-        /**
-         * @var stateService
-         * @brief ServiceClient zum Zustandswechsel des OpenIGTLink-Interfaces in der ROSOpenIGTLinkBridge
-         * @see RosOpenIGTLBridge
-         */
-        ros::ServiceClient  stateService;
+  /**
+   * @var Q5Pub
+   * @brief Sender in ROS für den Gelenkwinkel Q5
+   */
+  ros::Publisher Q5Pub;
 
-        /**
-         * @var Q4Pub
-         * @brief Sender in ROS für den Gelenkwinkel Q4
-         */
-        ros::Publisher  Q4Pub;
+  /**
+   * @var Q6nPub
+   * @brief Sender in ROS für den Gelenkwinkel Q6n
+   */
+  ros::Publisher Q6pPub;
 
-        /**
-         * @var Q5Pub
-         * @brief Sender in ROS für den Gelenkwinkel Q5
-         */
-        ros::Publisher  Q5Pub;
+  /**
+   * @var Q6pPub
+   * @brief Sender in ROS für den Gelenkwinkel Q6p
+   */
+  ros::Publisher Q6nPub;
 
-        /**
-         * @var Q6nPub
-         * @brief Sender in ROS für den Gelenkwinkel Q6n
-         */
-        ros::Publisher  Q6pPub;
+  ros::Publisher positionPub;
 
-        /**
-         * @var Q6pPub
-         * @brief Sender in ROS für den Gelenkwinkel Q6p
-         */
-        ros::Publisher  Q6nPub;
+  /**
+   * @var motorAngles
+   * @brief Zwischenspeicher für die eingehenden Motorwinkel der Gelenke Q6n und Q6p
+   * @see calcQ6
+   */
+  Eigen::VectorXd motorAngles;
 
-        ros::Publisher positionPub;
+  /**
+   * @var jointAnglesTar
+   * @brief Vektor der gewünschten Gelenkwinkel des Werkzeuges bzw. des Gesamtsystems
+   */
+  Eigen::VectorXd jointAnglesTar;
 
-        /**
-         * @var motorAngles
-         * @brief Zwischenspeicher für die eingehenden Motorwinkel der Gelenke Q6n und Q6p
-         * @see calcQ6
-         */
-        Eigen::VectorXd motorAngles;
+  /**
+   * @var jointAnglesAct
+   * @brief Vektor der aktuellen Gelenkwinkel des Werkzeuges bzw. des Gesamtsystems
+   */
+  Eigen::VectorXd jointAnglesAct;
 
-        /**
-         * @var jointAnglesTar
-         * @brief Vektor der gewünschten Gelenkwinkel des Werkzeuges bzw. des Gesamtsystems
-         */
-        Eigen::VectorXd jointAnglesTar;
+  /**
+   * @var gripper_stop
+   * @brief Flag, ob der Greifer gestoppt werden soll
+   * @see setGripperStatus
+   */
+  bool gripper_stop{ false };
 
-        /**
-         * @var jointAnglesAct
-         * @brief Vektor der aktuellen Gelenkwinkel des Werkzeuges bzw. des Gesamtsystems
-         */
-        Eigen::VectorXd jointAnglesAct;
+  /**
+   * @var gripper_open
+   * @brief Flag, ob der Greifer geöffnet werden soll
+   * @see setGripperStatus
+   */
+  bool gripper_open{ false };
 
-        /**
-         * @var gripper_stop
-         * @brief Flag, ob der Greifer gestoppt werden soll
-         * @see setGripperStatus
-         */
-        bool gripper_stop{false};
+  /**
+   * @var gripper_close
+   * @brief Flag, ob der Greifer geschlossen werden soll
+   * @see setGripperStatus
+   */
+  bool gripper_close{ false };
 
-        /**
-         * @var gripper_open
-         * @brief Flag, ob der Greifer geöffnet werden soll
-         * @see setGripperStatus
-         */
-        bool gripper_open{false};
+  /**
+   * @var cycleTime
+   * @brief Zykluszeit
+   */
+  double cycleTime{ 1 };
 
-        /**
-         * @var gripper_close
-         * @brief Flag, ob der Greifer geschlossen werden soll
-         * @see setGripperStatus
-         */
-        bool gripper_close{false};
+  /**
+   * @var cycleTimeScaleFactor
+   * @brief Faktor für die Gelenkwinkelansteuerung des Tools. Wenn es in der Realität verwendet wird, muss
+   * cycleTimeScaleFactor = cycleTime gelten. Ansonsten gilt cycleTimeScaleFactor = 1
+   * @see configurationCallback
+   */
+  double cycleTimeScaleFactor{ 1 };
 
-        /**
-         * @var cycleTime
-         * @brief Zykluszeit
-         */
-        double cycleTime{1};
+  /**
+   * @var gripperVelocityValue
+   * @brief Greifergeschwindigkeit in der Einheit [rad/s]
+   */
+  double gripperVelocityValue{ 0.05 };
 
-        /**
-         * @var cycleTimeScaleFactor
-         * @brief Faktor für die Gelenkwinkelansteuerung des Tools. Wenn es in der Realität verwendet wird, muss cycleTimeScaleFactor = cycleTime gelten. Ansonsten gilt cycleTimeScaleFactor = 1
-         * @see configurationCallback
-         */
-        double cycleTimeScaleFactor{1};
+  const double DEG_TO_RAD{ M_PI / 180 };
 
-        /**
-         * @var gripperVelocityValue
-         * @brief Greifergeschwindigkeit in der Einheit [rad/s]
-         */
-        double gripperVelocityValue{0.05};
+  /**
+   * @var boundingBox
+   * @brief Zeiger auf ein BoundingBox-Objekt
+   * @todo Weitere Begrenzungsgeometrien einfügen und abstrakte Basisklasse einfügen
+   */
+  std::unique_ptr<BoundingBox> boundingBox;
 
+  Eigen::Vector3d boundingBoxSize{ 0.25, 0.25, 0.17 };
+  double rcmDistance{ 0.05 };
 
+  int Q6CallbacksCalled{ 0 };
 
-        const double DEG_TO_RAD{M_PI/180};
+  /**
+   * @var callBacksCalled
+   * @brief Test, ob alle Gelenkwinkelcallbacks aufgerufen wurden
+   */
+  int callBacksCalled{ 0 };
 
-        /**
-         * @var boundingBox
-         * @brief Zeiger auf ein BoundingBox-Objekt
-         * @todo Weitere Begrenzungsgeometrien einfügen und abstrakte Basisklasse einfügen
-         */
-        std::unique_ptr<BoundingBox> boundingBox;
+  int rosRate{ 1000 };
 
-        Eigen::Vector3d boundingBoxSize{0.25,0.25,0.17};
-        double rcmDistance{0.05};
+  bool start_{ false };
 
-        int Q6CallbacksCalled{0};
+  /**
+   * @var statemachineIsRunning
+   * @brief Flag, ob das OpenIGTLink-Interface noch läuft
+   */
+  bool statemachineIsRunning;
 
-        /**
-         * @var callBacksCalled
-         * @brief Test, ob alle Gelenkwinkelcallbacks aufgerufen wurden
-         */
-        int callBacksCalled{0};
+  /**
+   * @var newState
+   * @var state
+   * @brief OpenIGTLink-Zustand
+   * @see OpenIGTLState.h
+   */
+  OPENIGTL_STATE newState{ NO_STATE };
+  OPENIGTL_STATE state{ NO_STATE };
 
-        int rosRate{1000};
+  geometry_msgs::TwistStamped velocity_;
 
-        bool start_{false};
+  /**
+   * @var cycleTimePub
+   * @brief Sender zur Bereitstellung der Zykluszeit für verschiedene ROS-Nodes
+   */
+  ros::Publisher cycleTimePub;
 
-        /**
-         * @var statemachineIsRunning
-         * @brief Flag, ob das OpenIGTLink-Interface noch läuft
-         */
-        bool statemachineIsRunning;
+  /**
+   * @var setTrocar
+   * @brief Darf der Trokar neu gesetzt werden bei Neustart des Zustandes?!
+   */
+  bool setTrocar{ false };
 
-        /**
-         * @var newState
-         * @var state
-         * @brief OpenIGTLink-Zustand
-         * @see OpenIGTLState.h
-         */
-        OPENIGTL_STATE newState{NO_STATE};
-        OPENIGTL_STATE state{NO_STATE};
+  /**
+   * @var CRITICAL_PLIERS_ANGLE
+   * @brief Kritischer Zangenwinkel als Konstante
+   */
+  double CRITICAL_PLIERS_ANGLE{ 0.95 * M_PI / 2 };
 
-        geometry_msgs::TwistStamped velocity_;
+  /**
+   * @var PLIERS_DISTANCE_TOLERANCE
+   * @brief Wie weit müssen die Marker zusammen sein damit dies als geschlossene Zange interpretiert ist
+   */
+  double PLIERS_DISTANCE_TOLERANCE{ 0.06 };
 
-        /**
-         * @var cycleTimePub
-         * @brief Sender zur Bereitstellung der Zykluszeit für verschiedene ROS-Nodes
-         */
-        ros::Publisher cycleTimePub;
+  /**
+   * @var PLIERS_LENGTH
+   * @brief Zangenlänge
+   */
+  double PLIERS_LENGTH{ 0.017 };
 
-        /**
-         * @var setTrocar
-         * @brief Darf der Trokar neu gesetzt werden bei Neustart des Zustandes?!
-         */
-        bool setTrocar{false};
+  /**
+   * @var pliersOpeningAngle
+   * @brief Zangenöffnungswinkel
+   */
+  double pliersOpeningAngle{ 0 };
 
-        /**
-         * @var CRITICAL_PLIERS_ANGLE
-         * @brief Kritischer Zangenwinkel als Konstante
-         */
-        double CRITICAL_PLIERS_ANGLE{0.95*M_PI/2};
+  /**
+   * @var pliersOpeningAngleOld
+   * @brief Zangenöffnungswinkel im letzten Zyklus
+   */
+  double pliersOpeningAngleOld{ 0 };
 
-        /**
-         * @var PLIERS_DISTANCE_TOLERANCE
-         * @brief Wie weit müssen die Marker zusammen sein damit dies als geschlossene Zange interpretiert ist
-         */
-        double PLIERS_DISTANCE_TOLERANCE{0.06};
-
-        /**
-         * @var PLIERS_LENGTH
-         * @brief Zangenlänge
-         */
-        double PLIERS_LENGTH{0.017};
-
-        /**
-         * @var pliersOpeningAngle
-         * @brief Zangenöffnungswinkel
-         */
-        double pliersOpeningAngle{0};
-
-        /**
-         * @var pliersOpeningAngleOld
-         * @brief Zangenöffnungswinkel im letzten Zyklus
-         */
-        double pliersOpeningAngleOld{0};
-
-        /**
-         * @var masterSlaveRelative
-         * @brief wird der Spacenav (relative Master-Slave-Steuerung) oder das AR-Tracking-Device (absolute Master-Slave-Steuerung) verwendet?
-         */
-        int masterSlaveMode{-1};
-
+  /**
+   * @var masterSlaveRelative
+   * @brief wird der Spacenav (relative Master-Slave-Steuerung) oder das AR-Tracking-Device (absolute
+   * Master-Slave-Steuerung) verwendet?
+   */
+  int masterSlaveMode{ -1 };
 };
 
-#endif // ICOMMANDER_H
+#endif  // ICOMMANDER_H
