@@ -4,7 +4,7 @@ project(masterslave)
 set(CMAKE_BUILD_TYPE Debug)
 
 
-add_definitions(-std=c++11)
+add_definitions(-std=c++11 -ftemplate-depth=100)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -30,7 +30,7 @@ include(${OpenIGTLink_USE_FILE})
 
 
 
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
