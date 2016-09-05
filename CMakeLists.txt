@@ -40,7 +40,8 @@ find_package(Boost REQUIRED COMPONENTS system)
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
-add_service_files(FILES
+add_service_files(DIRECTORY srv
+    FILES
     OpenIGTLStateService.srv
     NumericKinematicRCM.srv
     NumericKinematicInverseKinematics.srv
@@ -53,7 +54,7 @@ add_service_files(FILES
 
 
 ## Generate messages in the 'msg' folder
-add_message_files(
+add_message_files(DIRECTORY msg
    FILES
    Button.msg
    #Message2.msg
@@ -89,7 +90,7 @@ catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES masterslave
   CATKIN_DEPENDS roscpp std_msgs message_runtime
-  DEPENDS Eigen
+  DEPENDS Eigen3
 #  DEPENDS system_lib
 )
 
@@ -113,60 +114,35 @@ include_directories(
 
 ## Declare a C++ executable
 add_executable(ControlDevice src/ControlDevice.cpp include/masterslave/ControlDevice.h)
-add_dependencies(ControlDevice ControlDevice_gencfg)
+add_dependencies(ControlDevice ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(RosOpenIGTLBridge src/RosOpenIGTLBridge.cpp include/masterslave/RosOpenIGTLBridge.h)
-add_dependencies(RosOpenIGTLBridge RosOpenITGLBridge_gencfg)
-add_dependencies(RosOpenIGTLBridge masterslave_gencfg)
+add_dependencies(RosOpenIGTLBridge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(NumericKinematic src/kinematic/NumericKinematic.cpp include/masterslave/kinematic/NumericKinematic.h include/masterslave/kinematic/IKinematic.h src/kinematic/IKinematic.cpp include/masterslave/optimization/eiquadprog.hpp)
-add_dependencies(NumericKinematic masterslave_gencfg)
-add_dependencies(NumericKinematic NumericKinematic_gencfg)
+add_dependencies(NumericKinematic ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(GeometricKinematic src/kinematic/GeometricKinematic.cpp include/masterslave/kinematic/GeometricKinematic.h include/masterslave/kinematic/IKinematic.h src/kinematic/IKinematic.cpp)
-add_dependencies(GeometricKinematic GeometricKinematic_gencfg)
+add_dependencies(GeometricKinematic ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(MasterSlaveManipulation src/manipulation/MasterSlaveManipulation.cpp include/masterslave/manipulation/MasterSlaveManipulation.h)
-add_dependencies(MasterSlaveManipulation MasterSlaveManipulation_gencfg)
-add_dependencies(MasterSlaveManipulation masterslave_gencfg)
+add_dependencies(MasterSlaveManipulation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(MasterSlaveManipulationAbsolute include/masterslave/manipulation/MasterSlaveManipulationAbsolut.h src/manipulation/MasterSlaveManipulationAbsolut.cpp)
-add_dependencies(MasterSlaveManipulationAbsolute masterslave_gencfg)
+add_dependencies(MasterSlaveManipulationAbsolute ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
 add_executable(TrajectoryGenerator src/manipulation/TrajectoryGenerator.cpp include/masterslave/manipulation/TrajectoryGenerator.h include/masterslave/manipulation/trajectory/PTPTrajectory.h src/manipulation/trajectory/PTPTrajectory.cpp include/masterslave/manipulation/trajectory/CircleTrajectory.h src/manipulation/trajectory/CircleTrajectory.cpp include/masterslave/manipulation/trajectory/ITrajectory.h include/masterslave/manipulation/trajectory/LineTrajectory.h src/manipulation/trajectory/LineTrajectory.cpp)
-add_dependencies(TrajectoryGenerator TrajectoryGenerator_gencfg)
-add_dependencies(TrajectoryGenerator masterslave_gencfg)
+add_dependencies(TrajectoryGenerator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(NumericKinematicCommander src/commander/NumericKinematicCommander.cpp include/masterslave/commander/NumericKinematicCommander.h src/commander/ICommander.cpp include/masterslave/commander/ICommander.h include/masterslave/commander/BoundingBox.h src/commander/BoundingBox.cpp)
-add_dependencies(NumericKinematicCommander masterslave_gencfg)
+add_dependencies(NumericKinematicCommander ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(GeometricKinematicCommander src/commander/GeometricKinematicCommander.cpp include/masterslave/commander/GeometricKinematicCommander.h src/commander/ICommander.cpp include/masterslave/commander/ICommander.h include/masterslave/commander/BoundingBox.h src/commander/BoundingBox.cpp)
-add_dependencies(GeometricKinematicCommander masterslave_gencfg)
+add_dependencies(GeometricKinematicCommander ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(VisualServoing src/manipulation/VisualServoing.cpp include/masterslave/manipulation/VisualServoing.h)
-add_dependencies(VisualServoing masterslave_gencfg)
-
-## Add cmake target dependencies of the executable
-add_dependencies(ControlDevice ControlDevice_generate_messages_cpp)
-add_dependencies(ControlDevice masterslave_generate_messages_cpp)
-add_dependencies(RosOpenIGTLBridge rosopenigtlbridge_generate_messages_cpp)
-add_dependencies(RosOpenIGTLBridge masterslave_generate_messages_cpp)
-add_dependencies(GeometricKinematic GeometricKinematic_generate_messages_cpp)
-add_dependencies(GeometricKinematic masterslave_generate_messages_cpp)
-add_dependencies(MasterSlaveManipulation MasterSlaveManipulation_generate_messages_cpp)
-add_dependencies(MasterSlaveManipulation masterslave_generate_messages_cpp)
-add_dependencies(MasterSlaveManipulationAbsolute MasterSlaveManipulationAbsolut_generate_messages_cpp)
-add_dependencies(MasterSlaveManipulationAbsolute masterslave_generate_messages_cpp)
-add_dependencies(NumericKinematic NumericKinematic_generate_messages_cpp)
-add_dependencies(NumericKinematic masterslave_generate_messages_cpp)
-add_dependencies(TrajectoryGenerator TrajectoryGenerator_generate_messages_cpp)
-add_dependencies(TrajectoryGenerator masterslave_generate_messages_cpp)
-add_dependencies(NumericKinematicCommander NumericKinematicCommander_generate_messages_cpp)
-add_dependencies(NumericKinematicCommander masterslave_generate_messages_cpp)
-add_dependencies(GeometricKinematicCommander GeometricKinematicCommander_generate_messages_cpp)
-add_dependencies(GeometricKinematicCommander masterslave_generate_messages_cpp)
-add_dependencies(VisualServoing masterslave_generate_messages_cpp)
+add_dependencies(VisualServoing ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(ControlDevice
