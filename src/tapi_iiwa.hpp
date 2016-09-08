@@ -14,7 +14,6 @@
 #include "sensor_msgs/JointState.h"
 #include "std_msgs/Float64.h"
 #include "tapi_iiwa/OpenIGTLStateService.h"
-#include "tapi_iiwa/tapi_iiwaConfig.h"
 #include "tapi_lib/tapi_lib.hpp"
 
 // for own thread
