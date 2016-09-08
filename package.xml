@@ -25,7 +25,6 @@
   <!-- Dependencies can be catkin packages or system dependencies -->
   <build_depend>message_generation</build_depend>
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>dynamic_reconfigure</depend>
   <depend>eigen_conversions</depend>
   <depend>geometry_msgs</depend>
   <depend>roscpp</depend>
