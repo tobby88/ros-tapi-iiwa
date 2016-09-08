@@ -1,6 +1,0 @@
-#request
-float64[] jointAngles
-geometry_msgs/Pose T_0_FL
----
-#response
-geometry_msgs/Pose T_0_EE

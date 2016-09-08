@@ -1,26 +1,25 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(masterslave)
+project(tapi_iiwa)
 
-set(CMAKE_BUILD_TYPE Debug)
-
-
-add_definitions(-std=c++11 -ftemplate-depth=100)
+# Use specified C++ standard
+set(CMAKE_CXX_STANDARD 11)
+# ...and for older compilers
+add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  sensor_msgs
+  dynamic_reconfigure
+  eigen_conversions
   geometry_msgs
   message_generation
-  eigen_conversions
-  cmake_modules
+  roscpp
+  sensor_msgs
+  std_msgs
+  tapi_lib
   tf
   tf_conversions
-  dynamic_reconfigure
-  tapi_lib
 )
 
 include_directories(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
@@ -29,44 +28,36 @@ set(OpenIGTLink_DIR "/usr/local/lib/igtl/")
 find_package(OpenIGTLink REQUIRED)
 include(${OpenIGTLink_USE_FILE})
 
-
-
 find_package(Eigen3 REQUIRED)
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
-
-
+# Qt
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
 add_service_files(DIRECTORY srv
-    FILES
-    OpenIGTLStateService.srv
-    NumericKinematicRCM.srv
-    NumericKinematicInverseKinematics.srv
-    NumericKinematicDirectKinematics.srv
-    GeometricKinematicRCM.srv
-    GeometricKinematicInverseKinematics.srv
-    GeometricKinematicDirectKinematics.srv
-    Manipulation.srv
-  )
+  FILES
+  OpenIGTLStateService.srv
+)
 
 
 ## Generate messages in the 'msg' folder
-add_message_files(DIRECTORY msg
-   FILES
-   Button.msg
-   #Message2.msg
-)
+#add_message_files(DIRECTORY msg
+#   FILES
+#   Button.msg
+#   Message2.msg
+#)
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
-   DEPENDENCIES
-   std_msgs
-   sensor_msgs
-   geometry_msgs
+  DEPENDENCIES
+  std_msgs
+  sensor_msgs
+  geometry_msgs
 )
 
 ################################################
@@ -74,27 +65,18 @@ generate_messages(
 ################################################
 
 generate_dynamic_reconfigure_options(
-  cfg/BoundingBox.cfg
-  cfg/MasterSlave.cfg
-  cfg/ControlDevice.cfg
-  cfg/VisualServoing.cfg
-  cfg/NumericKinematic.cfg
-  cfg/RosOpenIGTLBridge.cfg
-  cfg/TrajectoryGenerator.cfg
-  cfg/MasterSlaveManipulationAbsolute.cfg
+  cfg/Tapi_iiwa.cfg
 )
 
 ###################################
 ## catkin specific configuration ##
 ###################################
 catkin_package(
-  INCLUDE_DIRS include
+#  INCLUDE_DIRS include
 #  LIBRARIES masterslave
-  CATKIN_DEPENDS roscpp std_msgs message_runtime tapi_lib
+  CATKIN_DEPENDS dynamic_reconfigure eigen_conversions geometry_msgs message_runtime roscpp sensor_msgs std_msgs tapi_lib tf tf_conversions
   DEPENDS Eigen3
-#  DEPENDS system_lib
 )
-
 
 ###########
 ## Build ##
@@ -106,95 +88,33 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${Eigen_INCLUDE_DIRS}
-  include
-  include/masterslave
-  include/masterslave/kinematic
-  include/masterslave/optimization
 )
 
+## Declare a C++ library
+# add_library(tapi_iiwa
+#   src/${PROJECT_NAME}/tapi_iiwa.cpp
+# )
+
+## Add cmake target dependencies of the library
+## as an example, code may need to be generated before libraries
+## either from message generation or dynamic reconfigure
+# add_dependencies(tapi_iiwa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(ControlDevice src/ControlDevice.cpp include/masterslave/ControlDevice.h)
-add_dependencies(ControlDevice ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(tapi_iiwa
+  src/main.cpp
+  src/tapi_iiwa.cpp
+)
 
-add_executable(RosOpenIGTLBridge src/RosOpenIGTLBridge.cpp include/masterslave/RosOpenIGTLBridge.h)
-add_dependencies(RosOpenIGTLBridge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-add_executable(NumericKinematic src/kinematic/NumericKinematic.cpp include/masterslave/kinematic/NumericKinematic.h include/masterslave/kinematic/IKinematic.h src/kinematic/IKinematic.cpp include/masterslave/optimization/eiquadprog.hpp)
-add_dependencies(NumericKinematic ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-add_executable(GeometricKinematic src/kinematic/GeometricKinematic.cpp include/masterslave/kinematic/GeometricKinematic.h include/masterslave/kinematic/IKinematic.h src/kinematic/IKinematic.cpp)
-add_dependencies(GeometricKinematic ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-add_executable(MasterSlaveManipulation src/manipulation/MasterSlaveManipulation.cpp include/masterslave/manipulation/MasterSlaveManipulation.h)
-add_dependencies(MasterSlaveManipulation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-add_executable(MasterSlaveManipulationAbsolute include/masterslave/manipulation/MasterSlaveManipulationAbsolut.h src/manipulation/MasterSlaveManipulationAbsolut.cpp)
-add_dependencies(MasterSlaveManipulationAbsolute ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-
-add_executable(TrajectoryGenerator src/manipulation/TrajectoryGenerator.cpp include/masterslave/manipulation/TrajectoryGenerator.h include/masterslave/manipulation/trajectory/PTPTrajectory.h src/manipulation/trajectory/PTPTrajectory.cpp include/masterslave/manipulation/trajectory/CircleTrajectory.h src/manipulation/trajectory/CircleTrajectory.cpp include/masterslave/manipulation/trajectory/ITrajectory.h include/masterslave/manipulation/trajectory/LineTrajectory.h src/manipulation/trajectory/LineTrajectory.cpp)
-add_dependencies(TrajectoryGenerator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-add_executable(NumericKinematicCommander src/commander/NumericKinematicCommander.cpp include/masterslave/commander/NumericKinematicCommander.h src/commander/ICommander.cpp include/masterslave/commander/ICommander.h include/masterslave/commander/BoundingBox.h src/commander/BoundingBox.cpp)
-add_dependencies(NumericKinematicCommander ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-add_executable(GeometricKinematicCommander src/commander/GeometricKinematicCommander.cpp include/masterslave/commander/GeometricKinematicCommander.h src/commander/ICommander.cpp include/masterslave/commander/ICommander.h include/masterslave/commander/BoundingBox.h src/commander/BoundingBox.cpp)
-add_dependencies(GeometricKinematicCommander ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-add_executable(VisualServoing src/manipulation/VisualServoing.cpp include/masterslave/manipulation/VisualServoing.h)
-add_dependencies(VisualServoing ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+## Add cmake target dependencies of the executable
+## same as for the library above
+add_dependencies(tapi_iiwa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(ControlDevice
-   ${catkin_LIBRARIES}
-   ${Eigen_LIBRARIES}
-)
-
-target_link_libraries(RosOpenIGTLBridge
-    ${catkin_LIBRARIES}
-    ${Eigen_LIBRARIES}
-    OpenIGTLink
-)
-
-target_link_libraries(NumericKinematic
-    ${catkin_LIBRARIES}
-    ${Eigen_LIBRARIES}
-)
-
-target_link_libraries(GeometricKinematic
-    ${catkin_LIBRARIES}
-    ${Eigen_LIBRARIES}
-)
-
-target_link_libraries(MasterSlaveManipulation
-    ${catkin_LIBRARIES}
-    ${Eigen_LIBRARIES}
-)
-
-target_link_libraries(MasterSlaveManipulationAbsolute
-    ${catkin_LIBRARIES}
-    ${Eigen_LIBRARIES}
-)
-
-target_link_libraries(TrajectoryGenerator
-    ${catkin_LIBRARIES}
-    ${Eigen_LIBRARIES}
-)
-
-target_link_libraries(NumericKinematicCommander
-    ${catkin_LIBRARIES}
-    ${Eigen_LIBRARIES}
-)
-
-target_link_libraries(GeometricKinematicCommander
-    ${catkin_LIBRARIES}
-    ${Eigen_LIBRARIES}
-)
-
-target_link_libraries(VisualServoing
-    ${catkin_LIBRARIES}
-    ${Eigen_LIBRARIES}
+target_link_libraries(tapi_iiwa
+  ${catkin_LIBRARIES}
+  ${Eigen_LIBRARIES}
+  OpenIGTLink
 )
 
 #############

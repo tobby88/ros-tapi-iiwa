@@ -1,4 +1,0 @@
-<map id="ICommander" name="ICommander">
-<area shape="rect" id="node2" href="$classGeometricKinematicCommander.html" title="Klasse, die sich um die ROS&#45;Kommunikation für die geometrisch bestimmte Kinematik kümmert..." alt="" coords="5,80,215,107"/>
-<area shape="rect" id="node3" href="$classNumericKinematicCommander.html" title="Klasse, die sich um die ROS&#45;Kommunikation für die numerisch bestimmte Kinematik kümmert. " alt="" coords="240,80,439,107"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="ITrajectory" name="ITrajectory">
-<area shape="rect" id="node2" href="$classCircleTrajectory.html" title="Klasse, die eine Interpolation einer Kreistrajektorie ermöglicht. " alt="" coords="5,80,120,107"/>
-<area shape="rect" id="node3" href="$classLineTrajectory.html" title="Eine Klasse, die eine Interpolation eines Polynom fünften Grades zwischen zwei Punkten ermöglicht..." alt="" coords="144,80,248,107"/>
-<area shape="rect" id="node4" href="$classPTPTrajectory.html" title="PTPTrajectory" alt="" coords="272,80,379,107"/>
-</map>

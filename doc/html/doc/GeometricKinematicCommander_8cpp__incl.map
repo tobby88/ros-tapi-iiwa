@@ -1,9 +1,0 @@
-<map id="GeometricKinematicCommander.cpp" name="GeometricKinematicCommander.cpp">
-<area shape="rect" id="node2" href="$GeometricKinematicCommander_8h.html" title="masterslave/commander\l/GeometricKinematicCommander.h" alt="" coords="3695,81,3921,122"/>
-<area shape="rect" id="node3" href="$ICommander_8h.html" title="ICommander.h" alt="" coords="1462,179,1569,205"/>
-<area shape="rect" id="node24" href="$GeometricKinematic_8h.html" title="masterslave/kinematic\l/GeometricKinematic.h" alt="" coords="3471,171,3624,213"/>
-<area shape="rect" id="node8" href="$DescriptionParameters_8h.html" title="masterslave/DescriptionParameters.h" alt="" coords="619,360,860,387"/>
-<area shape="rect" id="node9" href="$IKinematic_8h.html" title="masterslave/kinematic\l/IKinematic.h" alt="" coords="2342,262,2495,303"/>
-<area shape="rect" id="node11" href="$BoundingBox_8h.html" title="masterslave/commander\l/BoundingBox.h" alt="" coords="2773,262,2937,303"/>
-<area shape="rect" id="node23" href="$OpenIGTLStateDescription_8h.html" title="masterslave/OpenIGTLState\lDescription.h" alt="" coords="807,262,995,303"/>
-</map>

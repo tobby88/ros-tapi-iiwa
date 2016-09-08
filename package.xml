@@ -1,43 +1,43 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>masterslave</name>
-  <version>0.0.0</version>
-  <description>The masterslave package</description>
+  <name>tapi_iiwa</name>
+  <version>1.0.0</version>
+  <description>Connect Kuka iiwa to Tapi</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
-  <maintainer email="fabian.baier@gmx.de">Fabian Baier</maintainer>
+  <maintainer email="tobby@tobby.eu">Tobias Holst</maintainer>
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
+  <license>GPLv3</license>
 
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/masterslave</url> -->
+  <url type="website"></url>
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
   <!-- Authors do not have to be maintianers, but could be -->
-  <!-- Example: -->
   <author email="fabian.baier@gmx.de">Fabian Baier</author>
+  <author email="tobby@tobby.eu">Tobias Holst</author>
 
   <!-- The *_depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->
-  <build_depend>cmake_modules</build_depend>
   <build_depend>message_generation</build_depend>
   <buildtool_depend>catkin</buildtool_depend>
   <depend>dynamic_reconfigure</depend>
-  <depend>faulhabeer_driver</depend>
+  <depend>eigen_conversions</depend>
   <depend>geometry_msgs</depend>
   <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>tapi_lib</depend>
+  <depend>tf</depend>
+  <depend>tf_conversions</depend>
   <exec_depend>message_runtime</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
-  	<rosdoc config="rosdoc.yaml" />
   </export>
 </package>

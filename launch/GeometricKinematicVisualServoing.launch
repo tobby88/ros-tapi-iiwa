@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-	<arg name="TestDevice" value="Spacenav"/>
-	<include file="$(find masterslave)/launch/VisualServoingBasic.launch"/>	
-	<node pkg="masterslave" type="MasterSlaveManipulation" name="MasterSlaveManipulation" args="$(arg TestDevice)" output="screen"/>
-	<node pkg="masterslave" type="GeometricKinematic" name="GeometricKinematic" output="screen"/>
-	<node pkg="masterslave" type="GeometricKinematicCommander" name="GeometricKinematicCommander" args="$(arg TestDevice)" output="screen"/>
-	
-</launch>
