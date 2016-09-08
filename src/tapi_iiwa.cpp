@@ -1,5 +1,4 @@
 #include "tapi_iiwa.hpp"
-#include "ros/ros.h"
 
 #define M_TO_MM 1.0 / 1000.0f
 
@@ -7,13 +6,21 @@
 
 Tapi_iiwa::Tapi_iiwa(ros::NodeHandle nh) : nh_(nh)
 {
+  tpub = new Tapi::Publisher(&nh, "Kuka iiwa");
+  tsub = new Tapi::Subscriber(&nh, "Kuka iiwa");
+  tservice = new Tapi::ServiceServer(&nh, "Kuka iiwa Service");
+
   jointAngles = Eigen::VectorXd::Zero(7);
   jointAngles_new = Eigen::VectorXd::Zero(7);
-  flangeTargetSub = nh_.subscribe("/flangeTarget", 1, &Tapi_iiwa::transformCallback, this);
+  // flangeTargetSub = nh_.subscribe("/flangeTarget", 1, &Tapi_iiwa::transformCallback, this);
+  ros::SubscribeOptions opt;
+  opt = SubscribeOptionsForTapi(geometry_msgs::PoseStamped, 1, &Tapi_iiwa::transformCallback);
+  tsub->AddFeature(opt, "Target Position");
 
-  flangePub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeLBR", 1);
+  // flangePub = nh_.advertise<geometry_msgs::PoseStamped>("/flangeLBR", 1);
+  flangePub = tpub->AddFeature<geometry_msgs::PoseStamped>("Current Position", 1);
 
-  for (int i = 0; i < lbrJointAngleSub.size(); i++)
+  /*for (int i = 0; i < lbrJointAngleSub.size(); i++)
   {
     std::stringstream sstream;
     sstream << "/LBR/des/joint" << i + 1;
@@ -24,8 +31,11 @@ Tapi_iiwa::Tapi_iiwa(ros::NodeHandle nh) : nh_(nh)
     sstream << "/LBR/act/joint" << i + 1;
     lbrJointAnglePub[i] = nh_.advertise<sensor_msgs::JointState>(sstream.str().c_str(), 1);
     sstream.str(std::string());
-  }
-  stateServiceServer = nh_.advertiseService("/openIGTLState", &Tapi_iiwa::stateService, this);
+  }*/
+  // stateServiceServer = nh_.advertiseService("/openIGTLState", &Tapi_iiwa::stateService, this);
+  ros::AdvertiseServiceOptions opt2;
+  opt2 = ServiceServerOptionsForTapi(tapi_iiwa::OpenIGTLStateService, &Tapi_iiwa::stateService);
+  stateServiceServer = tservice->AddFeature(opt2, "Mode");
 
   boost::thread(boost::bind(&Tapi_iiwa::openIGTLinkTransformThread, this));
   boost::thread(boost::bind(&Tapi_iiwa::openIGTLinkThread, this));
@@ -34,20 +44,27 @@ Tapi_iiwa::Tapi_iiwa(ros::NodeHandle nh) : nh_(nh)
   ros::spin();
 }
 
+Tapi_iiwa::~Tapi_iiwa()
+{
+  delete tpub;
+  delete tsub;
+  delete tservice;
+}
+
 void Tapi_iiwa::loop(const ros::TimerEvent &event)
 {
   // Get pose of flange
   geometry_msgs::PoseStamped poseFLmsg;
   poseFLmsg.header.stamp = ros::Time::now();
   poseFLmsg.pose = poseFL;
-  this->flangePub.publish(poseFLmsg);
+  this->flangePub->publish(poseFLmsg);
 
-  for (int i = 0; i < 7; i++)
+  /*for (int i = 0; i < 7; i++)
   {
     sensor_msgs::JointState temp;
     temp.position.push_back(jointAngles[i]);
     lbrJointAnglePub[i].publish(temp);
-  }
+  }*/
 }
 
 void Tapi_iiwa::transformCallback(geometry_msgs::PoseStampedConstPtr transform)

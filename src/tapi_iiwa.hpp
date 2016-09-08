@@ -15,6 +15,7 @@
 #include "std_msgs/Float64.h"
 #include "tapi_iiwa/OpenIGTLStateService.h"
 #include "tapi_iiwa/tapi_iiwaConfig.h"
+#include "tapi_lib/tapi_lib.hpp"
 
 // for own thread
 #include <boost/bind.hpp>
@@ -50,6 +51,7 @@ class Tapi_iiwa
 {
 public:
   Tapi_iiwa(ros::NodeHandle);
+  ~Tapi_iiwa();
   /**
    * \fn bool stateService(tapi_iiwa::OpenIGTLStateService::Request&, tapi_iiwa::OpenIGTLStateService::Response&)
    * \brief Dieses ist eine Callback-Methode, die aufgerufen wird, wenn der Zustand des Roboters geändert werden soll
@@ -147,19 +149,20 @@ private:
    * \var flangeTargetSub
    * \brief Empfänger für Solllagen des Endeffektors in ROS
    */
-  ros::Subscriber flangeTargetSub;
+  // ros::Subscriber flangeTargetSub;
 
   /**
    * \var lbrJointAngleSub
    * @brief Empfänger für die  gewünschte Gelenkwinkelposition des LBR iiwa in ROS
    */
-  std::array<ros::Subscriber, 7> lbrJointAngleSub;
+  //std::array<ros::Subscriber, 7> lbrJointAngleSub;
 
   /**
    * \var flangePub
    * \brief Sender für die eingenommene Endeffektorlage in ROS
    */
-  ros::Publisher flangePub;
+  // ros::Publisher flangePub;
+  ros::Publisher *flangePub;
 
   /**
    * \var lbrJointAnglePub
@@ -172,7 +175,8 @@ private:
    * @brief Objekt zur Bereitstellung des stateServices
    * @see bool stateService(tapi_iiwa::OpenIGTLStateService::Request&, tapi_iiwa::OpenIGTLStateService::Response&)
    */
-  ros::ServiceServer stateServiceServer;
+  // ros::ServiceServer stateServiceServer;
+  ros::ServiceServer *stateServiceServer;
 
   ros::NodeHandle nh_;
 
@@ -288,12 +292,13 @@ private:
   const unsigned int CONNECTION_TIMEOUT{ 30 };
 
   int jointAnglesCalled{ 0 };
-
   boost::mutex stateUpdateMutex_;
-
   bool commandReceivedFromROS{ false };
-
   boost::mutex commandStringMutex_;
+
+  Tapi::Publisher *tpub;
+  Tapi::Subscriber *tsub;
+  Tapi::ServiceServer *tservice;
 };
 
 #endif  // TAPI_IIWA_H
