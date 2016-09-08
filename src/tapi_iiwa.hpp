@@ -1,9 +1,13 @@
 #ifndef TAPI_IIWA_H
 #define TAPI_IIWA_H
 
+#include <eigen_conversions/eigen_msg.h>
+#include <Eigen/Dense>
+#include <Eigen/Eigen>
+#include <array>
 #include <cstdlib>
+#include <sstream>
 #include "OpenIGTLStateDescription.hpp"
-#include "dynamic_reconfigure/server.h"
 #include "geometry_msgs/PoseArray.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "ros/ros.h"
@@ -16,7 +20,6 @@
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
-#include "ros/callback_queue.h"
 
 // for own OpenIGTLink
 #include "igtlClientSocket.h"
@@ -26,12 +29,6 @@
 #include "igtlStringMessage.h"
 #include "igtlTransformMessage.h"
 #include "igtl_transform.h"
-
-#include <eigen_conversions/eigen_msg.h>
-#include <Eigen/Dense>
-#include <Eigen/Eigen>
-#include <array>
-#include <sstream>
 
 /**
  * \file tapi_iiwa.hpp
@@ -145,15 +142,6 @@ private:
    * @return Pose
    */
   geometry_msgs::Pose igtlMatrixToRosPose(igtl::Matrix4x4 &igtlMatrix);
-
-  /**
-   * \fn configurationIGTLCallback(tapi_iiwa::tapi_iiwaConfig &config, uint32_t level)
-   * @brief Callbackmethode für dynamic reconfigure
-   * @param config Konfiguration von dynamic reconfigure
-   * @param level Bitmaske zur Maskierung einzelner Einstellungen
-   * @see Tapi_iiwa.cfg
-   */
-  void configurationIGTLCallback(tapi_iiwa::tapi_iiwaConfig &config, uint32_t level);
 
   /**
    * \var flangeTargetSub

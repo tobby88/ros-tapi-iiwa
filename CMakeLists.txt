@@ -10,7 +10,6 @@ add_definitions(-std=c++11)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  dynamic_reconfigure
   eigen_conversions
   geometry_msgs
   message_generation
@@ -64,9 +63,9 @@ generate_messages(
 ## Declare ROS dynamic reconfigure parameters ##
 ################################################
 
-generate_dynamic_reconfigure_options(
-  cfg/Tapi_iiwa.cfg
-)
+#generate_dynamic_reconfigure_options(
+#  cfg/Tapi_iiwa.cfg
+#)
 
 ###################################
 ## catkin specific configuration ##
@@ -74,7 +73,7 @@ generate_dynamic_reconfigure_options(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES masterslave
-  CATKIN_DEPENDS dynamic_reconfigure eigen_conversions geometry_msgs message_runtime roscpp sensor_msgs std_msgs tapi_lib tf tf_conversions
+  CATKIN_DEPENDS eigen_conversions geometry_msgs message_runtime roscpp sensor_msgs std_msgs tapi_lib tf tf_conversions
   DEPENDS Eigen3
 )
 

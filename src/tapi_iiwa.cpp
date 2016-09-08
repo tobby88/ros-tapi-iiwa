@@ -7,11 +7,6 @@
 
 Tapi_iiwa::Tapi_iiwa(ros::NodeHandle nh) : nh_(nh)
 {
-  dynamic_reconfigure::Server<tapi_iiwa::tapi_iiwaConfig> server;
-  dynamic_reconfigure::Server<tapi_iiwa::tapi_iiwaConfig>::CallbackType f;
-  f = boost::bind(&Tapi_iiwa::configurationIGTLCallback, this, _1, _2);
-  server.setCallback(f);
-
   jointAngles = Eigen::VectorXd::Zero(7);
   jointAngles_new = Eigen::VectorXd::Zero(7);
   flangeTargetSub = nh_.subscribe("/flangeTarget", 1, &Tapi_iiwa::transformCallback, this);
@@ -337,13 +332,5 @@ void Tapi_iiwa::lbrJointAngleCallback(const std_msgs::Float64ConstPtr &jointAngl
   {
     // Binäre Operation (Bits der Gelenknummern zu 1 gesetzt)
     jointAnglesCalled += 1 << number;
-  }
-}
-
-void Tapi_iiwa::configurationIGTLCallback(tapi_iiwa::tapi_iiwaConfig &config, uint32_t level)
-{
-  if (config.StartOpenIGTL)
-  {
-    // Insgesamt 3 Threads um ROS von OpenIGTL zu entkoppeln
   }
 }
