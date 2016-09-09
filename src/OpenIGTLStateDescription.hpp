@@ -1,4 +1,6 @@
 /******************************************************************************
+*  Copyright (C) 2016 by Fabian Baier                                         *
+*                                                                             *
 *  This file is part of tapi_iiwa.                                            *
 *                                                                             *
 *  tapi_iiwa is free software: you can redistribute it and/or modify          *
