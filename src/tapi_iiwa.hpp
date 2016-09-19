@@ -179,22 +179,9 @@ private:
   geometry_msgs::Pose igtlMatrixToRosPose(igtl::Matrix4x4 &igtlMatrix);
 
   /**
-   * \var flangeTargetSub
-   * \brief Empfänger für Solllagen des Endeffektors in ROS
-   */
-  // ros::Subscriber flangeTargetSub;
-
-  /**
-   * \var lbrJointAngleSub
-   * @brief Empfänger für die  gewünschte Gelenkwinkelposition des LBR iiwa in ROS
-   */
-  //std::array<ros::Subscriber, 7> lbrJointAngleSub;
-
-  /**
    * \var flangePub
    * \brief Sender für die eingenommene Endeffektorlage in ROS
    */
-  // ros::Publisher flangePub;
   ros::Publisher *flangePub;
 
   /**
@@ -208,7 +195,6 @@ private:
    * @brief Objekt zur Bereitstellung des stateServices
    * @see bool stateService(tapi_iiwa::OpenIGTLStateService::Request&, tapi_iiwa::OpenIGTLStateService::Response&)
    */
-  // ros::ServiceServer stateServiceServer;
   ros::ServiceServer *stateServiceServer;
 
   ros::NodeHandle nh_;
