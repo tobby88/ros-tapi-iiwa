@@ -77,7 +77,7 @@
  * \author Tobias Holst
  * \date 08.09.2016
  *
- * \version 0.4
+ * \version 1.0.1
  *
  */
 class Tapi_iiwa
