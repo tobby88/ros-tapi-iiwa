@@ -1,0 +1,25 @@
+actions: []
+authors: Fabian Baier <fabian.baier@gmx.de>, Tobias Holst <tobby@tobby.eu>
+brief: ''
+bugtracker: ''
+depends:
+- tapi_lib
+- catkin
+- roscpp
+- std_msgs
+- message_runtime
+- sensor_msgs
+- eigen_conversions
+- tf
+- geometry_msgs
+- message_generation
+- tf_conversions
+description: Connect Kuka iiwa to Tapi
+license: GPLv3
+maintainers: Tobias Holst <tobby@tobby.eu>
+msgs: []
+package_type: package
+repo_url: https://github.com/tobby88/ros-tapi-iiwa
+srvs:
+- OpenIGTLStateService
+url: ''
