@@ -22,4 +22,4 @@ package_type: package
 repo_url: https://github.com/tobby88/ros-tapi-iiwa
 srvs:
 - OpenIGTLStateService
-url: https://tobby88.github.io/ros-tapi-iiwa/html/
+url: https://tobby88.github.io/ros-tapi-iiwa/html/index.html
